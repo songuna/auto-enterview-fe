@@ -60,8 +60,10 @@ const SignUp: React.FC = () => {
         <Form onSubmit={handleSubmit}>
           <H1>회사 회원가입</H1>
           <Span>정보를 입력해주세요.</Span>
+          <EmailCheck>
           <Input type="email" name="companyEmail" placeholder="이메일" value={formData.companyEmail} onChange={handleInputChange} />
-          <Button className='emailBtn' type="button" onClick={() => handleEmailVerification(formData.companyEmail || '')}>인증</Button>
+          <Button className='emailCheckBtn' type="button" onClick={() => handleEmailVerification(formData.companyEmail || '')}>인증</Button>
+          </EmailCheck>
           <Input type="text" name="companyEmailNumber" placeholder="이메일 인증번호" value={formData.companyEmailNumber} onChange={handleInputChange} /> 
           <Input type="password" name="companyPassword" placeholder="비밀번호" value={formData.companyPassword} onChange={handleInputChange} />
           <Input type="text" name="companyName" placeholder="회사명" value={formData.companyName} onChange={handleInputChange} />
@@ -74,8 +76,10 @@ const SignUp: React.FC = () => {
           <H1>개인 회원가입</H1>
           <Span>정보를 입력해주세요.</Span>
           <Input type="text" name="userName" placeholder="이름" value={formData.userName} onChange={handleInputChange} />
-          <Input type="email" name="userEmail" placeholder="이메일" value={formData.userEmail} onChange={handleInputChange} />
-          <Button className='emailBtn' type="button" onClick={() => handleEmailVerification(formData.companyEmail || '')}>인증</Button>
+          <EmailCheck>
+          <Input type="email" name="userEmail" placeholder="이메일" value={formData.userEmail} onChange={handleInputChange}></Input>
+          <Button className='emailCheckBtn' type="button" onClick={() => handleEmailVerification(formData.companyEmail || '')}>인증</Button>
+          </EmailCheck>
           <Input type="text" name="userEmailNumber" placeholder="이메일 인증번호" value={formData.userEmailNumber} onChange={handleInputChange} />
           <Input type="password" name="userPassword" placeholder="비밀번호" value={formData.userPassword} onChange={handleInputChange} />
           <Input type="text" name="userPhoneNumber" placeholder="핸드폰 번호" value={formData.userPhoneNumber} onChange={handleInputChange} />
@@ -92,7 +96,7 @@ const SignUp: React.FC = () => {
           <OverlayPanel className="overlay-panel overlay-right">
             <H1>회사 회원가입</H1>
             <P>회사라면 여기에서 회원가입해주세요.</P>
-            <Button className="ghost" id="company-signUp" onClick={handleCompanySignUpClick}>회원가입</Button>
+            <Button className="ghost" id="company-signUp" onClick={handleCompanySignUpClick}>회사 가입하기</Button>
           </OverlayPanel>
         </Overlay>
       </OverlayContainer>
@@ -226,13 +230,13 @@ const Button = styled.button`
   letter-spacing: 1px;
   text-transform: uppercase;
   transition: transform 80ms ease-in;
-  &.emailBtn{
+  &.emailCheckBtn{
+    width: 50px;
+    height: 45px;
+    padding: 0px;
     border-radius: 0px;
-    padding-left: 0px;
-    height: 20px;
-    width: 80px;
     font-size: 10px;
-    text-align: center;
+    margin-top: 5px;
   }
   &:active {
     transform: scale(0.95);
@@ -260,8 +264,8 @@ const Form = styled.form`
 const Input = styled.input`
   background-color: #eee;
   border: none;
-  padding: 12px 15px;
-  margin: 8px 0;
+  padding: 15px 15px;
+  margin: 5px 0;
   width: 100%;
 `;
 
@@ -281,5 +285,11 @@ const P = styled.p`
   letter-spacing: 0.5px;
   margin: 20px 0 30px;
 `;
+
+const EmailCheck = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+`
 
 export default SignUp;
