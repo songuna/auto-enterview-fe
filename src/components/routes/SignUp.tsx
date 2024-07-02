@@ -1,45 +1,81 @@
-import { useState } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import styled, { keyframes } from 'styled-components';
 
+// 회원가입
+const SignUp: React.FC = () => {
+  const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+  const [formData, setFormData] = useState({
+    companyEmail: '',
+    companyEmailNumber: '',
+    companyPassword: '',
+    companyName: '',
+    companyPhoneNumber: '',
+    userName: '',
+    userEmail: '',
+    userEmailNumber: '',
+    userPassword: '',
+    userPhoneNumber: ''
+  });
 
-
-const SignUp = () => {
-   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleCompanySignUpClick = () => {
     setIsRightPanelActive(true);
   };
 
-  const handleUserSignUPClick = () => {
+  const handleUserSignUpClick = () => {
     setIsRightPanelActive(false);
   };
 
+  const handleSubmit = (e: FormEvent) => {
+  e.preventDefault();
+  const fields = isRightPanelActive
+    ? ['companyEmail', 'companyEmailNumber', 'companyPassword', 'companyName', 'companyPhoneNumber']
+    : ['userName', 'userEmail', 'userEmailNumber', 'userPassword', 'userPhoneNumber'];
+
+  const hasEmptyField = fields.some(field => {
+    if (!formData[field]) {
+      alert('정보를 입력해주세요');
+      return true;
+    }
+    return false;
+  });
+
+  if (!hasEmptyField) {
+    // 모든 필드가 입력되었을 때 처리 로직
+    console.log('Form submitted', formData);
+  }
+};
 
 
+// 회원가입 JSX
   return (
     <Container id="container" className={isRightPanelActive ? 'right-panel-active' : ''}>
       <FormContainer className="form-container company-sign-up">
-        <Form action="#">
+        <Form action="#" onSubmit={handleSubmit}>
           <H1>회사 회원가입</H1>
           <Span>정보를 입력해주세요.</Span>
-          <Input type="company-email" placeholder="이메일" />
-          <Input type="company-email-number" placeholder="이메일 인증번호" />
-          <Input type="company-password" placeholder="비밀번호" />
-          <Input type="company-name" placeholder="회사명" />
-          <Input type="company-phone-number" placeholder="회사 전화번호" />
-          <Button>회사 등록하기</Button>
+          <Input type="company-email" placeholder="이메일" value={formData.companyEmail} onChange={handleInputChange} />
+          <Input type="company-email-number" placeholder="이메일 인증번호" value={formData.companyEmailNumber} onChange={handleInputChange}/>
+          <Input type="company-password" placeholder="비밀번호" value={formData.companyPassword} onChange={handleInputChange} />
+          <Input type="company-name" placeholder="회사명" value={formData.companyName} onChange={handleInputChange} />
+          <Input type="company-phone-number" placeholder="회사 전화번호" value={formData.companyPhoneNumber} onChange={handleInputChange} />
+          <Button type="submit">회사 등록하기</Button>
         </Form>
       </FormContainer>
       <FormContainer className="form-container user-sign-up">
-        <Form action="#">
+        <Form action="#" onSubmit={handleSubmit}>
           <H1>개인 회원가입</H1>
           <Span>정보를 입력해주세요.</Span>
-          <Input type="user-name" placeholder="이름" />
-          <Input type="user-email" placeholder="이메일" />
-          <Input type="user-email-number" placeholder="이메일 인증번호" />
-          <Input type="user-password" placeholder="비밀번호" />
-          <Input type="user-phone-number" placeholder="핸드폰 번호" />
-          <Button>회원가입</Button>
+          <Input type="user-name" placeholder="이름" value={formData.userName} onChange={handleInputChange} />
+          <Input type="user-email" placeholder="이메일" value={formData.userEmail} onChange={handleInputChange} />
+          <Input type="user-email-number" placeholder="이메일 인증번호" value={formData.userEmailNumber} onChange={handleInputChange} />
+          <Input type="user-password" placeholder="비밀번호" value={formData.userPassword} onChange={handleInputChange} />
+          <Input type="user-phone-number" placeholder="핸드폰 번호" value={formData.userPhoneNumber} onChange={handleInputChange} />
+          <Button type="submit">회원가입</Button>
         </Form>
       </FormContainer>
       <OverlayContainer className="overlay-container">
@@ -47,7 +83,7 @@ const SignUp = () => {
           <OverlayPanel className="overlay-panel overlay-left">
             <H1>개인 회원가입</H1>
             <P>개인이라면 여기에서 회원가입해주세요.</P>
-            <Button className="ghost" id="user-signUp" onClick={handleUserSignUPClick}>개인 가입하기</Button>
+            <Button className="ghost" id="user-signUp" onClick={handleUserSignUpClick}>개인 가입하기</Button>
           </OverlayPanel>
           <OverlayPanel className="overlay-panel overlay-right">
             <H1>회사 회원가입</H1>
@@ -61,7 +97,7 @@ const SignUp = () => {
 };
 
 
-
+// 회원가입 style
 const show = keyframes`
   0%, 49.99% {
     opacity: 0;
@@ -78,6 +114,9 @@ const Container = styled.div`
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
   overflow: hidden;
   width: 768px;
