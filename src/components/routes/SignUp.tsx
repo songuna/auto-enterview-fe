@@ -31,50 +31,46 @@ const SignUp: React.FC = () => {
   };
 
   const handleSubmit = (e: FormEvent) => {
-  e.preventDefault();
-  const fields = isRightPanelActive
-    ? ['companyEmail', 'companyEmailNumber', 'companyPassword', 'companyName', 'companyPhoneNumber']
-    : ['userName', 'userEmail', 'userEmailNumber', 'userPassword', 'userPhoneNumber'];
+    e.preventDefault();
+    const fields = isRightPanelActive
+      ? ['companyEmail', 'companyEmailNumber', 'companyPassword', 'companyName', 'companyPhoneNumber']
+      : ['userName', 'userEmail', 'userEmailNumber', 'userPassword', 'userPhoneNumber'];
 
-  const hasEmptyField = fields.some(field => {
-    if (!formData[field]) {
-      alert('정보를 입력해주세요');
-      return true;
+    for (let field of fields) {
+      if (!formData[field]) {
+        alert('정보를 입력해주세요');
+        return;
+      }
     }
-    return false;
-  });
 
-  if (!hasEmptyField) {
-    // 모든 필드가 입력되었을 때 처리 로직
+    // 입력된 정보 처리 로직
     console.log('Form submitted', formData);
-  }
-};
-
+  };
 
 // 회원가입 JSX
   return (
     <Container id="container" className={isRightPanelActive ? 'right-panel-active' : ''}>
       <FormContainer className="form-container company-sign-up">
-        <Form action="#" onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit}>
           <H1>회사 회원가입</H1>
           <Span>정보를 입력해주세요.</Span>
-          <Input type="company-email" placeholder="이메일" value={formData.companyEmail} onChange={handleInputChange} />
-          <Input type="company-email-number" placeholder="이메일 인증번호" value={formData.companyEmailNumber} onChange={handleInputChange}/>
-          <Input type="company-password" placeholder="비밀번호" value={formData.companyPassword} onChange={handleInputChange} />
-          <Input type="company-name" placeholder="회사명" value={formData.companyName} onChange={handleInputChange} />
-          <Input type="company-phone-number" placeholder="회사 전화번호" value={formData.companyPhoneNumber} onChange={handleInputChange} />
+          <Input type="email" name="companyEmail" placeholder="이메일" value={formData.companyEmail} onChange={handleInputChange} />
+          <Input type="text" name="companyEmailNumber" placeholder="이메일 인증번호" value={formData.companyEmailNumber} onChange={handleInputChange} />
+          <Input type="password" name="companyPassword" placeholder="비밀번호" value={formData.companyPassword} onChange={handleInputChange} />
+          <Input type="text" name="companyName" placeholder="회사명" value={formData.companyName} onChange={handleInputChange} />
+          <Input type="text" name="companyPhoneNumber" placeholder="회사 전화번호" value={formData.companyPhoneNumber} onChange={handleInputChange} />
           <Button type="submit">회사 등록하기</Button>
         </Form>
       </FormContainer>
       <FormContainer className="form-container user-sign-up">
-        <Form action="#" onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit}>
           <H1>개인 회원가입</H1>
           <Span>정보를 입력해주세요.</Span>
-          <Input type="user-name" placeholder="이름" value={formData.userName} onChange={handleInputChange} />
-          <Input type="user-email" placeholder="이메일" value={formData.userEmail} onChange={handleInputChange} />
-          <Input type="user-email-number" placeholder="이메일 인증번호" value={formData.userEmailNumber} onChange={handleInputChange} />
-          <Input type="user-password" placeholder="비밀번호" value={formData.userPassword} onChange={handleInputChange} />
-          <Input type="user-phone-number" placeholder="핸드폰 번호" value={formData.userPhoneNumber} onChange={handleInputChange} />
+          <Input type="text" name="userName" placeholder="이름" value={formData.userName} onChange={handleInputChange} />
+          <Input type="email" name="userEmail" placeholder="이메일" value={formData.userEmail} onChange={handleInputChange} />
+          <Input type="text" name="userEmailNumber" placeholder="이메일 인증번호" value={formData.userEmailNumber} onChange={handleInputChange} />
+          <Input type="password" name="userPassword" placeholder="비밀번호" value={formData.userPassword} onChange={handleInputChange} />
+          <Input type="text" name="userPhoneNumber" placeholder="핸드폰 번호" value={formData.userPhoneNumber} onChange={handleInputChange} />
           <Button type="submit">회원가입</Button>
         </Form>
       </FormContainer>
