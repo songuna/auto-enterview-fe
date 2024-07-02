@@ -6,22 +6,22 @@ import styled, { keyframes } from 'styled-components';
 const SignUp = () => {
    const [isRightPanelActive, setIsRightPanelActive] = useState(false);
 
-  const handleSignUpClick = () => {
+  const handleCompanySignUpClick = () => {
     setIsRightPanelActive(true);
   };
 
-  const handleSignInClick = () => {
+  const handleUserSignUPClick = () => {
     setIsRightPanelActive(false);
   };
 
 
 
   return (
-    <Container  className={isRightPanelActive ? 'right-panel-active' : ''}>
-      <SignUpContainer>
+    <Container id="container" className={isRightPanelActive ? 'right-panel-active' : ''}>
+      <FormContainer className="form-container company-sign-up">
         <Form action="#">
-          <H1>회사 계정을 만드시겠어요?</H1>
-          <Span>or use your email for registration</Span>
+          <H1>회사 회원가입</H1>
+          <Span>정보를 입력해주세요.</Span>
           <Input type="company-email" placeholder="이메일" />
           <Input type="company-email-number" placeholder="이메일 인증번호" />
           <Input type="company-password" placeholder="비밀번호" />
@@ -29,8 +29,8 @@ const SignUp = () => {
           <Input type="company-phone-number" placeholder="회사 전화번호" />
           <Button>회사 등록하기</Button>
         </Form>
-      </SignUpContainer>
-      <SignInContainer>
+      </FormContainer>
+      <FormContainer className="form-container user-sign-up">
         <Form action="#">
           <H1>개인 회원가입</H1>
           <Span>정보를 입력해주세요.</Span>
@@ -41,18 +41,18 @@ const SignUp = () => {
           <Input type="user-phone-number" placeholder="핸드폰 번호" />
           <Button>회원가입</Button>
         </Form>
-      </SignInContainer>
-      <OverlayContainer>
-        <Overlay>
-          <OverlayPanel>
-            <H1>개인이라면 여기에서 회원가입해주세요.</H1>
-            <P>To keep connected with us please login with your personal info</P>
-            <Button className="ghost" id="signIn" onClick={handleSignInClick}>개인 가입하기</Button>
+      </FormContainer>
+      <OverlayContainer className="overlay-container">
+        <Overlay className="overlay">
+          <OverlayPanel className="overlay-panel overlay-left">
+            <H1>개인 회원가입</H1>
+            <P>개인이라면 여기에서 회원가입해주세요.</P>
+            <Button className="ghost" id="user-signUp" onClick={handleUserSignUPClick}>개인 가입하기</Button>
           </OverlayPanel>
-          <OverlayPanel>
+          <OverlayPanel className="overlay-panel overlay-right">
             <H1>회사 회원가입</H1>
-            <P>Enter your personal details and start journey with us</P>
-            <Button className="ghost" id="signUp" onClick={handleSignUpClick}>회원가입</Button>
+            <P>회사라면 여기에서 회원가입해주세요.</P>
+            <Button className="ghost" id="company-signUp" onClick={handleCompanySignUpClick}>회원가입</Button>
           </OverlayPanel>
         </Overlay>
       </OverlayContainer>
@@ -83,10 +83,10 @@ const Container = styled.div`
   width: 768px;
   max-width: 100%;
   min-height: 480px;
-  &.right-panel-active .sign-in-container {
+  &.right-panel-active .user-sign-up {
     transform: translateX(100%);
   }
-  &.right-panel-active .sign-up-container {
+  &.right-panel-active .company-sign-up {
     transform: translateX(100%);
     opacity: 1;
     z-index: 5;
@@ -106,28 +106,21 @@ const Container = styled.div`
   }
 `;
 
-const SignInContainer = styled.div`
-  left: 0;
-  width: 50%;
-  z-index: 2;
-  &.form-container{
+const FormContainer = styled.div`
   position: absolute;
   top: 0;
   height: 100%;
   transition: all 0.6s ease-in-out;
+  &.company-sign-up {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
   }
-`;
-
-const SignUpContainer = styled.div`
-  left: 0;
-  width: 50%;
-  opacity: 0;
-  z-index: 1;
-  &.form-container{
-  position: absolute;
-  top: 0;
-  height: 100%;
-  transition: all 0.6s ease-in-out;
+  &.user-sign-up {
+    left: 0;
+    width: 50%;
+    z-index: 2;
   }
 `;
 
@@ -143,7 +136,7 @@ const OverlayContainer = styled.div`
 `;
 
 const Overlay = styled.div`
-  background: linear-gradient(to right, #ff4b2b, #ff416c);
+  background: linear-gradient(to right, #000694, #5690FB);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 0 0;
@@ -180,8 +173,9 @@ const OverlayPanel = styled.div`
 
 const Button = styled.button`
   border-radius: 20px;
-  border: 1px solid #ff4b2b;
-  background-color: #ff4b2b;
+  border: 1px solid #000694;
+  background-color: #000694;
+  margin-top: 10px;
   color: #ffffff;
   font-size: 12px;
   font-weight: bold;
@@ -222,7 +216,7 @@ const Input = styled.input`
 
 const H1 = styled.h1`
   font-weight: bold;
-  margin: 0;
+  margin-bottom: 12px;
 `;
 
 const Span = styled.span`
@@ -235,28 +229,6 @@ const P = styled.p`
   line-height: 20px;
   letter-spacing: 0.5px;
   margin: 20px 0 30px;
-`;
-
-const Footer = styled.footer`
-  background-color: #222;
-  color: #fff;
-  font-size: 14px;
-  bottom: 0;
-  position: fixed;
-  left: 0;
-  right: 0;
-  text-align: center;
-  z-index: 999;
-  &.p {
-    margin: 10px 0;
-  }
-  &.i {
-    color: red;
-  }
-  &.a {
-    color: #3c97bf;
-    text-decoration: none;
-  }
 `;
 
 export default SignUp;
