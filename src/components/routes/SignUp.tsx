@@ -1,9 +1,21 @@
+import { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 
 
 const SignUp = () => {
-  return <></>;
+   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+
+  const handleSignUpClick = () => {
+    setIsRightPanelActive(true);
+  };
+
+  const handleSignInClick = () => {
+    setIsRightPanelActive(false);
+  };
+
+
+
   return (
     <Container  className={isRightPanelActive ? 'right-panel-active' : ''}>
       <SignUpContainer>
