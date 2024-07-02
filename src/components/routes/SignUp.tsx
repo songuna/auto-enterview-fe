@@ -30,6 +30,12 @@ const SignUp: React.FC = () => {
     setIsRightPanelActive(false);
   };
 
+    const handleEmailVerification = (email: string) => {
+    // 이메일 인증 로직 구현 (예: 이메일로 인증 링크 전송)
+    console.log(`이메일 ${email}을(를) 인증합니다.`);
+    alert(`이메일 ${email}로 인증번호가 발송되었습니다.`);
+  };
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const fields = isRightPanelActive
@@ -55,7 +61,8 @@ const SignUp: React.FC = () => {
           <H1>회사 회원가입</H1>
           <Span>정보를 입력해주세요.</Span>
           <Input type="email" name="companyEmail" placeholder="이메일" value={formData.companyEmail} onChange={handleInputChange} />
-          <Input type="text" name="companyEmailNumber" placeholder="이메일 인증번호" value={formData.companyEmailNumber} onChange={handleInputChange} />
+          <Button className='emailBtn' type="button" onClick={() => handleEmailVerification(formData.companyEmail || '')}>인증</Button>
+          <Input type="text" name="companyEmailNumber" placeholder="이메일 인증번호" value={formData.companyEmailNumber} onChange={handleInputChange} /> 
           <Input type="password" name="companyPassword" placeholder="비밀번호" value={formData.companyPassword} onChange={handleInputChange} />
           <Input type="text" name="companyName" placeholder="회사명" value={formData.companyName} onChange={handleInputChange} />
           <Input type="text" name="companyPhoneNumber" placeholder="회사 전화번호" value={formData.companyPhoneNumber} onChange={handleInputChange} />
@@ -68,6 +75,7 @@ const SignUp: React.FC = () => {
           <Span>정보를 입력해주세요.</Span>
           <Input type="text" name="userName" placeholder="이름" value={formData.userName} onChange={handleInputChange} />
           <Input type="email" name="userEmail" placeholder="이메일" value={formData.userEmail} onChange={handleInputChange} />
+          <Button className='emailBtn' type="button" onClick={() => handleEmailVerification(formData.companyEmail || '')}>인증</Button>
           <Input type="text" name="userEmailNumber" placeholder="이메일 인증번호" value={formData.userEmailNumber} onChange={handleInputChange} />
           <Input type="password" name="userPassword" placeholder="비밀번호" value={formData.userPassword} onChange={handleInputChange} />
           <Input type="text" name="userPhoneNumber" placeholder="핸드폰 번호" value={formData.userPhoneNumber} onChange={handleInputChange} />
@@ -218,6 +226,14 @@ const Button = styled.button`
   letter-spacing: 1px;
   text-transform: uppercase;
   transition: transform 80ms ease-in;
+  &.emailBtn{
+    border-radius: 0px;
+    padding-left: 0px;
+    height: 20px;
+    width: 80px;
+    font-size: 10px;
+    text-align: center;
+  }
   &:active {
     transform: scale(0.95);
   }
