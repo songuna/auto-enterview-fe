@@ -55,6 +55,7 @@ const SignUp: React.FC = () => {
 
 // 회원가입 JSX
   return (
+    <Wrapper>
     <Container id="container" className={isRightPanelActive ? 'right-panel-active' : ''}>
       <FormContainer className="form-container company-sign-up">
         <Form onSubmit={handleSubmit}>
@@ -101,6 +102,7 @@ const SignUp: React.FC = () => {
         </Overlay>
       </OverlayContainer>
     </Container>
+    </Wrapper>
   );
 };
 
@@ -117,6 +119,13 @@ const show = keyframes`
     z-index: 5;
   }
 `;
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 80px;
+`
 
 const Container = styled.div`
   background-color: #fff;
