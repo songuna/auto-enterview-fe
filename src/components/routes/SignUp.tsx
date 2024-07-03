@@ -1,9 +1,11 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 // 회원가입
 const SignUp: React.FC = () => {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
     companyEmail: '',
     companyEmailNumber: '',
@@ -17,6 +19,7 @@ const SignUp: React.FC = () => {
     userPhoneNumber: ''
   });
 
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -29,11 +32,39 @@ const SignUp: React.FC = () => {
   const handleUserSignUpClick = () => {
     setIsRightPanelActive(false);
   };
+  const checkEmailDuplication = async (email: string) => {
+    // 서버에서 이메일 중복 확인하는 함수 (예시로 Promise 사용)
+    return new Promise<{ isDuplicated: boolean }>((resolve) => {
+      setTimeout(() => {
+        // 예: 중복된 이메일인지 아닌지 확인하는 로직
+        const isDuplicated = email === "duplicate@example.com";
+        resolve({ isDuplicated });
+      }, 500);
+    });
+  };
+  
+  const sendVerificationCode = async (email: string) => {
+    // 서버에서 이메일로 인증 코드 발송하는 함수
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        console.log(`이메일 ${email}로 인증 코드 발송`);
+        resolve();
+      }, 500);
+    });
+  };
 
-    const handleEmailVerification = (email: string) => {
-    // 이메일 인증 로직 구현 (예: 이메일로 인증 링크 전송)
-    console.log(`이메일 ${email}을(를) 인증합니다.`);
-    alert(`이메일 ${email}로 인증번호가 발송되었습니다.`);
+  const handleEmailVerification = async (email: string) => {
+    if (!email) {
+      alert('이메일을 입력해주세요.');
+      return;
+    }
+    const { isDuplicated } = await checkEmailDuplication(email);
+    if (isDuplicated) {
+      alert('이메일이 중복되었습니다.');
+    } else {
+      await sendVerificationCode(email);
+      alert(`이메일 ${email}로 인증번호가 발송되었습니다.`);
+    }
   };
 
   const handleSubmit = (e: FormEvent) => {
@@ -51,10 +82,16 @@ const SignUp: React.FC = () => {
 
     // 입력된 정보 처리 로직
     console.log('Form submitted', formData);
+
+};
+
+const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
   };
 
 // 회원가입 JSX
   return (
+    <Wrapper>
     <Container id="container" className={isRightPanelActive ? 'right-panel-active' : ''}>
       <FormContainer className="form-container company-sign-up">
         <Form onSubmit={handleSubmit}>
@@ -64,8 +101,11 @@ const SignUp: React.FC = () => {
           <Input type="email" name="companyEmail" placeholder="이메일" value={formData.companyEmail} onChange={handleInputChange} />
           <Button className='emailCheckBtn' type="button" onClick={() => handleEmailVerification(formData.companyEmail || '')}>인증</Button>
           </EmailCheck>
-          <Input type="text" name="companyEmailNumber" placeholder="이메일 인증번호" value={formData.companyEmailNumber} onChange={handleInputChange} /> 
-          <Input type="password" name="companyPassword" placeholder="비밀번호" value={formData.companyPassword} onChange={handleInputChange} />
+          <Input type="text" name="companyEmailNumber" placeholder="이메일 인증번호" value={formData.companyEmailNumber} onChange={handleInputChange} />
+          <PassWordCheck>
+          <Input type={isPasswordVisible ? "text" : "password"}  name="companyPassword" placeholder="비밀번호" value={formData.companyPassword} onChange={handleInputChange} />
+          <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
+          </PassWordCheck>
           <Input type="text" name="companyName" placeholder="회사명" value={formData.companyName} onChange={handleInputChange} />
           <Input type="text" name="companyPhoneNumber" placeholder="회사 전화번호" value={formData.companyPhoneNumber} onChange={handleInputChange} />
           <Button type="submit">회사 등록하기</Button>
@@ -81,7 +121,10 @@ const SignUp: React.FC = () => {
           <Button className='emailCheckBtn' type="button" onClick={() => handleEmailVerification(formData.companyEmail || '')}>인증</Button>
           </EmailCheck>
           <Input type="text" name="userEmailNumber" placeholder="이메일 인증번호" value={formData.userEmailNumber} onChange={handleInputChange} />
-          <Input type="password" name="userPassword" placeholder="비밀번호" value={formData.userPassword} onChange={handleInputChange} />
+          <PassWordCheck>
+          <Input type={isPasswordVisible ? "text" : "password"}  name="userPassword" placeholder="비밀번호" value={formData.userPassword} onChange={handleInputChange} />
+          <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
+          </PassWordCheck>
           <Input type="text" name="userPhoneNumber" placeholder="핸드폰 번호" value={formData.userPhoneNumber} onChange={handleInputChange} />
           <Button type="submit">회원가입</Button>
         </Form>
@@ -101,6 +144,7 @@ const SignUp: React.FC = () => {
         </Overlay>
       </OverlayContainer>
     </Container>
+    </Wrapper>
   );
 };
 
@@ -117,6 +161,13 @@ const show = keyframes`
     z-index: 5;
   }
 `;
+
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 80px;
+`
 
 const Container = styled.div`
   background-color: #fff;
@@ -291,5 +342,18 @@ const EmailCheck = styled.div`
   display: flex;
   flex-direction: row;
 `
+
+const PassWordCheck = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+`
+
+const Icon = styled.div`
+  cursor: pointer;
+  margin-left: -30px;
+  display: flex;
+  align-items: center;
+`;
 
 export default SignUp;
