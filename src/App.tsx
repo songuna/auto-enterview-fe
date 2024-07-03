@@ -1,5 +1,4 @@
 import { RecoilRoot } from "recoil";
-import "./App.css";
 import { createGlobalStyle } from "styled-components";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "react-router-dom";
