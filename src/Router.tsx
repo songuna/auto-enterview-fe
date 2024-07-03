@@ -12,83 +12,90 @@ import CreateJobPost from "./components/routes/CreateJobPost";
 import ViewResume from "./components/routes/ViewResume";
 import RecruitBoard from "./components/routes/RecruitBoard";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
+import Layout from "./components/routes/Layout";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Index />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/sign-up",
-    element: <SignUp />,
-  },
-  {
-    path: "/find-email",
-    element: <FindEmail />,
-  },
-  {
-    path: "/account",
-    element: (
-      <ProtectedRoute>
-        <Account />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/user-mypage",
-    element: (
-      <ProtectedRoute>
-        <UserMypage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/company-mypage",
-    element: (
-      <ProtectedRoute>
-        <CompanyMypage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/create-resume",
-    element: (
-      <ProtectedRoute>
-        <CreateResume />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/view-resume/:userId",
-    element: (
-      <ProtectedRoute>
-        <ViewResume />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/create-jobpost",
-    element: (
-      <ProtectedRoute>
-        <CreateJobPost />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/recruit-board/:recruitId",
-    element: (
-      <ProtectedRoute>
-        <RecruitBoard />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/jobpost-detail/:postId",
-    element: <JobPostDetail />,
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <Index />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/sign-up",
+        element: <SignUp />,
+      },
+      {
+        path: "/find-email",
+        element: <FindEmail />,
+      },
+      {
+        path: "/account",
+        element: (
+          <ProtectedRoute>
+            <Account />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/user-mypage",
+        element: (
+          <ProtectedRoute>
+            <UserMypage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/company-mypage",
+        element: (
+          <ProtectedRoute>
+            <CompanyMypage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/create-resume",
+        element: (
+          <ProtectedRoute>
+            <CreateResume />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/view-resume/:userId",
+        element: (
+          <ProtectedRoute>
+            <ViewResume />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/create-jobpost",
+        element: (
+          <ProtectedRoute>
+            <CreateJobPost />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/recruit-board/:recruitId",
+        element: (
+          <ProtectedRoute>
+            <RecruitBoard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/jobpost-detail/:postId",
+        element: <JobPostDetail />,
+      },
+    ],
   },
 ]);
 
