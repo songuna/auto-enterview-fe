@@ -82,6 +82,10 @@ const SignUp: React.FC = () => {
           </EmailCheck>
           <Input type="text" name="userEmailNumber" placeholder="이메일 인증번호" value={formData.userEmailNumber} onChange={handleInputChange} />
           <Input type="password" name="userPassword" placeholder="비밀번호" value={formData.userPassword} onChange={handleInputChange} />
+<<<<<<< Updated upstream
+=======
+          </PassWordCheck>
+>>>>>>> Stashed changes
           <Input type="text" name="userPhoneNumber" placeholder="핸드폰 번호" value={formData.userPhoneNumber} onChange={handleInputChange} />
           <Button type="submit">회원가입</Button>
         </Form>
