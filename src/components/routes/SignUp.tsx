@@ -1,9 +1,11 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 // 회원가입
 const SignUp: React.FC = () => {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
     companyEmail: '',
     companyEmailNumber: '',
@@ -16,6 +18,7 @@ const SignUp: React.FC = () => {
     userPassword: '',
     userPhoneNumber: ''
   });
+
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -51,6 +54,11 @@ const SignUp: React.FC = () => {
 
     // 입력된 정보 처리 로직
     console.log('Form submitted', formData);
+
+};
+
+const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
   };
 
 // 회원가입 JSX
@@ -65,8 +73,11 @@ const SignUp: React.FC = () => {
           <Input type="email" name="companyEmail" placeholder="이메일" value={formData.companyEmail} onChange={handleInputChange} />
           <Button className='emailCheckBtn' type="button" onClick={() => handleEmailVerification(formData.companyEmail || '')}>인증</Button>
           </EmailCheck>
-          <Input type="text" name="companyEmailNumber" placeholder="이메일 인증번호" value={formData.companyEmailNumber} onChange={handleInputChange} /> 
-          <Input type="password" name="companyPassword" placeholder="비밀번호" value={formData.companyPassword} onChange={handleInputChange} />
+          <Input type="text" name="companyEmailNumber" placeholder="이메일 인증번호" value={formData.companyEmailNumber} onChange={handleInputChange} />
+          <PassWordCheck>
+          <Input type={isPasswordVisible ? "text" : "password"}  name="companyPassword" placeholder="비밀번호" value={formData.companyPassword} onChange={handleInputChange} />
+          <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
+          </PassWordCheck>
           <Input type="text" name="companyName" placeholder="회사명" value={formData.companyName} onChange={handleInputChange} />
           <Input type="text" name="companyPhoneNumber" placeholder="회사 전화번호" value={formData.companyPhoneNumber} onChange={handleInputChange} />
           <Button type="submit">회사 등록하기</Button>
@@ -82,7 +93,10 @@ const SignUp: React.FC = () => {
           <Button className='emailCheckBtn' type="button" onClick={() => handleEmailVerification(formData.companyEmail || '')}>인증</Button>
           </EmailCheck>
           <Input type="text" name="userEmailNumber" placeholder="이메일 인증번호" value={formData.userEmailNumber} onChange={handleInputChange} />
-          <Input type="password" name="userPassword" placeholder="비밀번호" value={formData.userPassword} onChange={handleInputChange} />
+          <PassWordCheck>
+          <Input type={isPasswordVisible ? "text" : "password"}  name="userPassword" placeholder="비밀번호" value={formData.userPassword} onChange={handleInputChange} />
+          <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
+          </PassWordCheck>
           <Input type="text" name="userPhoneNumber" placeholder="핸드폰 번호" value={formData.userPhoneNumber} onChange={handleInputChange} />
           <Button type="submit">회원가입</Button>
         </Form>
@@ -300,5 +314,18 @@ const EmailCheck = styled.div`
   display: flex;
   flex-direction: row;
 `
+
+const PassWordCheck = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+`
+
+const Icon = styled.div`
+  cursor: pointer;
+  margin-left: -30px;
+  display: flex;
+  align-items: center;
+`;
 
 export default SignUp;
