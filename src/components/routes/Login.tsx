@@ -53,9 +53,9 @@ const handleSubmit = (e: FormEvent) => {
           <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
           </PassWordCheck>
           <Button type="submit">로그인</Button>
-          <Link to="/find-email">
+          <FindLink to="/find-email">
           <FindEmailButton>이메일 찾기</FindEmailButton>
-          </Link>
+          </FindLink>
         </Form>
       </FormContainer>
       </Container>
@@ -147,6 +147,7 @@ const Button = styled.button`
   letter-spacing: 1px;
   text-transform: uppercase;
   transition: transform 80ms ease-in;
+  width: 100%;
   `
 
 const FindEmailButton = styled(Button)`
@@ -154,7 +155,8 @@ const FindEmailButton = styled(Button)`
   color: #000694;
   margin-top: 20px;
   border: 1px solid #000694;
-
+  border-radius: 20px;
+  width: 100%;
 `
 
 const PassWordCheck = styled.div`
@@ -169,5 +171,9 @@ const Icon = styled.div`
   display: flex;
   align-items: center;
 `;
+
+const FindLink= styled(Link)`
+  width: 100%;
+`
 
 export default Login;
