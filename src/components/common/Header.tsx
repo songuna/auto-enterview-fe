@@ -104,7 +104,6 @@ const Button = styled(Link)`
   }
   &.account,
   &.login {
-    /* border: 1px solid var(--primary-color); */
     border-radius: var(--button-radius);
     box-shadow: inset 0 0 8px rgba(132, 132, 132, 0.5);
   }
