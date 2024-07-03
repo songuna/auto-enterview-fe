@@ -32,11 +32,39 @@ const SignUp: React.FC = () => {
   const handleUserSignUpClick = () => {
     setIsRightPanelActive(false);
   };
+  const checkEmailDuplication = async (email: string) => {
+    // 서버에서 이메일 중복 확인하는 함수 (예시로 Promise 사용)
+    return new Promise<{ isDuplicated: boolean }>((resolve) => {
+      setTimeout(() => {
+        // 예: 중복된 이메일인지 아닌지 확인하는 로직
+        const isDuplicated = email === "duplicate@example.com";
+        resolve({ isDuplicated });
+      }, 500);
+    });
+  };
+  
+  const sendVerificationCode = async (email: string) => {
+    // 서버에서 이메일로 인증 코드 발송하는 함수
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        console.log(`이메일 ${email}로 인증 코드 발송`);
+        resolve();
+      }, 500);
+    });
+  };
 
-    const handleEmailVerification = (email: string) => {
-    // 이메일 인증 로직 구현 (예: 이메일로 인증 링크 전송)
-    console.log(`이메일 ${email}을(를) 인증합니다.`);
-    alert(`이메일 ${email}로 인증번호가 발송되었습니다.`);
+  const handleEmailVerification = async (email: string) => {
+    if (!email) {
+      alert('이메일을 입력해주세요.');
+      return;
+    }
+    const { isDuplicated } = await checkEmailDuplication(email);
+    if (isDuplicated) {
+      alert('이메일이 중복되었습니다.');
+    } else {
+      await sendVerificationCode(email);
+      alert(`이메일 ${email}로 인증번호가 발송되었습니다.`);
+    }
   };
 
   const handleSubmit = (e: FormEvent) => {
