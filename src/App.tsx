@@ -83,15 +83,18 @@ const GlobalStyles = createGlobalStyle`
     }
     .sub-title {
       font-size: 1.3rem;
-      font-weight: 500;
+      font-weight: 700;
     }
     .text {
-      font-size: 1rem;
+      font-size: 1.125rem;
     }
     .text-sm {
       font-size: 0.8rem;
     }
   }
+  ol, ul {
+	list-style: none;
+}
   a {
     display: block;
     text-decoration: none;
