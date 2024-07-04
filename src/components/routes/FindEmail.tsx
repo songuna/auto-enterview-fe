@@ -40,6 +40,7 @@ const FindEmail: React.FC = () => {
         <Input type="text" placeholder="이름" value={name} onChange={(e) => setName(e.target.value)} />
         <Input type="text" placeholder="휴대폰 번호 ( - 사용)" value={phone} onChange={(e) => setPhone(e.target.value)}/>
         <Button>이메일 찾기</Button>
+        <Span>회사는 이메일 찾기를 지원하지않습니다.</Span>
       </Form>
     </Container>
     {isModalOpen && (
@@ -122,6 +123,7 @@ const Button = styled.button`
   border: 1px solid #000694;
   background-color: #000694;
   margin-top: 20px;
+  margin-bottom: 10px;
   color: #ffffff;
   font-size: 12px;
   font-weight: bold;
