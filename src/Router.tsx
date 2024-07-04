@@ -68,7 +68,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/view-resume/:userId",
+        path: "/view-resume/:candidateKey",
         element: (
           <ProtectedRoute>
             <ViewResume />
@@ -84,7 +84,8 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/recruit-board/:recruitId",
+        // path: "/recruit-board/:recruitId",
+        path: "/recruit-board",
         element: (
           <ProtectedRoute>
             <RecruitBoard />
