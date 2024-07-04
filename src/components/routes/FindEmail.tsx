@@ -4,11 +4,24 @@ import React, { useState } from 'react';
 const FindEmail: React.FC = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (!name || !phone) {
       alert('정보를 입력해주세요');
+    } else {
+      // 이메일 찾기 로직을 여기에 추가
+      const foundEmail = 'example@example.com'; // 이 부분을 실제 이메일 찾기 로직으로 대체
+      setEmail(foundEmail);
+      setIsModalOpen(true);
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
   <Wrapper>
@@ -21,6 +34,15 @@ const FindEmail: React.FC = () => {
         <Button>이메일 찾기</Button>
       </Form>
     </Container>
+    {isModalOpen && (
+        <ModalOverlay>
+          <ModalContent>
+            <H2>이메일 찾기 성공!</H2>
+            <P>이메일: {email}</P>
+            <CloseButton onClick={closeModal}>닫기</CloseButton>
+          </ModalContent>
+        </ModalOverlay>
+      )}
   </Wrapper>
 
   );
@@ -107,4 +129,56 @@ const Span = styled.span`
   margin-top: 5px;
   margin-bottom: 5px;
 `
+
+// 이메일 찾기 후 모달
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalContent = styled.div`
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const CloseButton = styled.button`
+  margin-top: 1rem;
+  padding: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  background-color: #000694;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #000694;
+  }
+`;
+
+const H2 = styled.h2`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+`
+
+const P = styled.p`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+
+
 export default FindEmail;
