@@ -168,6 +168,10 @@ const Board = styled.div`
 const Steps = styled.ol`
   display: flex;
   gap: 1rem;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 `;
 
 const Step = styled.li`
