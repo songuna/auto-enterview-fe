@@ -1,5 +1,6 @@
 import styled, { keyframes } from 'styled-components';
 import React, { useState } from 'react';
+//import axios from 'axios';
 
 const FindEmail: React.FC = () => {
   const [name, setName] = useState('');
@@ -12,10 +13,17 @@ const FindEmail: React.FC = () => {
     if (!name || !phone) {
       alert('정보를 입력해주세요');
     } else {
-      // 이메일 찾기 로직을 여기에 추가
-      const foundEmail = 'example@example.com'; // 이 부분을 실제 이메일 찾기 로직으로 대체
-      setEmail(foundEmail);
-      setIsModalOpen(true);
+      try {
+        //const response = await axios.post('https://api.example.com/find-email', {
+          //name,
+          //phone,
+        //});
+        setEmail(response.data.email);
+        setIsModalOpen(true);
+      } catch (error) {
+        console.error('Error finding email:', error);
+        alert('이메일을 찾을 수 없습니다. 다시 시도해주세요.');
+      }
     }
   };
 
@@ -153,8 +161,6 @@ const ModalContent = styled.div`
 const CloseButton = styled.button`
   margin-top: 1rem;
   padding: 0.5rem;
-  justify-content: center;
-  align-items: center;
   background-color: #000694;
   color: white;
   border: none;
