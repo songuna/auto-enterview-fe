@@ -1,6 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useState, FormEvent, ChangeEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 interface AccountProps {
@@ -82,6 +83,12 @@ const Account: React.FC<AccountProps> = ({ role }) => {
     return regex.test(password);
   };
 
+  const handleDeleteAccount = () => {
+    if (window.confirm("정말 탈퇴하시겠습니까?")) {
+      alert("탈퇴되었습니다");
+      window.location.href = "/"; // 메인 화면으로 이동
+    }
+  };
 
 
   return(
@@ -109,7 +116,7 @@ const Account: React.FC<AccountProps> = ({ role }) => {
           {role === "company" && (
           <Input type="text" name="companyName" placeholder="회사명"/> )}
           <Button type="submit">비밀번호 변경</Button>
-          <Button type="submit">회원 탈퇴</Button>
+          <Button type="button" onClick={handleDeleteAccount}>회원 탈퇴</Button>
       </Form>
     </Container>
   </Wrapper>
