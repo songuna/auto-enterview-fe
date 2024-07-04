@@ -2,7 +2,11 @@ import styled, { keyframes } from 'styled-components';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useState } from 'react';
 
-const Account = () => {
+interface AccountProps {
+  role: string;
+}
+
+const Account: React.FC<AccountProps> = ({ role }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
 const togglePasswordVisibility = () => {
@@ -29,7 +33,8 @@ const togglePasswordVisibility = () => {
           <Input type={isPasswordVisible ? "text" : "password"} placeholder="새로운 비밀번호 한번 더"/>
           <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
           </PassWordCheck>
-          <Input type="text" name="companyName" placeholder="회사명"/>
+          {role === "company" && (
+          <Input type="text" name="companyName" placeholder="회사명"/> )}
           <Button type="submit">비밀번호 변경</Button>
           <Button type="submit">회원 탈퇴</Button>
       </Form>
