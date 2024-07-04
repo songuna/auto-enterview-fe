@@ -1,6 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useState } from 'react';
+import axios from 'axios';
 
 interface AccountProps {
   role: string;
@@ -8,9 +9,42 @@ interface AccountProps {
 
 const Account: React.FC<AccountProps> = ({ role }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [confirmMessage, setConfirmMessage] = useState('');
 
 const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
+  };
+const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    // 새로운 비밀번호 확인
+    if (newPassword !== confirmPassword) {
+      setConfirmMessage('일치하지 않는 비밀번호입니다');
+      return;
+    } else {
+      setConfirmMessage('일치하는 비밀번호입니다');
+    }
+    
+    try {
+      // 기존 비밀번호 확인 요청
+      const response = await axios.post('https://api.example.com/check-password', {
+        password: oldPassword,
+      });
+
+      if (response.data.success) {
+        setMessage('일치하는 비밀번호입니다');
+        // 비밀번호 변경 로직 추가
+      } else {
+        setMessage('일치하지않는 비밀번호입니다');
+      }
+    } catch (error) {
+      console.error('Error checking password:', error);
+      setMessage('일치하지않는 비밀번호입니다');
+    }
   };
 
 
@@ -18,23 +52,26 @@ const togglePasswordVisibility = () => {
   return(
   <Wrapper>
     <Container id="container">
-      <Form>
+      <Form onSubmit={handleSubmit}>
         <H1>비밀번호 변경</H1>
         <Span>비밀번호를 변경해주세요.</Span>
         <PassWordCheck>
-          <Input type={isPasswordVisible ? "text" : "password"} placeholder="기존 비밀번호"/>
+          <Input type={isPasswordVisible ? "text" : "password"} placeholder="기존 비밀번호" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)}/>
           <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
           </PassWordCheck>
+          <MessageSpan>{message}</MessageSpan>
           <PassWordCheck>
-          <Input type={isPasswordVisible ? "text" : "password"} placeholder="새로운 비밀번호"/>
+          <Input type={isPasswordVisible ? "text" : "password"} placeholder="새로운 비밀번호" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
           <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
           </PassWordCheck>
+          <MessageSpan>{message}</MessageSpan>
           <PassWordCheck>
-          <Input type={isPasswordVisible ? "text" : "password"} placeholder="새로운 비밀번호 한번 더"/>
+          <Input type={isPasswordVisible ? "text" : "password"} placeholder="새로운 비밀번호 한번 더" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
           <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
           </PassWordCheck>
           {role === "company" && (
           <Input type="text" name="companyName" placeholder="회사명"/> )}
+          <MessageSpan>{message}</MessageSpan>
           <Button type="submit">비밀번호 변경</Button>
           <Button type="submit">회원 탈퇴</Button>
       </Form>
@@ -137,6 +174,11 @@ const Button = styled.button`
   width: 100%;
   `
 
+const MessageSpan = styled.span`
+  color: red;
+  margin-top: 1px;
+  font-size: 14px;
+`;
 
 
 
