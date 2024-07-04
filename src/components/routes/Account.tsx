@@ -28,7 +28,7 @@ const handleSubmit = async (event: React.FormEvent) => {
     } else {
       setConfirmMessage('일치하는 비밀번호입니다');
     }
-    
+
     try {
       // 기존 비밀번호 확인 요청
       const response = await axios.post('https://api.example.com/check-password', {
@@ -64,14 +64,13 @@ const handleSubmit = async (event: React.FormEvent) => {
           <Input type={isPasswordVisible ? "text" : "password"} placeholder="새로운 비밀번호" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
           <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
           </PassWordCheck>
-          <MessageSpan>{message}</MessageSpan>
           <PassWordCheck>
           <Input type={isPasswordVisible ? "text" : "password"} placeholder="새로운 비밀번호 한번 더" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
           <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
           </PassWordCheck>
           {role === "company" && (
           <Input type="text" name="companyName" placeholder="회사명"/> )}
-          <MessageSpan>{message}</MessageSpan>
+          <MessageSpan>{confirmMessage}</MessageSpan>
           <Button type="submit">비밀번호 변경</Button>
           <Button type="submit">회원 탈퇴</Button>
       </Form>
