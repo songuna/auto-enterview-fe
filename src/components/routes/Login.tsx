@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, ChangeEvent } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Link } from 'react-router-dom'; 
@@ -8,6 +8,7 @@ const Login = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
 const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -19,6 +20,14 @@ const handleSubmit = (e: FormEvent) => {
       alert("정보를 입력하지 않았습니다");
       return;
     }
+
+    // 비밀번호 유효성 검사
+    const isValidPassword = validatePassword(password);
+    if (!isValidPassword) {
+      setPasswordError("8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다.");
+      return;
+    }
+
     try {
       // 서버 API 호출
       //const response = await axios.post('https://api.example.com/login', {
@@ -39,6 +48,13 @@ const handleSubmit = (e: FormEvent) => {
     console.log("로그인 시도:", { email, password });
   };
 
+// 비밀번호 유효성 검사 로직 추가
+  const validatePassword = (password: string) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+    return regex.test(password);
+  };
+
+
 // 로그인 JSX
   return (
   <Wrapper>
@@ -49,9 +65,10 @@ const handleSubmit = (e: FormEvent) => {
           <Span>이메일과 비밀번호를 입력해주세요.</Span>
           <Input type="email" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} />
           <PassWordCheck>
-          <Input type={isPasswordVisible ? "text" : "password"} placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)}/>
+          <Input type={isPasswordVisible ? "text" : "password"} placeholder="비밀번호" onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
           <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
           </PassWordCheck>
+          <ErrorSpan>{passwordError}</ErrorSpan>
           <Button type="submit">로그인</Button>
           <FindLink to="/find-email">
           <FindEmailButton>이메일 찾기</FindEmailButton>
@@ -175,5 +192,12 @@ const Icon = styled.div`
 const FindLink= styled(Link)`
   width: 100%;
 `
+
+const ErrorSpan = styled.span`
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+`;
+
 
 export default Login;
