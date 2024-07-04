@@ -15,6 +15,8 @@ const infoTitles = [
   "회사 홈페이지 URL",
 ];
 
+const infoTypes = ["text", "date", "text", "number", "text"];
+
 interface ICompanyInfo {
   boss: string;
   company_age: number;
@@ -36,6 +38,8 @@ const CompanyMypage = () => {
   const [urlValue, setUrlValue] = useState("");
   const firstInputRef = useRef<HTMLInputElement>(null);
 
+  const companyKey = "";
+  const infoURL = `/companies/${companyKey}/information`;
   const values = [bossValue, ageValue, addressValue, employeesValue, urlValue];
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,27 +64,28 @@ const CompanyMypage = () => {
   };
 
   const saveInfo = async () => {
-    try {
-      if (info) {
-        await axios.put(`/companies/${companyKey}/information`, {
-          employees: employeesValue,
-          company_age: ageValue,
-          company_url: urlValue,
-          boss: bossValue,
-          address: addressValue,
-        });
-      } else {
-        await axios.post(`/companies/${companyKey}/information`, {
-          employees: employeesValue,
-          company_age: ageValue,
-          company_url: urlValue,
-          boss: bossValue,
-          address: addressValue,
-        });
+    const body = {
+      employees: employeesValue,
+      company_age: ageValue,
+      company_url: urlValue,
+      boss: bossValue,
+      address: addressValue,
+    };
+    const bodyFill = Object.values(body).every((v) => v.trim());
+
+    if (bodyFill) {
+      try {
+        if (info) {
+          await axios.put(`${infoURL}`, body);
+        } else {
+          await axios.post(`${infoURL}`, body);
+        }
+        setEditMode((edit) => !edit);
+      } catch (error) {
+        alert("회원 정보를 저장하는데 문제가 발생했습니다. 다시 시도해주세요.");
       }
-      setEditMode((edit) => !edit);
-    } catch (error) {
-      alert("회원 정보를 저장하는데 문제가 발생했습니다. 다시 시도해주세요.");
+    } else {
+      alert("회사 정보를 모두 입력해주세요.");
     }
   };
 
@@ -116,13 +121,34 @@ const CompanyMypage = () => {
           <UserInfo>
             {editMode
               ? infoTitles.map((info, idx) => (
-                  <Info className="text">
+                  <Info className="text" key={info}>
                     <InfoTitle>{info}</InfoTitle>
                     {idx === 0 ? (
-                      <InfoInput ref={firstInputRef} />
+                      <InfoInput
+                        type={infoTypes[idx]}
+                        name={info}
+                        value={values[idx]}
+                        onChange={onChange}
+                        ref={firstInputRef}
+                      />
+                    ) : infoTypes[idx] === "number" ? (
+                      <InfoInput
+                        type={infoTypes[idx]}
+                        name={info}
+                        value={values[idx]}
+                        min={0}
+                        onChange={onChange}
+                      />
+                    ) : infoTypes[idx] === "date" ? (
+                      <InfoInput
+                        type={infoTypes[idx]}
+                        name={info}
+                        value={values[idx]}
+                        onChange={onChange}
+                      />
                     ) : (
                       <InfoInput
-                        type="text"
+                        type={infoTypes[idx]}
                         name={info}
                         value={values[idx]}
                         onChange={onChange}
@@ -131,7 +157,7 @@ const CompanyMypage = () => {
                   </Info>
                 ))
               : infoTitles.map((info) => (
-                  <Info className="text">
+                  <Info className="text" key={info}>
                     <InfoTitle>{info}</InfoTitle>
                     <InfoDesc>{info}</InfoDesc>
                   </Info>
@@ -247,9 +273,23 @@ const InfoTitle = styled.p`
 `;
 
 const InfoInput = styled.input`
+  position: relative;
+  width: calc(100% - 150px);
+  padding: 2px 0;
   border: none;
   border-bottom: 1px dashed var(--border-gray-100);
   background-color: transparent;
+
+  // 캘린더 클릭 영역을 input 전체 영역으로 설정
+  &[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-position: 100% -3px;
+    cursor: pointer;
+  }
 `;
 
 const InfoDesc = styled.p`
