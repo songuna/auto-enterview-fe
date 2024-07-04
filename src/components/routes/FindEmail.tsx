@@ -1,13 +1,23 @@
 import styled, { keyframes } from 'styled-components';
+import React, { useState } from 'react';
 
-const FindEmail = () => {
+const FindEmail: React.FC = () => {
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!name || !phone) {
+      alert('정보를 입력해주세요');
+
   return (
   <Wrapper>
     <Container id="container">
-      <Form>
+      <Form onSubmit={handleSubmit}>
         <H1>이메일 찾기</H1>
-        <Input type="text" placeholder="이름"/>
-        <Input type="text" placeholder="휴대폰 번호"/>
+        <Span>이름과 휴대폰 번호를 입력해주세요.</Span>
+        <Input type="text" placeholder="이름" value={name} onChange={(e) => setName(e.target.value)} />
+        <Input type="text" placeholder="휴대폰 번호" value={phone} onChange={(e) => setPhone(e.target.value)}/>
         <Button>이메일 찾기</Button>
       </Form>
     </Container>
@@ -92,4 +102,9 @@ const Button = styled.button`
   width: 100%;
   `
 
+const Span = styled.span`
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+`
 export default FindEmail;
