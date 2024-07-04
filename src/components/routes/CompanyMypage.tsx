@@ -6,14 +6,9 @@ import { HiOutlinePlus } from "react-icons/hi2";
 import { IoMdClose } from "react-icons/io";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { Container, Inner, SubTitle, UserName, Wrapper } from "../css/Common";
 
-const infoTitles = [
-  "대표자",
-  "설립년도",
-  "주소",
-  "사원수",
-  "회사 홈페이지 URL",
-];
+const infoTitles = ["대표자", "설립년도", "주소", "사원수", "회사 홈페이지 URL"];
 
 const infoTypes = ["text", "date", "text", "number", "text"];
 
@@ -60,7 +55,7 @@ const CompanyMypage = () => {
   };
 
   const cancelEdit = () => {
-    setEditMode((edit) => !edit);
+    setEditMode(edit => !edit);
   };
 
   const saveInfo = async () => {
@@ -71,7 +66,7 @@ const CompanyMypage = () => {
       boss: bossValue,
       address: addressValue,
     };
-    const bodyFill = Object.values(body).every((v) => v.trim());
+    const bodyFill = Object.values(body).every(v => v.trim());
 
     if (bodyFill) {
       try {
@@ -80,7 +75,7 @@ const CompanyMypage = () => {
         } else {
           await axios.post(`${infoURL}`, body);
         }
-        setEditMode((edit) => !edit);
+        setEditMode(edit => !edit);
       } catch (error) {
         alert("회원 정보를 저장하는데 문제가 발생했습니다. 다시 시도해주세요.");
       }
@@ -90,17 +85,17 @@ const CompanyMypage = () => {
   };
 
   const editInfo = () => {
-    setEditMode((edit) => !edit);
+    setEditMode(edit => !edit);
     firstInputRef.current?.focus();
   };
 
   return (
     <Wrapper>
       <Inner className="inner-1200">
-        <UserName className="title">{"(주)회사 이름"}</UserName>
+        <UserName>{"(주)회사 이름"}</UserName>
         <Container>
           <Top>
-            <SubTitle className="sub-title">회사 정보</SubTitle>
+            <SubTitle>회사 정보</SubTitle>
             <Buttons>
               {editMode ? (
                 <>
@@ -156,7 +151,7 @@ const CompanyMypage = () => {
                     )}
                   </Info>
                 ))
-              : infoTitles.map((info) => (
+              : infoTitles.map(info => (
                   <Info className="text" key={info}>
                     <InfoTitle>{info}</InfoTitle>
                     <InfoDesc>{info}</InfoDesc>
@@ -178,9 +173,7 @@ const CompanyMypage = () => {
                 <Dday>{"D-3"}</Dday>
               </LabelWrap>
               <ListTitle>
-                {
-                  "제목입니다ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ"
-                }
+                {"제목입니다ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ"}
               </ListTitle>
               <ListCareer>{"경력"}</ListCareer>
               <ListStep>{"서류 접수중"}</ListStep>
@@ -191,9 +184,7 @@ const CompanyMypage = () => {
                 <Dday>{"D-3"}</Dday>
               </LabelWrap>
               <ListTitle>
-                {
-                  "제목입니다ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ"
-                }
+                {"제목입니다ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ"}
               </ListTitle>
               <ListCareer>{"경력"}</ListCareer>
               <ListStep>{"서류 접수중"}</ListStep>
@@ -205,25 +196,10 @@ const CompanyMypage = () => {
   );
 };
 
-const Wrapper = styled.div`
-  padding-top: 120px;
-`;
-
-const Inner = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 60px;
-`;
-
-const UserName = styled.h2``;
-
-const Container = styled.div``;
-
 const Top = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 24px;
 `;
 
 const Buttons = styled.div`
@@ -295,8 +271,6 @@ const InfoInput = styled.input`
 const InfoDesc = styled.p`
   width: calc(100% - 150px);
 `;
-
-const SubTitle = styled.h3``;
 
 const CreatePost = styled(Link)`
   display: flex;
