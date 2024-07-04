@@ -38,7 +38,7 @@ const FindEmail: React.FC = () => {
         <H1>이메일 찾기</H1>
         <Span>이름과 휴대폰 번호를 입력해주세요.</Span>
         <Input type="text" placeholder="이름" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input type="text" placeholder="휴대폰 번호" value={phone} onChange={(e) => setPhone(e.target.value)}/>
+        <Input type="text" placeholder="휴대폰 번호 ( - 사용)" value={phone} onChange={(e) => setPhone(e.target.value)}/>
         <Button>이메일 찾기</Button>
       </Form>
     </Container>

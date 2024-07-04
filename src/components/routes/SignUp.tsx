@@ -107,7 +107,7 @@ const togglePasswordVisibility = () => {
           <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
           </PassWordCheck>
           <Input type="text" name="companyName" placeholder="회사명" value={formData.companyName} onChange={handleInputChange} />
-          <Input type="text" name="companyPhoneNumber" placeholder="회사 전화번호" value={formData.companyPhoneNumber} onChange={handleInputChange} />
+          <Input type="text" name="companyPhoneNumber" placeholder="회사 전화번호 ( - 사용)" value={formData.companyPhoneNumber} onChange={handleInputChange} />
           <Button type="submit">회사 등록하기</Button>
         </Form>
       </FormContainer>
@@ -125,7 +125,7 @@ const togglePasswordVisibility = () => {
           <Input type={isPasswordVisible ? "text" : "password"}  name="userPassword" placeholder="비밀번호" value={formData.userPassword} onChange={handleInputChange} />
           <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
           </PassWordCheck>
-          <Input type="text" name="userPhoneNumber" placeholder="핸드폰 번호" value={formData.userPhoneNumber} onChange={handleInputChange} />
+          <Input type="text" name="userPhoneNumber" placeholder="핸드폰 번호 ( - 사용)" value={formData.userPhoneNumber} onChange={handleInputChange} />
           <Button type="submit">회원가입</Button>
         </Form>
       </FormContainer>
