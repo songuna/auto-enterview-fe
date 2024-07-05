@@ -4,6 +4,9 @@ import DatePicker from "react-datepicker";
 import React, { useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm, Controller } from "react-hook-form";
+import { JobPosting } from "../type/jobPosting";
+import { postCompaniesJobPosting } from "../axios/http";
+import { useNavigate } from "react-router-dom";
 
 const CreateJobPost = () => {
   //enum
@@ -70,12 +73,9 @@ const CreateJobPost = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = data => {
-    console.log(data);
-  };
-
   // 필요경력, 급여같은 input에서 disable될 때 임시로 저장해두는 값
   const inputMemory = useRef({ career: "", salary: "" });
+  const [freeHour, setFreeHour] = useState(false);
 
   //전형절차단계
   const [jobPostingSteps, setJobPostingSteps] = useState(["서류전형"]);
@@ -110,6 +110,47 @@ const CreateJobPost = () => {
     setFileName(value[value.length - 1]);
   };
 
+  const getTwoDigit = (number: number) => {
+    return number < 10 ? `0${number}` : `${number}`;
+  };
+
+  const getStringWorkingHour = (startTime: Date, endTime: Date) => {
+    return `${getTwoDigit(startTime.getHours())}:${getTwoDigit(startTime.getMinutes())} ~ ${getTwoDigit(endTime.getHours())}:${getTwoDigit(endTime.getMinutes())}`;
+  };
+
+  // 채용공고생성 api
+  const navigate = useNavigate();
+
+  const onSubmit = async (formData: any) => {
+    const requestData: JobPosting = {
+      title: formData.title,
+      jobCategory: formData.jobCategory,
+      career: +formData.career,
+      techStack: formData.teckStack,
+      jobPostingStep: jobPostingSteps,
+      workLocation: formData.workLocation,
+      education: formData.education,
+      employmentType: formData.employmentType,
+      salary: formData.salary == "회사내규에따름" ? "회사내규에따름" : `${formData.salary}만원`,
+      workTime: freeHour
+        ? "자율출근제"
+        : getStringWorkingHour(formData.startHour, formData.endHour),
+      startDateTime: formData.startDateTime,
+      endDateTime: formData.endDateTime,
+      jobPostingContent: formData.jobPostingContent,
+      image: {
+        fileName: fileName,
+        originalFileName: fileName,
+        filePath: fileName,
+      },
+    };
+
+    console.log(formData);
+    console.log(requestData);
+
+    await postCompaniesJobPosting(1, requestData);
+    navigate("/company-mypage");
+  };
   return (
     <>
       <Helmet>
@@ -375,6 +416,7 @@ const CreateJobPost = () => {
                       timeFormat="HH:mm"
                       timeCaption=""
                       customInput={<TimeInput />}
+                      disabled={freeHour}
                     />
                   </TimePickerContainer>
                 )}
@@ -397,11 +439,16 @@ const CreateJobPost = () => {
                       timeFormat="HH:mm"
                       timeCaption=""
                       customInput={<TimeInput />}
+                      disabled={freeHour}
                     />
                   </TimePickerContainer>
                 )}
               />
-              <Checkbox type="checkbox" id="hourfree" />
+              <Checkbox
+                type="checkbox"
+                id="hourfree"
+                onChange={() => setFreeHour(freeHour => !freeHour)}
+              />
               <label htmlFor="hourfree">자율출근제</label>
             </InputContents>
             <ErrorMessage>
@@ -833,6 +880,12 @@ const TimeInput = styled.input`
   cursor: pointer;
   word-break: keep-all;
   font-size: 1rem;
+
+  &:disabled {
+    border: 1px solid var(--bg-light-gray);
+    color: var(--bg-light-gray);
+    background-color: #f8f8f8;
+  }
 `;
 
 const DateInput = styled(TimeInput)`
