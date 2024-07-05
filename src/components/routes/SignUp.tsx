@@ -6,6 +6,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 const SignUp: React.FC = () => {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
   const [formData, setFormData] = useState({
     companyEmail: '',
     companyEmailNumber: '',
@@ -18,7 +19,6 @@ const SignUp: React.FC = () => {
     userPassword: '',
     userPhoneNumber: ''
   });
-
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -89,6 +89,23 @@ const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
+// 비밀번호 유효성 검사 로직 추가
+const validatePassword = (password: string) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+    return regex.test(password);
+  };
+
+const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    if (validatePassword(value)) {
+      setPasswordError('');
+    } else {
+      setPasswordError('8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다');
+    }
+    setFormData({ ...formData, [e.target.name]: value });
+  };
+
+
 // 회원가입 JSX
   return (
     <Wrapper>
@@ -103,9 +120,10 @@ const togglePasswordVisibility = () => {
           </EmailCheck>
           <Input type="text" name="companyEmailNumber" placeholder="이메일 인증번호" value={formData.companyEmailNumber} onChange={handleInputChange} />
           <PassWordCheck>
-          <Input type={isPasswordVisible ? "text" : "password"}  name="companyPassword" placeholder="비밀번호" value={formData.companyPassword} onChange={handleInputChange} />
+          <Input type={isPasswordVisible ? "text" : "password"}  name="companyPassword" placeholder="비밀번호" value={formData.companyPassword} onChange={handlePasswordChange} />
           <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
           </PassWordCheck>
+          <ErrorSpan>{passwordError}</ErrorSpan>
           <Input type="text" name="companyName" placeholder="회사명" value={formData.companyName} onChange={handleInputChange} />
           <Input type="text" name="companyPhoneNumber" placeholder="회사 전화번호 ( - 사용)" value={formData.companyPhoneNumber} onChange={handleInputChange} />
           <Button type="submit">회사 등록하기</Button>
@@ -122,9 +140,10 @@ const togglePasswordVisibility = () => {
           </EmailCheck>
           <Input type="text" name="userEmailNumber" placeholder="이메일 인증번호" value={formData.userEmailNumber} onChange={handleInputChange} />
           <PassWordCheck>
-          <Input type={isPasswordVisible ? "text" : "password"}  name="userPassword" placeholder="비밀번호" value={formData.userPassword} onChange={handleInputChange} />
+          <Input type={isPasswordVisible ? "text" : "password"}  name="userPassword" placeholder="비밀번호" value={formData.userPassword} onChange={handlePasswordChange} />
           <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
           </PassWordCheck>
+          <ErrorSpan>{passwordError}</ErrorSpan>
           <Input type="text" name="userPhoneNumber" placeholder="핸드폰 번호 ( - 사용)" value={formData.userPhoneNumber} onChange={handleInputChange} />
           <Button type="submit">회원가입</Button>
         </Form>
@@ -178,9 +197,9 @@ const Container = styled.div`
   align-items: center;
   position: relative;
   overflow: hidden;
-  width: 768px;
+  width: 800px;
   max-width: 100%;
-  min-height: 480px;
+  min-height: 530px;
   &.right-panel-active .user-sign-up {
     transform: translateX(100%);
   }
@@ -287,7 +306,7 @@ const Button = styled.button`
     padding: 0px;
     border-radius: 0px;
     font-size: 10px;
-    margin-top: 5px;
+    margin-top: 7px;
   }
   &:active {
     transform: scale(0.95);
@@ -316,7 +335,7 @@ const Input = styled.input`
   background-color: #eee;
   border: none;
   padding: 15px 15px;
-  margin: 5px 0;
+  margin: 7px 0;
   width: 100%;
 `;
 
@@ -354,6 +373,12 @@ const Icon = styled.div`
   margin-left: -30px;
   display: flex;
   align-items: center;
+`;
+
+const ErrorSpan = styled.span`
+  color: red;
+  margin-top: 5px;
+  font-size: 12px;
 `;
 
 export default SignUp;
