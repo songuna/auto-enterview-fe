@@ -116,7 +116,7 @@ const Account: React.FC<AccountProps> = ({ role }) => {
           {role === "company" && (
           <Input type="text" name="companyName" placeholder="회사명"/> )}
           <Button type="submit">비밀번호 변경</Button>
-          <Button type="button" onClick={handleDeleteAccount}>회원 탈퇴</Button>
+          <Button className="out" type="button" onClick={handleDeleteAccount}>회원 탈퇴</Button>
       </Form>
     </Container>
   </Wrapper>
@@ -215,6 +215,11 @@ const Button = styled.button`
   text-transform: uppercase;
   transition: transform 80ms ease-in;
   width: 100%;
+  &.out{
+  border: 1px solid #ff0000;
+  background-color: #ffffff;
+  color: #ff0000;
+  }
   `
 
 const MessageSpan = styled.span`
