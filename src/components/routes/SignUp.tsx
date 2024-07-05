@@ -289,7 +289,7 @@ const OverlayPanel = styled.div`
 `;
 
 const Button = styled.button`
-  border-radius: 20px;
+  border-radius: 8px;
   border: 1px solid #000694;
   background-color: #000694;
   margin-top: 10px;
@@ -298,13 +298,14 @@ const Button = styled.button`
   font-weight: bold;
   padding: 12px 45px;
   letter-spacing: 1px;
+  width: 100%;
   text-transform: uppercase;
   transition: transform 80ms ease-in;
   &.emailCheckBtn{
     width: 50px;
     height: 45px;
     padding: 0px;
-    border-radius: 0px;
+    border-radius: 8px;
     font-size: 10px;
     margin-top: 7px;
   }
@@ -334,6 +335,7 @@ const Form = styled.form`
 const Input = styled.input`
   background-color: #eee;
   border: none;
+  border-radius: 8px;
   padding: 15px 15px;
   margin: 7px 0;
   width: 100%;

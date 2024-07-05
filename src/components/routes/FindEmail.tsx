@@ -113,13 +113,14 @@ const H1 = styled.h1`
 const Input = styled.input`
   background-color: #eee;
   border: none;
+  border-radius: 8px;
   padding: 15px 40px;
   margin: 10px 0;
   width: 100%;
 `
 
 const Button = styled.button`
-  border-radius: 20px;
+  border-radius: 8px;
   border: 1px solid #000694;
   background-color: #000694;
   margin-top: 20px;
