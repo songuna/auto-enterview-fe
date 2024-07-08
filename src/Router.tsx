@@ -13,6 +13,8 @@ import ViewResume from "./components/routes/ViewResume";
 import RecruitBoard from "./components/routes/RecruitBoard";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 import Layout from "./components/routes/Layout";
+import FormAssignment from "./components/routes/FormAssignment";
+import FormInterview from "./components/routes/FormInterview";
 
 const router = createBrowserRouter([
   {
@@ -91,6 +93,24 @@ const router = createBrowserRouter([
             <RecruitBoard />
           </ProtectedRoute>
         ),
+        children: [
+          {
+            path: "/recruit-board/assignment",
+            element: (
+              <ProtectedRoute>
+                <FormAssignment />
+              </ProtectedRoute>
+            ),
+          },
+          {
+            path: "/recruit-board/interview",
+            element: (
+              <ProtectedRoute>
+                <FormInterview />
+              </ProtectedRoute>
+            ),
+          },
+        ],
       },
       {
         path: "/jobpost-detail/:postId",
