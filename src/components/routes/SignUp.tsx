@@ -1,23 +1,23 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
-import styled, { keyframes } from 'styled-components';
+import { useState, ChangeEvent, FormEvent } from "react";
+import styled, { keyframes } from "styled-components";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 // 회원가입
 const SignUp: React.FC = () => {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [passwordError, setPasswordError] = useState('');
+  const [passwordError, setPasswordError] = useState("");
   const [formData, setFormData] = useState({
-    companyEmail: '',
-    companyEmailNumber: '',
-    companyPassword: '',
-    companyName: '',
-    companyPhoneNumber: '',
-    userName: '',
-    userEmail: '',
-    userEmailNumber: '',
-    userPassword: '',
-    userPhoneNumber: ''
+    companyEmail: "",
+    companyEmailNumber: "",
+    companyPassword: "",
+    companyName: "",
+    companyPhoneNumber: "",
+    userName: "",
+    userEmail: "",
+    userEmailNumber: "",
+    userPassword: "",
+    userPhoneNumber: "",
   });
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +34,7 @@ const SignUp: React.FC = () => {
   };
   const checkEmailDuplication = async (email: string) => {
     // 서버에서 이메일 중복 확인하는 함수 (예시로 Promise 사용)
-    return new Promise<{ isDuplicated: boolean }>((resolve) => {
+    return new Promise<{ isDuplicated: boolean }>(resolve => {
       setTimeout(() => {
         // 예: 중복된 이메일인지 아닌지 확인하는 로직
         const isDuplicated = email === "duplicate@example.com";
@@ -42,10 +42,10 @@ const SignUp: React.FC = () => {
       }, 500);
     });
   };
-  
+
   const sendVerificationCode = async (email: string) => {
     // 서버에서 이메일로 인증 코드 발송하는 함수
-    return new Promise<void>((resolve) => {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         console.log(`이메일 ${email}로 인증 코드 발송`);
         resolve();
@@ -55,12 +55,12 @@ const SignUp: React.FC = () => {
 
   const handleEmailVerification = async (email: string) => {
     if (!email) {
-      alert('이메일을 입력해주세요.');
+      alert("이메일을 입력해주세요.");
       return;
     }
     const { isDuplicated } = await checkEmailDuplication(email);
     if (isDuplicated) {
-      alert('이메일이 중복되었습니다.');
+      alert("이메일이 중복되었습니다.");
     } else {
       await sendVerificationCode(email);
       alert(`이메일 ${email}로 인증번호가 발송되었습니다.`);
@@ -70,103 +70,186 @@ const SignUp: React.FC = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const fields = isRightPanelActive
-      ? ['companyEmail', 'companyEmailNumber', 'companyPassword', 'companyName', 'companyPhoneNumber']
-      : ['userName', 'userEmail', 'userEmailNumber', 'userPassword', 'userPhoneNumber'];
+      ? [
+          "companyEmail",
+          "companyEmailNumber",
+          "companyPassword",
+          "companyName",
+          "companyPhoneNumber",
+        ]
+      : ["userName", "userEmail", "userEmailNumber", "userPassword", "userPhoneNumber"];
 
-    for (let field of fields) {
+    for (const field of fields) {
       if (!formData[field]) {
-        alert('정보를 입력해주세요');
+        alert("정보를 입력해주세요");
         return;
       }
     }
 
     // 입력된 정보 처리 로직
-    console.log('Form submitted', formData);
+    console.log("Form submitted", formData);
+  };
 
-};
-
-const togglePasswordVisibility = () => {
+  const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-// 비밀번호 유효성 검사 로직 추가
-const validatePassword = (password: string) => {
+  // 비밀번호 유효성 검사 로직 추가
+  const validatePassword = (password: string) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
     return regex.test(password);
   };
 
-const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     if (validatePassword(value)) {
-      setPasswordError('');
+      setPasswordError("");
     } else {
-      setPasswordError('8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다');
+      setPasswordError("8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다");
     }
     setFormData({ ...formData, [e.target.name]: value });
   };
 
-
-// 회원가입 JSX
+  // 회원가입 JSX
   return (
     <Wrapper>
-    <Container id="container" className={isRightPanelActive ? 'right-panel-active' : ''}>
-      <FormContainer className="form-container company-sign-up">
-        <Form onSubmit={handleSubmit}>
-          <H1>회사 회원가입</H1>
-          <Span>정보를 입력해주세요.</Span>
-          <EmailCheck>
-          <Input type="email" name="companyEmail" placeholder="이메일" value={formData.companyEmail} onChange={handleInputChange} />
-          <Button className='emailCheckBtn' type="button" onClick={() => handleEmailVerification(formData.companyEmail || '')}>인증</Button>
-          </EmailCheck>
-          <Input type="text" name="companyEmailNumber" placeholder="이메일 인증번호" value={formData.companyEmailNumber} onChange={handleInputChange} />
-          <PassWordCheck>
-          <Input type={isPasswordVisible ? "text" : "password"}  name="companyPassword" placeholder="비밀번호" value={formData.companyPassword} onChange={handlePasswordChange} />
-          <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
-          </PassWordCheck>
-          <ErrorSpan>{passwordError}</ErrorSpan>
-          <Input type="text" name="companyName" placeholder="회사명" value={formData.companyName} onChange={handleInputChange} />
-          <Input type="text" name="companyPhoneNumber" placeholder="회사 전화번호 ( - 사용)" value={formData.companyPhoneNumber} onChange={handleInputChange} />
-          <Button type="submit">회사 등록하기</Button>
-        </Form>
-      </FormContainer>
-      <FormContainer className="form-container user-sign-up">
-        <Form onSubmit={handleSubmit}>
-          <H1>개인 회원가입</H1>
-          <Span>정보를 입력해주세요.</Span>
-          <Input type="text" name="userName" placeholder="이름" value={formData.userName} onChange={handleInputChange} />
-          <EmailCheck>
-          <Input type="email" name="userEmail" placeholder="이메일" value={formData.userEmail} onChange={handleInputChange}></Input>
-          <Button className='emailCheckBtn' type="button" onClick={() => handleEmailVerification(formData.companyEmail || '')}>인증</Button>
-          </EmailCheck>
-          <Input type="text" name="userEmailNumber" placeholder="이메일 인증번호" value={formData.userEmailNumber} onChange={handleInputChange} />
-          <PassWordCheck>
-          <Input type={isPasswordVisible ? "text" : "password"}  name="userPassword" placeholder="비밀번호" value={formData.userPassword} onChange={handlePasswordChange} />
-          <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
-          </PassWordCheck>
-          <ErrorSpan>{passwordError}</ErrorSpan>
-          <Input type="text" name="userPhoneNumber" placeholder="핸드폰 번호 ( - 사용)" value={formData.userPhoneNumber} onChange={handleInputChange} />
-          <Button type="submit">회원가입</Button>
-        </Form>
-      </FormContainer>
-      <OverlayContainer className="overlay-container">
-        <Overlay className="overlay">
-          <OverlayPanel className="overlay-panel overlay-left">
-            <H1>개인 회원가입</H1>
-            <P>개인이라면 여기에서 회원가입해주세요.</P>
-            <Button className="ghost" id="user-signUp" onClick={handleUserSignUpClick}>개인 가입하기</Button>
-          </OverlayPanel>
-          <OverlayPanel className="overlay-panel overlay-right">
+      <Container id="container" className={isRightPanelActive ? "right-panel-active" : ""}>
+        <FormContainer className="form-container company-sign-up">
+          <Form onSubmit={handleSubmit}>
             <H1>회사 회원가입</H1>
-            <P>회사라면 여기에서 회원가입해주세요.</P>
-            <Button className="ghost" id="company-signUp" onClick={handleCompanySignUpClick}>회사 가입하기</Button>
-          </OverlayPanel>
-        </Overlay>
-      </OverlayContainer>
-    </Container>
+            <Span>정보를 입력해주세요.</Span>
+            <EmailCheck>
+              <Input
+                type="email"
+                name="companyEmail"
+                placeholder="이메일"
+                value={formData.companyEmail}
+                onChange={handleInputChange}
+              />
+              <Button
+                className="emailCheckBtn"
+                type="button"
+                onClick={() => handleEmailVerification(formData.companyEmail || "")}
+              >
+                인증
+              </Button>
+            </EmailCheck>
+            <Input
+              type="text"
+              name="companyEmailNumber"
+              placeholder="이메일 인증번호"
+              value={formData.companyEmailNumber}
+              onChange={handleInputChange}
+            />
+            <PassWordCheck>
+              <Input
+                type={isPasswordVisible ? "text" : "password"}
+                name="companyPassword"
+                placeholder="비밀번호"
+                value={formData.companyPassword}
+                onChange={handlePasswordChange}
+              />
+              <Icon onClick={togglePasswordVisibility}>
+                {isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
+              </Icon>
+            </PassWordCheck>
+            <ErrorSpan>{passwordError}</ErrorSpan>
+            <Input
+              type="text"
+              name="companyName"
+              placeholder="회사명"
+              value={formData.companyName}
+              onChange={handleInputChange}
+            />
+            <Input
+              type="text"
+              name="companyPhoneNumber"
+              placeholder="회사 전화번호 ( - 사용)"
+              value={formData.companyPhoneNumber}
+              onChange={handleInputChange}
+            />
+            <Button type="submit">회사 등록하기</Button>
+          </Form>
+        </FormContainer>
+        <FormContainer className="form-container user-sign-up">
+          <Form onSubmit={handleSubmit}>
+            <H1>개인 회원가입</H1>
+            <Span>정보를 입력해주세요.</Span>
+            <Input
+              type="text"
+              name="userName"
+              placeholder="이름"
+              value={formData.userName}
+              onChange={handleInputChange}
+            />
+            <EmailCheck>
+              <Input
+                type="email"
+                name="userEmail"
+                placeholder="이메일"
+                value={formData.userEmail}
+                onChange={handleInputChange}
+              ></Input>
+              <Button
+                className="emailCheckBtn"
+                type="button"
+                onClick={() => handleEmailVerification(formData.userEmail || "")}
+              >
+                인증
+              </Button>
+            </EmailCheck>
+            <Input
+              type="text"
+              name="userEmailNumber"
+              placeholder="이메일 인증번호"
+              value={formData.userEmailNumber}
+              onChange={handleInputChange}
+            />
+            <PassWordCheck>
+              <Input
+                type={isPasswordVisible ? "text" : "password"}
+                name="userPassword"
+                placeholder="비밀번호"
+                value={formData.userPassword}
+                onChange={handlePasswordChange}
+              />
+              <Icon onClick={togglePasswordVisibility}>
+                {isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
+              </Icon>
+            </PassWordCheck>
+            <ErrorSpan>{passwordError}</ErrorSpan>
+            <Input
+              type="text"
+              name="userPhoneNumber"
+              placeholder="핸드폰 번호 ( - 사용)"
+              value={formData.userPhoneNumber}
+              onChange={handleInputChange}
+            />
+            <Button type="submit">회원가입</Button>
+          </Form>
+        </FormContainer>
+        <OverlayContainer className="overlay-container">
+          <Overlay className="overlay">
+            <OverlayPanel className="overlay-panel overlay-left">
+              <H1>개인 회원가입</H1>
+              <P>개인이라면 여기에서 회원가입해주세요.</P>
+              <Button className="ghost" id="user-signUp" onClick={handleUserSignUpClick}>
+                개인 가입하기
+              </Button>
+            </OverlayPanel>
+            <OverlayPanel className="overlay-panel overlay-right">
+              <H1>회사 회원가입</H1>
+              <P>회사라면 여기에서 회원가입해주세요.</P>
+              <Button className="ghost" id="company-signUp" onClick={handleCompanySignUpClick}>
+                회사 가입하기
+              </Button>
+            </OverlayPanel>
+          </Overlay>
+        </OverlayContainer>
+      </Container>
     </Wrapper>
   );
 };
-
 
 // 회원가입 style
 const show = keyframes`
@@ -186,12 +269,14 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 80px;
-`
+`;
 
 const Container = styled.div`
   background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.25),
+    0 10px 10px rgba(0, 0, 0, 0.22);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -253,7 +338,7 @@ const OverlayContainer = styled.div`
 `;
 
 const Overlay = styled.div`
-  background: linear-gradient(to right, #000694, #5690FB);
+  background: linear-gradient(to right, #000694, #5690fb);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 0 0;
@@ -279,12 +364,12 @@ const OverlayPanel = styled.div`
   width: 50%;
   transform: translateX(0);
   transition: transform 0.6s ease-in-out;
-  &.overlay-left{
-  transform: translateX(-20%);
+  &.overlay-left {
+    transform: translateX(-20%);
   }
-  &.overlay-right{
-  right: 0;
-  transform: translateX(0);
+  &.overlay-right {
+    right: 0;
+    transform: translateX(0);
   }
 `;
 
@@ -300,7 +385,7 @@ const Button = styled.button`
   letter-spacing: 1px;
   text-transform: uppercase;
   transition: transform 80ms ease-in;
-  &.emailCheckBtn{
+  &.emailCheckBtn {
     width: 50px;
     height: 45px;
     padding: 0px;
@@ -360,13 +445,13 @@ const EmailCheck = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
-`
+`;
 
 const PassWordCheck = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
-`
+`;
 
 const Icon = styled.div`
   cursor: pointer;
