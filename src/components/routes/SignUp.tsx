@@ -1,6 +1,18 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import styled, { keyframes } from "styled-components";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import axios from 'axios';
+
+const API_URL = 'http://api.example.com';
+
+const signup = async (formData: any) => {
+  try {
+    const response = await axios.post(`${API_URL}/signup`, formData);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || '회원가입에 실패했습니다.');
+  }
+};
 
 // 회원가입
 const SignUp: React.FC = () => {
@@ -67,28 +79,56 @@ const SignUp: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const fields = isRightPanelActive
-      ? [
-          "companyEmail",
-          "companyEmailNumber",
-          "companyPassword",
-          "companyName",
-          "companyPhoneNumber",
-        ]
-      : ["userName", "userEmail", "userEmailNumber", "userPassword", "userPhoneNumber"];
-
-    for (const field of fields) {
-      if (!formData[field]) {
-        alert("정보를 입력해주세요");
-        return;
-      }
+  const handleSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+  
+  const fields = isRightPanelActive
+    ? [
+        "companyEmail",
+        "companyEmailNumber",
+        "companyPassword",
+        "companyName",
+        "companyPhoneNumber",
+      ]
+    : ["userName", "userEmail", "userEmailNumber", "userPassword", "userPhoneNumber"];
+  
+  for (const field of fields) {
+    if (!formData[field]) {
+      alert("정보를 입력해주세요");
+      return;
     }
-
-    // 입력된 정보 처리 로직
+  }
+  
+  try {
+    if (isRightPanelActive) {
+      // 회사 회원가입 처리
+      const companyFormData = {
+        email: formData.companyEmail,
+        emailNumber: formData.companyEmailNumber,
+        password: formData.companyPassword,
+        name: formData.companyName,
+        phoneNumber: formData.companyPhoneNumber,
+      };
+      await signup(companyFormData);
+    } else {
+      // 개인 회원가입 처리
+      const userFormData = {
+        name: formData.userName,
+        email: formData.userEmail,
+        emailNumber: formData.userEmailNumber,
+        password: formData.userPassword,
+        phoneNumber: formData.userPhoneNumber,
+      };
+      await signup(userFormData);
+    }
+    
+    // 회원가입 성공 처리 로직 추가
+    alert("회원가입이 완료되었습니다.");
     console.log("Form submitted", formData);
-  };
+  } catch (error) {
+    alert(error.message);
+  }
+};
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
