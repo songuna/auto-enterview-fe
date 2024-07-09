@@ -7,6 +7,7 @@ import { IoMdClose } from "react-icons/io";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Container, Inner, SubTitle, UserName, Wrapper } from "../css/Common";
+import { IconButton } from "../css/ReactIconButton";
 
 const infoTitles = ["대표자", "설립년도", "주소", "사원수", "회사 홈페이지 URL"];
 
@@ -99,17 +100,17 @@ const CompanyMypage = () => {
             <Buttons>
               {editMode ? (
                 <>
-                  <Button className="cancel" onClick={cancelEdit}>
+                  <IconButton className="cancel" onClick={cancelEdit}>
                     <IoMdClose />
-                  </Button>
-                  <Button className="save" onClick={saveInfo}>
+                  </IconButton>
+                  <IconButton className="save" onClick={saveInfo}>
                     <GiSaveArrow />
-                  </Button>
+                  </IconButton>
                 </>
               ) : (
-                <Button className="edit" onClick={editInfo}>
+                <IconButton className="edit" onClick={editInfo}>
                   <CiEdit />
-                </Button>
+                </IconButton>
               )}
             </Buttons>
           </Top>
@@ -205,28 +206,6 @@ const Top = styled.div`
 const Buttons = styled.div`
   display: flex;
   gap: 0.5rem;
-`;
-
-const Button = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: var(--button-radius);
-  font-size: 1.5rem;
-
-  &.cancel {
-    background-color: var(--bg-light-gray);
-    border: 1px solid var(--border-gray-100);
-  }
-  &.save {
-    background-color: #00cc21;
-  }
-  &.edit {
-    background-color: var(--primary-color);
-    color: #fff;
-  }
 `;
 
 const UserInfo = styled.div`

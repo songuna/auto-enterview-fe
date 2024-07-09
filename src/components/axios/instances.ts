@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: "교체예정",
+  baseURL: "http://13.125.179.134",
   timeout: 5000,
 });
 
