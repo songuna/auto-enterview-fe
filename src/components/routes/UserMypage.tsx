@@ -22,7 +22,7 @@ import { useRecoilValue } from "recoil";
 const infoTitles = ["이름", "이메일", "휴대폰 번호"];
 
 const UserMypage = () => {
-  const [isResume, setIsResume] = useState(false);
+  const [isResume, setIsResume] = useState(true);
   // todo: 로그인한 유저 정보
   const currentUserKey = "id";
   // const currentUserKey = useRecoilValue()
@@ -31,8 +31,8 @@ const UserMypage = () => {
     // 이력서가 등록되어 있는지 확인
     const fetchResume = async () => {
       try {
-        await getResume(currentUserKey);
-        setIsResume(true);
+        const response = await getResume(currentUserKey);
+        if (response.length) setIsResume(true);
       } catch (error) {
         alert("이력서를 불러오는데 문제가 생겼습니다.");
         setIsResume(false);
