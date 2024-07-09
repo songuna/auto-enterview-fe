@@ -36,7 +36,6 @@ const handleSubmit = (e: FormEvent) => {
       //});
       // 서버에서 응답을 받은 후 처리
       //console.log("서버 응답:", response.data);
-
       // 로그인 완료 알림창 띄우기
       alert("로그인 완료되었습니다");
 
