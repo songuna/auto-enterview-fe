@@ -18,7 +18,17 @@ export const Settings = styled.div`
 
 export const Label = styled.label``;
 
+export const Buttons = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+`;
+
 export const CreateButton = styled.button`
   background-color: var(--primary-color);
   color: #fff;
+`;
+
+export const NextButton = styled.button`
+  background-color: var(--bg-light-gray);
 `;

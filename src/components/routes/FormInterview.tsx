@@ -1,4 +1,4 @@
-import { CreateButton, Form, Label, Settings } from "../css/ScheduleFormStyle";
+import { Buttons, CreateButton, Form, Label, NextButton, Settings } from "../css/ScheduleFormStyle";
 
 const FormInterview = () => {
   return (
@@ -31,7 +31,10 @@ const FormInterview = () => {
       )}
     /> */}
       </Settings>
-      <CreateButton>예약 내용 저장하기</CreateButton>
+      <Buttons>
+        <CreateButton className="btn">일정 저장하기</CreateButton>
+        <NextButton className="btn">다음</NextButton>
+      </Buttons>
     </Form>
   );
 };

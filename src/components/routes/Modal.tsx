@@ -3,9 +3,9 @@ import { Container, SubTitle } from "../css/Common";
 import { ModalType } from "./RecruitBoard";
 import { Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
-import { NavLink, Outlet, Params } from "react-router-dom";
-import { useState } from "react";
-import { Form, Label } from "../css/ScheduleFormStyle";
+import { NavLink, Outlet, Params, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { CreateButton, Form, Label } from "../css/ScheduleFormStyle";
 import { IoMdClose } from "react-icons/io";
 
 interface ModalProps {
@@ -17,6 +17,11 @@ interface ModalProps {
 
 const Modal = ({ type, id, step, onClose }: ModalProps) => {
   const [emailText, setEmailText] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    navigate("/recruit-board/assignment");
+  }, [navigate]);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEmailText(e.target.value);
@@ -77,6 +82,7 @@ const Modal = ({ type, id, step, onClose }: ModalProps) => {
                     </TimePickerContainer>
                   )}
                 /> */}
+                <CreateButton className="btn">메일 예약하기</CreateButton>
               </Form>
             </Field>
           </ModalContainer>

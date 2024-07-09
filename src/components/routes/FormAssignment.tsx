@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { CreateButton, Form, Label, Settings } from "../css/ScheduleFormStyle";
+import { Buttons, CreateButton, Form, Label, NextButton, Settings } from "../css/ScheduleFormStyle";
 
 const FormAssignment = () => {
   return (
@@ -37,15 +37,5 @@ const FormAssignment = () => {
     </Form>
   );
 };
-
-const Buttons = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-`;
-
-const NextButton = styled.button`
-  background-color: var(--bg-light-gray);
-`;
 
 export default FormAssignment;

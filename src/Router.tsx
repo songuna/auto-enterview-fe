@@ -95,6 +95,7 @@ const router = createBrowserRouter([
         ),
         children: [
           {
+            index: true,
             path: "/recruit-board/assignment",
             element: (
               <ProtectedRoute>
