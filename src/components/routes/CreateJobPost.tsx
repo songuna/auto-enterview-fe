@@ -1,13 +1,16 @@
 import styled from "styled-components";
-import Select from "react-select";
-import DatePicker from "react-datepicker";
 import React, { useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { JobPosting } from "../type/jobPosting";
 import { postCompaniesJobPosting } from "../axios/http/jobPosting";
 import { useNavigate } from "react-router-dom";
 import { getTwoDigit } from "../common/Format";
+import DatePickerDuration from "../input/DatePickerDuration";
+import SelectInput from "../input/SelectInput";
+import { InputDefault } from "../css/input";
+import Checkbox from "../input/Checkbox";
+import TimePicker from "../input/TimePicker";
 
 const CreateJobPost = () => {
   //enum
@@ -75,33 +78,51 @@ const CreateJobPost = () => {
   } = useForm();
 
   // 필요경력, 급여같은 input에서 disable될 때 임시로 저장해두는 값
-  const inputMemory = useRef({ career: "", salary: "" });
+  const inputMemory = useRef({ career: 0, salary: 0 });
   const [freeHour, setFreeHour] = useState(false);
 
+  const [formData, setFormData] = useState({
+    jobCategory: "",
+    title: "",
+    career: 0,
+    teckstack: [],
+    workLocation: "",
+    education: "",
+    employmentType: "",
+    salary: 0,
+    startHour: new Date(2024, 7, 13, 9, 0),
+    endHour: new Date(2024, 7, 13, 18, 0),
+    startDate: new Date(),
+    endDate: new Date(),
+    jobPostingSteps: [],
+    jobPostingContent: "",
+  });
+
   //전형절차단계
-  const [jobPostingSteps, setJobPostingSteps] = useState(["서류전형"]);
-  const [jobPostingError, setJobPostingError] = useState("");
   //추가
   const [addStepValue, setAddStepValue] = useState("");
   const addStep = (
-    event: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>,
+    event:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.KeyboardEvent<HTMLInputElement>,
   ) => {
     event.preventDefault();
     if (addStepValue === "") return;
-    if (jobPostingSteps.length >= 10) {
-      setJobPostingError("최대 10단계까지 가능합니다.");
-      return;
-    }
 
-    setJobPostingSteps([...jobPostingSteps, addStepValue]);
+    setFormData(formData => {
+      return {
+        ...formData,
+        jobPostingSteps: [...formData.jobPostingSteps, addStepValue],
+      };
+    });
     setAddStepValue("");
   };
   //삭제
   const deleteStep = (idx: number) => {
-    const temp = [...jobPostingSteps];
+    const temp = [...formData.jobPostingSteps];
     temp.splice(idx, 1);
 
-    setJobPostingSteps(temp);
+    setFormData({ ...formData, jobPostingSteps: temp });
   };
 
   //파일업로드
@@ -124,11 +145,11 @@ const CreateJobPost = () => {
       jobCategory: formData.jobCategory,
       career: +formData.career,
       techStack: formData.teckStack,
-      jobPostingStep: jobPostingSteps,
+      jobPostingStep: formData.jobPostingSteps,
       workLocation: formData.workLocation,
       education: formData.education,
       employmentType: formData.employmentType,
-      salary: formData.salary == "회사내규에따름" ? "회사내규에따름" : `${formData.salary}만원`,
+      salary: formData.salary,
       workTime: freeHour
         ? "자율출근제"
         : getStringWorkingHour(formData.startHour, formData.endHour),
@@ -142,12 +163,10 @@ const CreateJobPost = () => {
       },
     };
 
-    console.log(formData);
-    console.log(requestData);
-
     await postCompaniesJobPosting(1, requestData);
     navigate("/company-mypage");
   };
+
   return (
     <>
       <Helmet>
@@ -155,350 +174,239 @@ const CreateJobPost = () => {
       </Helmet>
       <Wrapper className="inner-1200">
         <Title>채용공고 생성</Title>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={onSubmit}>
           <InputContainer>
             <InputTitle>채용직무</InputTitle>
-            <Controller
-              control={control}
-              name="jobCategory"
-              rules={{ required: "채용할 직무를 선택해주세요." }}
-              render={({ field: { onChange, value, ref } }) => (
-                <Select
-                  options={optionJob}
-                  styles={{
-                    control: (baseStyles, state) => ({
-                      ...baseStyles,
-                      borderColor: state.isFocused ? "#000694" : "#B7B7B7",
-                      borderRadius: "8px",
-                      padding: "6px 5px",
-                    }),
-                    option: (baseStyles, state) => ({
-                      ...baseStyles,
-                      backgroundColor: state.isFocused ? "#000694" : "",
-                      color: state.isFocused ? "#ffffff" : "#000000",
-                      padding: "8px 13px",
-                    }),
-                  }}
-                  placeholder="채용할 직무를 선택하세요"
-                  ref={ref}
-                  value={optionJob.find(option => option.value === value)}
-                  onChange={option => onChange(option?.value)}
-                />
-              )}
+            <SelectInput
+              placeholder="채용할 직무를 선택하세요"
+              options={[
+                { value: "backend", label: "서버/백엔드 개발" },
+                { value: "frontend", label: "프론트엔드 개발" },
+                { value: "fullstack", label: "웹 풀스택 개발" },
+                { value: "android", label: "안드로이드 개발" },
+                { value: "ios", label: "iOS 개발" },
+              ]}
+              value={formData.jobCategory}
+              onChange={value =>
+                setFormData({ ...formData, jobCategory: value })
+              }
             />
-            <ErrorMessage>{errors.jobCategory && String(errors.jobCategory?.message)}</ErrorMessage>
+            <ErrorMessage>
+              {formData.jobCategory ? "" : "채용할 직무를 선택해주세요."}
+            </ErrorMessage>
           </InputContainer>
           <InputContainer>
             <InputTitle>제목</InputTitle>
-            <InputText
+            <InputDefault
               type="text"
               placeholder="공고 제목을 입력하세요"
-              className="text"
-              {...register("title", { required: "공고 제목을 입력해주세요." })}
+              value={formData.title}
+              onChange={e =>
+                setFormData({ ...formData, title: e.target.value })
+              }
             />
-            <ErrorMessage>{errors.title && String(errors.title?.message)}</ErrorMessage>
+            <ErrorMessage>
+              {formData.title ? "" : "공고 제목을 입력해주세요."}
+            </ErrorMessage>
           </InputContainer>
 
           <InputContainer>
             <InputTitle>필요경력</InputTitle>
             <InputContents>
-              <Controller
-                control={control}
-                name="career"
-                rules={{ required: "필요경력을 입력해주세요." }}
-                render={({ field: { onChange, ref, value } }) => (
-                  <>
-                    <InputShortText
-                      type="number"
-                      placeholder="신입은 0"
-                      className="text"
-                      onChange={event => {
-                        onChange(event.target.value);
-                        inputMemory.current.career = event.target.value;
-                      }}
-                      ref={ref}
-                      disabled={value == -1}
-                    />
-                    <AdditionExplanation>년 이상</AdditionExplanation>
-                    <Checkbox
-                      type="checkbox"
-                      id="career-year"
-                      onChange={event => {
-                        onChange(event.target.checked ? "-1" : inputMemory.current.career);
-                      }}
-                      ref={ref}
-                    />
-                    <label htmlFor="career-year">경력무관</label>
-                  </>
-                )}
+              <InputShortText
+                type="number"
+                placeholder="신입은 0"
+                className="text"
+                value={formData.career}
+                onChange={event => {
+                  setFormData({
+                    ...formData,
+                    career: Number(event.target.value),
+                  });
+                  inputMemory.current.career = Number(event.target.value);
+                }}
+                disabled={formData.career == -1}
+              />
+              <AdditionExplanation>년 이상</AdditionExplanation>
+              <Checkbox
+                id={"career-year"}
+                text="경력무관"
+                onChange={event => {
+                  setFormData({
+                    ...formData,
+                    career: event.target.checked
+                      ? -1
+                      : inputMemory.current.career,
+                  });
+                }}
               />
             </InputContents>
-            <ErrorMessage> {errors.career && String(errors.career?.message)}</ErrorMessage>
+            <ErrorMessage>
+              {formData.career ? "" : "필요경력을 입력해주세요."}
+            </ErrorMessage>
           </InputContainer>
 
           <InputContainerShortMargin>
             <InputTitle>기술스택</InputTitle>
-            <Controller
-              control={control}
-              name="teckStack"
-              rules={{ required: "기술스택은 1개이상 선택해주세요." }}
-              defaultValue={[]}
-              render={({ field: { onChange, value } }) => (
-                <StackInputContainer>
-                  {teckStacks.map(stack => {
-                    return (
-                      <StackInputGroup key={stack}>
-                        <Checkboxs
-                          type="checkbox"
-                          id={stack}
-                          onChange={event => {
-                            if (event.target.checked) {
-                              // 체크하면 추가
-                              onChange([...value, stack]);
-                            } else {
-                              //해제하면 빼기
-                              const temp = value;
-                              temp.splice(stack, 1);
-                              onChange(temp);
-                            }
-                          }}
-                        />
-                        <label htmlFor={stack}>{stack}</label>
-                      </StackInputGroup>
-                    );
-                  })}
-                </StackInputContainer>
-              )}
-            />
-            <ErrorMessage> {errors.teckStack && String(errors.teckStack?.message)}</ErrorMessage>
+
+            <StackInputContainer>
+              {teckStacks.map(stack => {
+                return (
+                  <StackInputGroup key={stack}>
+                    <Checkbox
+                      id={stack}
+                      text={stack}
+                      onChange={event => {
+                        if (event.target.checked) {
+                          // 체크하면 추가
+                          const temp = formData.teckstack;
+                          temp.push(stack);
+                          setFormData({ ...formData, teckstack: temp });
+                        } else {
+                          //해제하면 빼기
+                          const temp = [...formData.teckstack];
+                          const result = temp.filter(el => el !== stack);
+                          setFormData({ ...formData, teckstack: result });
+                        }
+                      }}
+                    />
+                  </StackInputGroup>
+                );
+              })}
+            </StackInputContainer>
+            <ErrorMessage>
+              {formData.teckstack ? "" : "테크스택을 1개이상 선택해주세요."}
+            </ErrorMessage>
           </InputContainerShortMargin>
 
           <InputContainer>
             <InputTitle>근무지</InputTitle>
-            <InputText
+            <InputDefault
               type="text"
               placeholder="주소를 입력하세요"
               className="text"
-              {...register("workLocation", { required: "근무지를 입력해주세요." })}
+              value={formData.workLocation}
+              onChange={event =>
+                setFormData({ ...formData, workLocation: event.target.value })
+              }
             />
             <ErrorMessage>
-              {errors.workLocation && String(errors.workLocation?.message)}
+              {formData.workLocation ? "" : "근무지를 입력해주세요."}
             </ErrorMessage>
           </InputContainer>
 
           <InputContainer>
             <InputTitle>필요학력</InputTitle>
-            <Controller
-              control={control}
-              name="education"
-              rules={{ required: "필요학력을 선택해주세요." }}
-              render={({ field: { onChange, value, ref } }) => (
-                <Select
-                  options={optionEducation}
-                  styles={{
-                    control: (baseStyles, state) => ({
-                      ...baseStyles,
-                      borderColor: state.isFocused ? "#5690FB" : "#B7B7B7",
-                      borderRadius: "8px",
-                      padding: "6px 5px",
-                    }),
-                    option: (baseStyles, state) => ({
-                      ...baseStyles,
-                      backgroundColor: state.isFocused ? "#5690FB" : "",
-                      color: state.isFocused ? "#ffffff" : "#000000",
-                      padding: "8px 13px",
-                    }),
-                  }}
-                  placeholder="필요한 학력을 선택하세요"
-                  ref={ref}
-                  value={optionEducation.find(option => option.value === value)}
-                  onChange={option => onChange(option?.value)}
-                />
-              )}
+            <SelectInput
+              options={optionEducation}
+              placeholder="필요한 학력을 선택하세요"
+              value={formData.education}
+              onChange={value => setFormData({ ...formData, education: value })}
             />
-            <ErrorMessage>{errors.education && String(errors.education?.message)}</ErrorMessage>
+            <ErrorMessage>
+              {formData.education ? "" : "필요한 학력 입력해주세요."}
+            </ErrorMessage>
           </InputContainer>
 
           <InputContainer>
             <InputTitle>고용형태</InputTitle>
-            <Controller
-              control={control}
-              name="employmentType"
-              rules={{ required: "고용형태를 선택해주세요." }}
-              render={({ field: { onChange, value, ref } }) => (
-                <Select
-                  options={optionEmploymentType}
-                  styles={{
-                    control: (baseStyles, state) => ({
-                      ...baseStyles,
-                      borderColor: state.isFocused ? "#5690FB" : "#B7B7B7",
-                      borderRadius: "8px",
-                      padding: "6px 5px",
-                    }),
-                    option: (baseStyles, state) => ({
-                      ...baseStyles,
-                      backgroundColor: state.isFocused ? "#5690FB" : "",
-                      color: state.isFocused ? "#ffffff" : "#000000",
-                      padding: "8px 13px",
-                    }),
-                  }}
-                  placeholder="고용형태를 선택하세요"
-                  ref={ref}
-                  value={optionEmploymentType.find(option => option.value === value)}
-                  onChange={option => onChange(option?.value)}
-                />
-              )}
+            <SelectInput
+              options={optionEmploymentType}
+              placeholder="고용형태를 선택하세요"
+              value={formData.employmentType}
+              onChange={value =>
+                setFormData({ ...formData, employmentType: value })
+              }
             />
             <ErrorMessage>
-              {errors.employmentType && String(errors.employmentType?.message)}
+              {formData.employmentType ? "" : "고용형태를 선택해주세요."}
             </ErrorMessage>
           </InputContainer>
 
           <InputContainer>
             <InputTitle>급여</InputTitle>
             <InputContents>
-              <Controller
-                control={control}
-                name="salary"
-                rules={{ required: "급여를 입력해주세요." }}
-                render={({ field: { onChange, ref, value } }) => (
-                  <>
-                    <InputShortText
-                      type="number"
-                      placeholder="연봉"
-                      className="text"
-                      onChange={event => {
-                        onChange(event.target.value);
-                        inputMemory.current.salary = event.target.value;
-                      }}
-                      ref={ref}
-                      disabled={value == "회사내규에따름"}
-                    />
-                    <AdditionExplanation>만원</AdditionExplanation>
-                    <Checkbox
-                      type="checkbox"
-                      id="pay"
-                      onChange={event => {
-                        onChange(
-                          event.target.checked ? "회사내규에따름" : inputMemory.current.salary,
-                        );
-                      }}
-                      ref={ref}
-                    />
-                    <label htmlFor="pay">회사 내규에 따름</label>
-                  </>
-                )}
-              />
+              <>
+                <InputShortText
+                  type="number"
+                  placeholder="연봉"
+                  className="text"
+                  value={formData.salary}
+                  onChange={event => {
+                    setFormData({
+                      ...formData,
+                      salary: Number(event.target.value),
+                    });
+                    inputMemory.current.salary = Number(event.target.value);
+                  }}
+                  disabled={formData.salary == -1}
+                />
+                <AdditionExplanation>만원</AdditionExplanation>
+                <Checkbox
+                  id="pay"
+                  text="회사내규에 따름"
+                  onChange={event => {
+                    setFormData({
+                      ...formData,
+                      salary: event.target.checked
+                        ? -1
+                        : inputMemory.current.salary,
+                    });
+                  }}
+                />
+              </>
             </InputContents>
-            <ErrorMessage>{errors.salary && String(errors.salary?.message)}</ErrorMessage>
+            <ErrorMessage>
+              {formData.salary ? "" : "급여를 입력해주세요."}
+            </ErrorMessage>
           </InputContainer>
 
           <InputContainer>
             <InputTitle>근무기간</InputTitle>
             <InputContents>
-              <Controller
-                control={control}
-                name="startHour"
-                rules={{ required: "근무시간을 선택해주세요." }}
-                defaultValue={new Date(2024, 7, 13, 9, 0)}
-                render={({ field: { onChange, value } }) => (
-                  <TimePickerContainer>
-                    <DatePicker
-                      selected={value}
-                      onChange={date => onChange(date)}
-                      showTimeSelect
-                      showTimeSelectOnly
-                      timeIntervals={30}
-                      dateFormat="HH:mm"
-                      timeFormat="HH:mm"
-                      timeCaption=""
-                      customInput={<TimeInput />}
-                      disabled={freeHour}
-                    />
-                  </TimePickerContainer>
-                )}
+              <TimePicker
+                value={formData.startHour}
+                onChange={date => setFormData({ ...formData, startHour: date })}
+                disabled={freeHour}
               />
               <p>~</p>
-              <Controller
-                control={control}
-                name="endHour"
-                rules={{ required: "근무시간을 선택해주세요." }}
-                defaultValue={new Date(2024, 7, 13, 18, 0)}
-                render={({ field: { onChange, value } }) => (
-                  <TimePickerContainer>
-                    <DatePicker
-                      selected={value}
-                      onChange={date => onChange(date)}
-                      showTimeSelect
-                      showTimeSelectOnly
-                      timeIntervals={30}
-                      dateFormat="HH:mm"
-                      timeFormat="HH:mm"
-                      timeCaption=""
-                      customInput={<TimeInput />}
-                      disabled={freeHour}
-                    />
-                  </TimePickerContainer>
-                )}
+              <TimePicker
+                value={formData.endHour}
+                onChange={date => setFormData({ ...formData, endHour: date })}
+                disabled={freeHour}
               />
               <Checkbox
-                type="checkbox"
                 id="hourfree"
-                onChange={() => setFreeHour(freeHour => !freeHour)}
+                text="자율출근제"
+                onChange={event => setFreeHour(event.target.checked)}
               />
-              <label htmlFor="hourfree">자율출근제</label>
             </InputContents>
             <ErrorMessage>
-              {(errors.startHour || errors.startHour) && String(errors.startHour?.message)}
+              {formData.startHour || formData.startHour
+                ? ""
+                : "근무시간을 선택해주세요."}
             </ErrorMessage>
           </InputContainer>
 
           <InputContainer>
             <InputTitle>접수기간</InputTitle>
             <InputContents>
-              <Controller
-                control={control}
-                name="startDateTime"
-                rules={{ required: "접수시간을 선택해주세요." }}
-                defaultValue={new Date()}
-                render={({ field: { onChange, value } }) => (
-                  <DatePickerContainer>
-                    <DatePicker
-                      selected={value}
-                      onChange={date => onChange(date)}
-                      selectsStart
-                      dateFormat="YYYY.MM.dd"
-                      customInput={<DateInput />}
-                      startDate={watch("startDateTime")}
-                      endDate={watch("endDateTime")}
-                    />
-                  </DatePickerContainer>
-                )}
-              />
-              <p>~</p>
-              <Controller
-                control={control}
-                name="endDateTime"
-                rules={{ required: "접수시간을 선택해주세요." }}
-                defaultValue={new Date()}
-                render={({ field: { onChange, value } }) => (
-                  <DatePickerContainer>
-                    <DatePicker
-                      selected={value}
-                      onChange={date => onChange(date)}
-                      selectsEnd
-                      dateFormat="YYYY.MM.dd"
-                      customInput={<DateInput />}
-                      startDate={watch("startDateTime")}
-                      endDate={watch("endDateTime")}
-                    />
-                  </DatePickerContainer>
-                )}
+              <DatePickerDuration
+                startDate={formData.startDate}
+                endDate={formData.endDate}
+                onChangeStartDate={date =>
+                  setFormData({ ...formData, startDate: date })
+                }
+                onChangeEndDate={date =>
+                  setFormData({ ...formData, endDate: date })
+                }
+                betweenString="~"
               />
             </InputContents>
             <ErrorMessage>
-              {(errors.startDateTime || errors.endDateTime) &&
-                String(errors.startDateTime?.message)}
+              {formData.startDate || formData.endDate
+                ? ""
+                : "접수기간을 선택해주세요."}
             </ErrorMessage>
           </InputContainer>
 
@@ -506,7 +414,7 @@ const CreateJobPost = () => {
             <InputTitle>전형절차</InputTitle>
             <InputContents>
               <StepContainer>
-                {jobPostingSteps.map((jobPostingStep, idx) => {
+                {formData.jobPostingSteps.map((jobPostingStep, idx) => {
                   return (
                     <Step key={`${jobPostingStep} ${idx}`}>
                       <StepNumber>{idx + 1}단계</StepNumber>
@@ -545,7 +453,11 @@ const CreateJobPost = () => {
                 </Button>
               </StepInputContianer>
             </InputContents>
-            <ErrorMessage>{jobPostingError}</ErrorMessage>
+            <ErrorMessage>
+              {formData.jobPostingSteps.length > 1
+                ? ""
+                : "전형단계를 추가해주세요."}
+            </ErrorMessage>
           </InputContainer>
 
           <InputContainer>
@@ -558,7 +470,13 @@ const CreateJobPost = () => {
             <Contents
               placeholder="공고내용을 입력해주세요."
               className="text"
-              {...register("jobPostingContent")}
+              value={formData.jobPostingContent}
+              onChange={event =>
+                setFormData({
+                  ...formData,
+                  jobPostingContent: event.target.value,
+                })
+              }
             />
             <FileContainer>
               <FileName>{fileName || ""}</FileName>
@@ -610,20 +528,7 @@ const InputContents = styled.div`
   flex-wrap: wrap;
 `;
 
-const InputText = styled.input`
-  padding: 16px;
-  background-color: var(--bg-light-gray);
-  border: 0;
-  border-radius: var(--button-radius);
-  flex: 1;
-
-  &:disabled {
-    color: var(--bg-light-gray);
-    background-color: #f8f8f8;
-  }
-`;
-
-const InputShortText = styled(InputText)`
+const InputShortText = styled(InputDefault)`
   width: 150px;
   flex: 0;
   text-align: end;
@@ -633,51 +538,6 @@ const AdditionExplanation = styled.p`
   margin: auto 8px;
 `;
 
-const Checkbox = styled.input`
-  display: none;
-
-  & + label {
-    display: inline-block;
-
-    padding: 16px;
-    border: 1px solid #b7b7b7;
-    border-radius: var(--button-radius);
-    cursor: pointer;
-    word-break: keep-all;
-    transition: all 0.1s;
-    user-select: none;
-
-    &:active {
-      transform: scale(99%);
-    }
-  }
-
-  &:checked + label {
-    color: #ffffff;
-    border: 1px solid var(--primary-color);
-    background-color: var(--primary-color);
-  }
-`;
-
-const Checkboxs = styled(Checkbox)`
-  & + label {
-    margin: 0;
-    margin-right: 16px;
-    margin-bottom: 16px;
-    padding: 16px;
-    border: 1px solid #b7b7b7;
-    border-radius: var(--button-radius);
-    cursor: pointer;
-    word-break: keep-all;
-    transition: all 0.1s;
-    user-select: none;
-
-    &:active {
-      transform: scale(99%);
-    }
-  }
-`;
-
 const StackInputContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -685,208 +545,11 @@ const StackInputContainer = styled.div`
 
 const StackInputGroup = styled.div`
   display: block;
-`;
 
-const TimePickerContainer = styled.div`
-  position: relative;
-  z-index: 2;
-
-  .react-datepicker-popper {
-    background-color: #ffffff;
-    border: 1px solid #b7b7b7;
-    border-radius: var(--button-radius);
-    transform: translate(0px, -250px) !important;
+  label {
+    margin-right: 16px;
+    margin-bottom: 16px;
   }
-
-  .react-datepicker__triangle {
-    display: none;
-  }
-
-  .react-datepicker__time-list {
-    height: 250px;
-    overflow-y: scroll;
-  }
-
-  .react-datepicker__time-list-item {
-    list-style: none;
-    width: 100px;
-    padding: 8px;
-    text-align: center;
-    cursor: pointer;
-
-    &:hover {
-      color: #ffffff;
-      background-color: var(--primary-color);
-    }
-
-    &[aria-selected="true"] {
-      color: #ffffff;
-      background-color: var(--primary-color);
-    }
-  }
-
-  .react-datepicker__aria-live {
-    display: none;
-  }
-`;
-
-const DatePickerContainer = styled.div`
-  position: relative;
-  .react-datepicker-popper {
-    z-index: 2;
-
-    position: relative;
-    background-color: #ffffff;
-    border: 1px solid #b7b7b7;
-    border-radius: var(--button-radius);
-  }
-
-  &:nth-child(1) .react-datepicker-popper {
-    transform: translate(0, -300px) !important;
-  }
-
-  &:nth-child(3) .react-datepicker-popper {
-    transform: translate(-137px, -300px) !important;
-  }
-
-  .react-datepicker__aria-live {
-    display: none;
-  }
-
-  .react-datepicker {
-    width: 100%;
-  }
-
-  .react-datepicker__navigation {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    width: 48px;
-    height: 48px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    span {
-      display: none;
-    }
-
-    &::after {
-      content: "";
-      position: relative;
-      width: 24px;
-      height: 24px;
-      background: url("/img/arrow.svg") no-repeat;
-      background-size: contain;
-      background-position: center;
-    }
-  }
-  .react-datepicker__navigation--previous {
-    &::after {
-      transform: rotate(180deg);
-    }
-  }
-
-  .react-datepicker__navigation--next {
-    left: auto;
-    right: 8px;
-  }
-
-  .react-datepicker__month-container {
-    padding: 8px;
-  }
-
-  .react-datepicker__current-month {
-    text-align: center;
-    line-height: 48px;
-    font-size: 1.3rem;
-  }
-
-  .react-datepicker__day-names {
-    display: flex;
-
-    .react-datepicker__day-name {
-      flex: 1;
-      width: 2.4rem;
-      text-align: center;
-      line-height: 2rem;
-      user-select: none;
-    }
-  }
-
-  .react-datepicker__navigation {
-    position: absolute;
-  }
-
-  .react-datepicker__week {
-    display: flex;
-  }
-
-  .react-datepicker__day {
-    width: 2.4rem;
-    text-align: center;
-    line-height: 2.4rem;
-    cursor: pointer;
-
-    &.react-datepicker__day--today {
-      font-weight: 700;
-    }
-
-    &:hover {
-      color: #ffffff;
-      background-color: var(--primary-color);
-    }
-
-    &.react-datepicker__day--range {
-      background-color: var(--border-gray-100);
-    }
-
-    &.react-datepicker__day--in-selecting-range {
-      color: var(--text-black);
-      background-color: #eff5ff;
-    }
-
-    &.react-datepicker__day--in-range {
-      color: var(--text-black);
-      background-color: var(--bg-light-gray);
-    }
-
-    &[aria-selected="true"] {
-      color: #ffffff;
-      background-color: var(--primary-color);
-    }
-
-    &.react-datepicker__day--in-range:not(.react-datepicker__day--in-selecting-range) {
-      color: var(--text-black);
-      background-color: var(--bg-light-blue);
-    }
-  }
-
-  .react-datepicker__triangle {
-    display: none;
-  }
-`;
-
-const TimeInput = styled.input`
-  display: inline-block;
-  width: 100px;
-  text-align: center;
-  padding: 16px;
-  border: 1px solid #b7b7b7;
-  border-radius: 8px;
-  cursor: pointer;
-  word-break: keep-all;
-  font-size: 1rem;
-
-  &:disabled {
-    border: 1px solid var(--bg-light-gray);
-    color: var(--bg-light-gray);
-    background-color: #f8f8f8;
-  }
-`;
-
-const DateInput = styled(TimeInput)`
-  width: 150px;
 `;
 
 const StepContainer = styled.div`
@@ -917,7 +580,7 @@ const StepInputContianer = styled.div`
   display: flex;
   gap: 8px;
 `;
-const StepInput = styled(InputText)`
+const StepInput = styled(InputDefault)`
   flex: 0;
 `;
 

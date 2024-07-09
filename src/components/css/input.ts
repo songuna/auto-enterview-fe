@@ -1,5 +1,45 @@
 import styled from "styled-components";
 
+export const InputDefault = styled.input`
+  padding: 16px;
+  font-size: 1rem;
+  background-color: var(--bg-light-gray);
+  border: 0;
+  border-radius: var(--button-radius);
+  flex: 1;
+
+  &:disabled {
+    color: var(--bg-light-gray);
+    background-color: #f8f8f8;
+  }
+`;
+
+export const InputCheckbox = styled.input`
+  display: none;
+
+  & + label {
+    display: inline-block;
+
+    padding: 16px;
+    border: 1px solid #b7b7b7;
+    border-radius: var(--button-radius);
+    cursor: pointer;
+    word-break: keep-all;
+    transition: all 0.1s;
+    user-select: none;
+
+    &:active {
+      transform: scale(99%);
+    }
+  }
+
+  &:checked + label {
+    color: #ffffff;
+    border: 1px solid var(--primary-color);
+    background-color: var(--primary-color);
+  }
+`;
+
 export const DataPickerInput = styled.input`
   display: inline-block;
   padding: 16px;

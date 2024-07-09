@@ -1,11 +1,26 @@
-import Select, { GroupBase } from "react-select";
+import Select, { GroupBase, OptionsOrGroups } from "react-select";
+
+interface OptionType {
+  value: string;
+  label: string;
+}
 
 interface Props {
   placeholder: string;
-  options: (string | GroupBase<string>)[];
+  options: OptionsOrGroups<any, GroupBase<any>> | undefined;
   value: string;
   onChange: (value: string) => void;
 }
+
+/**
+ * options 형태:
+  [
+    { value: "backend", label: "서버/백엔드 개발" },
+    { value: "frontend", label: "프론트엔드 개발" }
+  ]
+
+ * value와 바뀌었을 때 값을 바꾸어주는 함수 onChange를 넘겨야합니다.
+ */
 
 const SelectInput = ({ placeholder, options, value, onChange }: Props) => {
   return (
@@ -26,7 +41,7 @@ const SelectInput = ({ placeholder, options, value, onChange }: Props) => {
         }),
       }}
       placeholder={placeholder}
-      value={value}
+      value={value || ""}
       onChange={value => onChange(value || "")}
     />
   );
