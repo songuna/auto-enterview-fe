@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaEnvelopeOpenText } from "react-icons/fa";
+import Modal from "./Modal";
+import { useParams } from "next/navigation";
 
 interface ICandidateList {
   candidateKey: string;
@@ -11,8 +13,11 @@ interface ICandidateList {
   createdAt: string;
 }
 
+export type ModalType = "email" | "schedule";
+
 const RecruitBoard = () => {
-  const [steps, setSteps] = useState(["서류전형"]);
+  // const param = useParams();
+  const [steps, setSteps] = useState(["서류전형", "과제전형"]);
   const [candidateList, setCandidateList] = useState<ICandidateList[]>([
     {
       candidateKey: "지원자 key",
@@ -20,15 +25,18 @@ const RecruitBoard = () => {
       createdAt: "지원 일자",
     },
   ]);
-  const [schedule, setSchedule] = useState(false);
+  const [schedule, setSchedule] = useState<string[]>([]);
   const [activeList, setActiveList] = useState<string[]>([]);
+  const [modal, setModal] = useState(false);
+  const [modalType, setModalType] = useState<ModalType>("schedule");
+  const [modalStep, setModalStep] = useState("");
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   /* todo: 서류단계 통과한 지원자들 불러오기, jsx에도 적용 */
   /* todo: 일정생성, 메일발송 이벤트 구현 */
-
+  1;
   useEffect(() => {
-    async () => {
+    const fetchData = async () => {
       try {
         const steps = await axios.get(`/companies/${companyKey}/${jobPostingKey}/job-posting-step`);
         setSteps(steps.data);
@@ -41,6 +49,8 @@ const RecruitBoard = () => {
         alert("채용단계를 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
       }
     };
+
+    // fetchData();
   }, []);
 
   let isDragging = false;
@@ -98,6 +108,12 @@ const RecruitBoard = () => {
     });
   };
 
+  const openModal = (type: ModalType, step: string) => {
+    setModalType(type);
+    setModalStep(step);
+    setModal(true);
+  };
+
   return (
     <Wrapper>
       <Inner className="inner-1200">
@@ -115,10 +131,12 @@ const RecruitBoard = () => {
               {steps.map(step => (
                 <Step key={step}>
                   <StepTitle className="sub-title">{step}</StepTitle>
-                  {step === "서류전형" ? null : schedule ? (
-                    <EmailBtn>예약 메일 발송하기</EmailBtn>
+                  {step === "서류전형" ? null : schedule.length ? (
+                    <EmailBtn onClick={() => openModal("email", step)}>예약 메일 발송하기</EmailBtn>
                   ) : (
-                    <ScheduleBtn>일정 생성하기</ScheduleBtn>
+                    <ScheduleBtn onClick={() => openModal("schedule", step)}>
+                      일정 생성하기
+                    </ScheduleBtn>
                   )}
                   <Lists>
                     {candidateList.map(candidate => (
@@ -150,6 +168,10 @@ const RecruitBoard = () => {
                 </Step>
               ))}
             </Steps>
+            {/* <Modal type={modalType} id={param} /> */}
+            {modal ? (
+              <Modal type={modalType} step={modalStep} onClose={() => setModal(false)} />
+            ) : null}
           </Board>
         </Container>
       </Inner>
@@ -158,7 +180,9 @@ const RecruitBoard = () => {
 };
 
 const Board = styled.div`
+  position: relative;
   overflow: hidden;
+  min-height: 600px;
   padding: 1rem;
   border-top: 3px solid var(--border-gray-200);
   border-radius: var(--box-radius);

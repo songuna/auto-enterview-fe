@@ -103,6 +103,7 @@ const GlobalStyles = createGlobalStyle`
   button {
     border: none;
     background-color: transparent;
+    font-size: 1rem;
     cursor: pointer;
   }
   input, select, textarea {
