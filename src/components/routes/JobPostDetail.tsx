@@ -2,8 +2,71 @@ import styled from "styled-components";
 import { Container, Inner, Wrapper } from "../css/Common";
 import { CiEdit } from "react-icons/ci";
 import { IconButton } from "../css/ReactIconButton";
+import { getCompanyInfomation, getJobPosting, postJobPostingApply } from "../axios/http/jobPosting";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { JobPosting } from "../type/jobPosting";
+import { getDateFormat } from "../common/Format";
+import { companyInfo } from "../type/company";
 
 const JobPostDetail = () => {
+  const { postId } = useParams();
+
+  const [jobPostingInfo, setJobPostingInfo] = useState<JobPosting>({
+    companyKey: 1,
+    title: "공고제목이요",
+    jobCategory: "안드로이드",
+    career: 3,
+    techStack: ["Kotlin", "Spring Boot", "Java", "Node.js", "Python", "Dijango"],
+    jobPostingStep: ["서류전형", "1차면접", "2차면접"],
+    workLocation: "부산광역시 강서구 녹산산단382로14번가길 10~29번지(송정동)",
+    education: "4년제",
+    employmentType: "정규직",
+    salary: 3,
+    workTime: "09:00 ~ 18:00",
+    startDateTime: new Date(),
+    endDateTime: new Date(),
+    jobPostingContent:
+      " 설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명",
+    image: {
+      fileName: "파일명",
+      originalFileName: "원본파일명",
+      filePath: "url",
+    },
+  });
+  const [companyInfo, setCompanyInfo] = useState<companyInfo>({
+    companyInfoKey: "(주)안드로메다",
+    employees: 1315,
+    companyAge: new Date(),
+    companyUrl: "www.naver.com",
+    boss: "데애표",
+    address: "부산광역시 강서구 녹산산단382로14번가길 10~29번지(송정동)",
+  });
+
+  useEffect(() => {
+    async () => {
+      // 공고내용
+      const response = await getJobPosting(1);
+      setJobPostingInfo(response);
+
+      // 파일 해결되면 TODO: url 추출
+
+      // 회사정보
+      const companyResponse = await getCompanyInfomation(1);
+      setCompanyInfo(companyResponse);
+    };
+  }, []);
+
+  // 지원하기
+  const Apply = async () => {
+    if (!postId) return;
+
+    // TODO: 로그인하지 않았다면 로그인으로 보내기 alert
+
+    // 로그인한 사용자만
+    await postJobPostingApply(Number(postId));
+  };
+
   return (
     <Wrapper className="text">
       <Inner className="inner-1200">
@@ -14,7 +77,7 @@ const JobPostDetail = () => {
               <p>마감일자</p>
               <Dday>(D-1)</Dday>
             </DeadLineContainer>
-            <h1>제목</h1>
+            <h1>{jobPostingInfo?.title}</h1>
             <EditButton className="edit">
               <CiEdit />
             </EditButton>
@@ -22,121 +85,92 @@ const JobPostDetail = () => {
           <InfoContainer>
             <Info>
               <InfoTitle>채용직무</InfoTitle>
-              <InfoDesc>안드로이드</InfoDesc>
+              <InfoDesc>{jobPostingInfo?.jobCategory}</InfoDesc>
             </Info>
             <Info>
               <InfoTitle>기술스택</InfoTitle>
-              <InfoDesc>Kotlin</InfoDesc>
+              <InfoDesc>{jobPostingInfo?.techStack.map(stack => `${stack}, `)}</InfoDesc>
             </Info>
             <Info>
               <InfoTitle>고용형태</InfoTitle>
-              <InfoDesc>정규직</InfoDesc>
+              <InfoDesc>{jobPostingInfo?.employmentType}</InfoDesc>
             </Info>
             <Info>
               <InfoTitle>근무시간</InfoTitle>
-              <InfoDesc>09:00 ~ 18:00</InfoDesc>
+              <InfoDesc>{jobPostingInfo?.workTime}</InfoDesc>
             </Info>
             <Info>
               <InfoTitle>필요경력</InfoTitle>
-              <InfoDesc>3년</InfoDesc>
+              <InfoDesc>{jobPostingInfo?.career}년</InfoDesc>
             </Info>
             <Info>
               <InfoTitle>필요학력</InfoTitle>
-              <InfoDesc>4년제</InfoDesc>
+              <InfoDesc>{jobPostingInfo?.education}</InfoDesc>
             </Info>
             <Info>
               <InfoTitle>급여</InfoTitle>
-              <InfoDesc>6000만원</InfoDesc>
+              <InfoDesc>{jobPostingInfo?.salary}만원</InfoDesc>
             </Info>
             <Info>
               <InfoTitle>접수기간</InfoTitle>
-              <InfoDesc>2024.07.08 ~ 2024.08.08</InfoDesc>
+              <InfoDesc>
+                {getDateFormat(jobPostingInfo?.startDateTime)} ~{" "}
+                {getDateFormat(jobPostingInfo?.endDateTime)}
+              </InfoDesc>
             </Info>
             <LongInfo>
               <InfoTitle>근무지</InfoTitle>
-              <InfoDesc>부산광역시 강서구 녹산산단382로14번가길 10~29번지(송정동)</InfoDesc>
+              <InfoDesc>{jobPostingInfo.workLocation}</InfoDesc>
             </LongInfo>
             <LongInfo>
               <InfoTitle>전형절차</InfoTitle>
               <StepContainer>
-                <Step>
-                  <StepNumber>1단계</StepNumber>
-                  <p>서류전형</p>
-                </Step>
-                <Step>
-                  <StepNumber>2단계</StepNumber>
-                  <p>1차면면접차면접면면접면접접면접차면접면면접면접접면접차면접면면접면접접접</p>
-                </Step>
-                <Step>
-                  <StepNumber>3단계</StepNumber>
-                  <p>2차면접</p>
-                </Step>
-                <Step>
-                  <StepNumber>4단계</StepNumber>
-                  <p>2차면접</p>
-                </Step>
-                <Step>
-                  <StepNumber>5단계</StepNumber>
-                  <p>2차면접</p>
-                </Step>
-                <Step>
-                  <StepNumber>6단계</StepNumber>
-                  <p>면접차면접면면접면접접차면접</p>
-                </Step>
-                <Step>
-                  <StepNumber>7단계</StepNumber>
-                  <p>2차면접면접</p>
-                </Step>
-                <Step>
-                  <StepNumber>8단계</StepNumber>
-                  <p>2차면접</p>
-                </Step>
-                <Step>
-                  <StepNumber>9단계</StepNumber>
-                  <p>2차면접</p>
-                </Step>
-                <Step>
-                  <StepNumber>10단계</StepNumber>
-                  <p>2차면접</p>
-                </Step>
+                {jobPostingInfo.jobPostingStep.map((stepName, idx) => {
+                  return (
+                    <Step>
+                      <StepNumber>{idx + 1}단계</StepNumber>
+                      <p>{stepName}</p>
+                    </Step>
+                  );
+                })}
               </StepContainer>
             </LongInfo>
           </InfoContainer>
           <ContentsContianer>
             <h2>공고내용</h2>
-            <div>
-              설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명
-            </div>
-            <ContentImage src="" alt="채용공고 설명 이미지" />
+            <div>{jobPostingInfo.jobPostingContent}</div>
+            {jobPostingInfo.image.fileName && (
+              <ContentImage src={jobPostingInfo.image.filePath} alt="채용공고 설명 이미지" />
+            )}
           </ContentsContianer>
         </Container>
         <Container>
           <h2>회사정보</h2>
           <InfoContainer>
-            <CompanyName>(주)안드로메다</CompanyName>
+            <CompanyName>{companyInfo.companyInfoKey}</CompanyName>
             <Info>
               <InfoTitle>대표자</InfoTitle>
-              <InfoDesc>데애표</InfoDesc>
+              <InfoDesc>{companyInfo.boss}</InfoDesc>
             </Info>
             <Info>
               <InfoTitle>사원수</InfoTitle>
-              <InfoDesc>534명</InfoDesc>
+              <InfoDesc>{companyInfo.employees}명</InfoDesc>
             </Info>
             <Info>
               <InfoTitle>회사 홈페이지</InfoTitle>
-              <InfoDesc>http://www.naver.com/</InfoDesc>
+              <InfoDesc>{companyInfo.companyUrl}</InfoDesc>
             </Info>
             <Info>
               <InfoTitle>설립년도</InfoTitle>
-              <InfoDesc>1945년</InfoDesc>
+              <InfoDesc>{companyInfo.companyAge.getFullYear()}년</InfoDesc>
             </Info>
             <LongInfo>
               <InfoTitle>주소</InfoTitle>
-              <InfoDesc>부산광역시 강서구 녹산산단382로14번가길 10~29번지(송정동)</InfoDesc>
+              <InfoDesc>{companyInfo.address}</InfoDesc>
             </LongInfo>
           </InfoContainer>
         </Container>
-        <ApplyButton>지원하기</ApplyButton>
+        <ApplyButton onClick={Apply}>지원하기</ApplyButton>
       </Inner>
     </Wrapper>
   );

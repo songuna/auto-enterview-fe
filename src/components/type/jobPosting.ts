@@ -1,4 +1,5 @@
 export interface JobPosting {
+  companyKey: 1;
   title: string;
   jobCategory: string;
   career: number;
@@ -7,10 +8,10 @@ export interface JobPosting {
   workLocation: string;
   education: string;
   employmentType: string;
-  salary: string;
+  salary: number;
   workTime: string;
-  startDateTime: string;
-  endDateTime: string;
+  startDateTime: Date;
+  endDateTime: Date;
   jobPostingContent: string;
   image: {
     fileName: string;
@@ -18,3 +19,13 @@ export interface JobPosting {
     filePath: string;
   };
 }
+
+export interface JobPostingForCompany {
+  jobPostingkey: string;
+  title: string;
+  jobCategory: string;
+  startDateTime: Date;
+  endDateTime: Date;
+}
+
+export type JobPostingList = JobPostingForCompany[];
