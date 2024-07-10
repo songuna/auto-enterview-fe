@@ -23,6 +23,9 @@ interface Props {
  */
 
 const SelectInput = ({ placeholder, options, value, onChange }: Props) => {
+  console.log(options);
+  console.log(value);
+
   return (
     <Select
       options={options}
@@ -41,8 +44,8 @@ const SelectInput = ({ placeholder, options, value, onChange }: Props) => {
         }),
       }}
       placeholder={placeholder}
-      value={value || ""}
-      onChange={value => onChange(value || "")}
+      value={options?.filter(option => option.value === value)}
+      onChange={value => onChange(value)}
     />
   );
 };
