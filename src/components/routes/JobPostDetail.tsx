@@ -2,11 +2,15 @@ import styled from "styled-components";
 import { Container, Inner, Wrapper } from "../css/Common";
 import { CiEdit } from "react-icons/ci";
 import { IconButton } from "../css/ReactIconButton";
-import { getCompanyInfomation, getJobPosting, postJobPostingApply } from "../axios/http/jobPosting";
+import {
+  getCompanyInfomation,
+  getJobPosting,
+  postJobPostingApply,
+} from "../axios/http/jobPosting";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { JobPosting } from "../type/jobPosting";
-import { getDateFormat } from "../common/Format";
+import { getDateFormat } from "../utils/Format";
 import { companyInfo } from "../type/company";
 
 const JobPostDetail = () => {
@@ -17,7 +21,14 @@ const JobPostDetail = () => {
     title: "공고제목이요",
     jobCategory: "안드로이드",
     career: 3,
-    techStack: ["Kotlin", "Spring Boot", "Java", "Node.js", "Python", "Dijango"],
+    techStack: [
+      "Kotlin",
+      "Spring Boot",
+      "Java",
+      "Node.js",
+      "Python",
+      "Dijango",
+    ],
     jobPostingStep: ["서류전형", "1차면접", "2차면접"],
     workLocation: "부산광역시 강서구 녹산산단382로14번가길 10~29번지(송정동)",
     education: "4년제",
@@ -89,7 +100,9 @@ const JobPostDetail = () => {
             </Info>
             <Info>
               <InfoTitle>기술스택</InfoTitle>
-              <InfoDesc>{jobPostingInfo?.techStack.map(stack => `${stack}, `)}</InfoDesc>
+              <InfoDesc>
+                {jobPostingInfo?.techStack.map(stack => `${stack}, `)}
+              </InfoDesc>
             </Info>
             <Info>
               <InfoTitle>고용형태</InfoTitle>
@@ -140,7 +153,10 @@ const JobPostDetail = () => {
             <h2>공고내용</h2>
             <div>{jobPostingInfo.jobPostingContent}</div>
             {jobPostingInfo.image.fileName && (
-              <ContentImage src={jobPostingInfo.image.filePath} alt="채용공고 설명 이미지" />
+              <ContentImage
+                src={jobPostingInfo.image.filePath}
+                alt="채용공고 설명 이미지"
+              />
             )}
           </ContentsContianer>
         </Container>

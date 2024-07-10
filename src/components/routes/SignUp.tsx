@@ -24,7 +24,6 @@ const SignUp: React.FC = () => {
     userPhoneNumber: "",
   });
 
-
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
@@ -131,7 +130,8 @@ const SignUp: React.FC = () => {
 
   // 비밀번호 유효성 검사 로직 추가
   const validatePassword = (password: string) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
     return regex.test(password);
   };
 
@@ -140,7 +140,9 @@ const SignUp: React.FC = () => {
     if (validatePassword(value)) {
       setPasswordError("");
     } else {
-      setPasswordError("8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다");
+      setPasswordError(
+        "8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다",
+      );
     }
     setUserData({ ...userData, [e.target.name]: value });
   };
@@ -148,7 +150,10 @@ const SignUp: React.FC = () => {
   // 회원가입 JSX
   return (
     <Wrapper>
-      <Container id="container" className={isRightPanelActive ? "right-panel-active" : ""}>
+      <Container
+        id="container"
+        className={isRightPanelActive ? "right-panel-active" : ""}
+      >
         <FormContainer className="form-container company-sign-up">
           <Form onSubmit={handleSubmit}>
             <H1>회사 회원가입</H1>
@@ -203,7 +208,7 @@ const SignUp: React.FC = () => {
               value={userData.companyPhoneNumber}
               onChange={handleInputChange}
             />
-            <Button type="submit">회사 회원가입</Button>
+            <Button type="submit">회사 등록하기</Button>
           </Form>
         </FormContainer>
         <FormContainer className="form-container user-sign-up">
@@ -268,14 +273,22 @@ const SignUp: React.FC = () => {
             <OverlayPanel className="overlay-panel overlay-left">
               <H1>개인 회원가입</H1>
               <P>개인이라면 여기에서 회원가입해주세요.</P>
-              <Button className="ghost" id="user-signUp" onClick={handleUserSignUpClick}>
+              <Button
+                className="ghost"
+                id="user-signUp"
+                onClick={handleUserSignUpClick}
+              >
                 개인 가입하기
               </Button>
             </OverlayPanel>
             <OverlayPanel className="overlay-panel overlay-right">
               <H1>회사 회원가입</H1>
               <P>회사라면 여기에서 회원가입해주세요.</P>
-              <Button className="ghost" id="company-signUp" onClick={handleCompanySignUpClick}>
+              <Button
+                className="ghost"
+                id="company-signUp"
+                onClick={handleCompanySignUpClick}
+              >
                 회사 가입하기
               </Button>
             </OverlayPanel>

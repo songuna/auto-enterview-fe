@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { JobPosting } from "../type/jobPosting";
 import { postCompaniesJobPosting } from "../axios/http/jobPosting";
 import { useNavigate } from "react-router-dom";
-import { getTwoDigit } from "../common/Format";
+import { getTwoDigit } from "../utils/Format";
 import DatePickerDuration from "../input/DatePickerDuration";
 import SelectInput from "../input/SelectInput";
 import { InputDefault } from "../css/input";
