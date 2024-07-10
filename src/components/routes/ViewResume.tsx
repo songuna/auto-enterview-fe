@@ -27,7 +27,11 @@ const ViewResume: React.FC  = () => {
   };
 
   // 수정버튼 구현
-
+  const handleEdit = () => {
+    if (window.confirm('이력서를 수정하시겠습니까?')) {
+      navigate('/create-resume');
+    }
+  };
 
   return (
     <>
@@ -37,7 +41,7 @@ const ViewResume: React.FC  = () => {
       <Wrapper className="inner-1200">
           <Title>이력서
             <Icon>
-            <Edit onClick={() => navigate('/create-resume')}>
+            <Edit onClick={handleEdit}>
               <MdOutlineEdit size={20}></MdOutlineEdit>
             </Edit>
             
