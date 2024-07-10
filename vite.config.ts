@@ -3,13 +3,13 @@ import react from "@vitejs/plugin-react-swc";
 
 export default defineConfig({
   plugins: [react()],
-  server: {
-    proxy: {
-      "/": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
-        rewrite: path => path.replace(/^\//, ""),
-      },
-    },
-  },
+  //server: {
+    //proxy: {
+      //"/": {
+        //target: "http://localhost:8080",
+        //changeOrigin: true,
+        //rewrite: path => path.replace(/^\//, ""),
+      //},
+    //},
+  //},
 });

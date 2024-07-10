@@ -1,8 +1,12 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
+//export const axiosInstance = axios.create({
+  //baseURL: "/",
+  //timeout: 5000,
+//});
 export const axiosInstance = axios.create({
-  baseURL: "/",
-  timeout: 5000,
+  baseURL: "http://13.125.179.134:8080",
+  //timeout: 5000,
 });
 
 export interface HttpClient extends AxiosInstance {
