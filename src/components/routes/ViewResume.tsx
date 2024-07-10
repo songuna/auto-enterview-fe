@@ -2,8 +2,30 @@ import { Helmet } from "react-helmet-async";
 import styled from "styled-components";
 import { MdOutlineEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const ViewResume = () => {
+const ViewResume: React.FC  = () => {
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const navigate = useNavigate();
+
+
+  // 삭제버튼 구현
+  const handleDelete = () => {
+    if (deleteConfirm) {
+      // 삭제 로직 수행 예시
+      alert('이력서가 삭제되었습니다!');
+      setDeleteConfirm(false);
+      navigate('/user-mypage');
+    } else {
+      setDeleteConfirm(true);
+      alert('정말 삭제하시겠습니까?');
+    }
+  };
+
+  // 수정버튼 구현
+
+
   return (
     <>
       <Helmet>
@@ -12,10 +34,11 @@ const ViewResume = () => {
       <Wrapper className="inner-1200">
           <Title>이력서
             <Icon>
-            <Edit>
+            <Edit onClick={() => navigate('/create-resume')}>
               <MdOutlineEdit size={20}></MdOutlineEdit>
             </Edit>
-            <Delet>
+            
+            <Delet onClick={handleDelete}>
               <RiDeleteBin6Line size={20}></RiDeleteBin6Line>
             </Delet>
             </Icon>
