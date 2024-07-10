@@ -1,17 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import styled, { keyframes } from "styled-components";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { postSignup } from "../axios/http/user";
-
-const signup = async (userData: any) => {
-  try {
-    const userData = { formData:name, email, password, phone}
-    const response = await postSignup(userData)
-  } catch (error) {
-    throw new Error(error.response?.data?.message || '회원가입에 실패했습니다.');
-  }
-};
-
 
 // 회원가입
 const SignUp: React.FC = () => {
@@ -30,7 +19,6 @@ const SignUp: React.FC = () => {
     userPassword: "",
     userPhoneNumber: "",
   });
-
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -79,56 +67,34 @@ const SignUp: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
-  
-  const fields = isRightPanelActive
-    ? [
-        "companyEmail",
-        "companyEmailNumber",
-        "companyPassword",
-        "companyName",
-        "companyPhoneNumber",
-      ]
-    : ["userName", "userEmail", "userEmailNumber", "userPassword", "userPhoneNumber"];
-  
-  for (const field of fields) {
-    if (!formData[field]) {
-      alert("정보를 입력해주세요");
-      return;
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    const fields = isRightPanelActive
+      ? [
+          "companyEmail",
+          "companyEmailNumber",
+          "companyPassword",
+          "companyName",
+          "companyPhoneNumber",
+        ]
+      : [
+          "userName",
+          "userEmail",
+          "userEmailNumber",
+          "userPassword",
+          "userPhoneNumber",
+        ];
+
+    for (const field of fields) {
+      if (!formData[field]) {
+        alert("정보를 입력해주세요");
+        return;
+      }
     }
-  }
-  
-  try {
-    if (isRightPanelActive) {
-      // 회사 회원가입 처리
-      const companyFormData = {
-        email: formData.companyEmail,
-        emailNumber: formData.companyEmailNumber,
-        password: formData.companyPassword,
-        name: formData.companyName,
-        phoneNumber: formData.companyPhoneNumber,
-      };
-      await signup(companyFormData);
-    } else {
-      // 개인 회원가입 처리
-      const userFormData = {
-        name: formData.userName,
-        email: formData.userEmail,
-        emailNumber: formData.userEmailNumber,
-        password: formData.userPassword,
-        phoneNumber: formData.userPhoneNumber,
-      };
-      await signup(userFormData);
-    }
-    
-    // 회원가입 성공 처리 로직 추가
-    alert("회원가입이 완료되었습니다.");
+
+    // 입력된 정보 처리 로직
     console.log("Form submitted", formData);
-  } catch (error) {
-    alert(error.message);
-  }
-};
+  };
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -136,7 +102,8 @@ const SignUp: React.FC = () => {
 
   // 비밀번호 유효성 검사 로직 추가
   const validatePassword = (password: string) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
     return regex.test(password);
   };
 
@@ -145,7 +112,9 @@ const SignUp: React.FC = () => {
     if (validatePassword(value)) {
       setPasswordError("");
     } else {
-      setPasswordError("8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다");
+      setPasswordError(
+        "8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다",
+      );
     }
     setFormData({ ...formData, [e.target.name]: value });
   };
@@ -153,7 +122,10 @@ const SignUp: React.FC = () => {
   // 회원가입 JSX
   return (
     <Wrapper>
-      <Container id="container" className={isRightPanelActive ? "right-panel-active" : ""}>
+      <Container
+        id="container"
+        className={isRightPanelActive ? "right-panel-active" : ""}
+      >
         <FormContainer className="form-container company-sign-up">
           <Form onSubmit={handleSubmit}>
             <H1>회사 회원가입</H1>
@@ -169,7 +141,9 @@ const SignUp: React.FC = () => {
               <Button
                 className="emailCheckBtn"
                 type="button"
-                onClick={() => handleEmailVerification(formData.companyEmail || "")}
+                onClick={() =>
+                  handleEmailVerification(formData.companyEmail || "")
+                }
               >
                 인증
               </Button>
@@ -208,7 +182,7 @@ const SignUp: React.FC = () => {
               value={formData.companyPhoneNumber}
               onChange={handleInputChange}
             />
-            <Button type="submit">회사 회원가입</Button>
+            <Button type="submit">회사 등록하기</Button>
           </Form>
         </FormContainer>
         <FormContainer className="form-container user-sign-up">
@@ -233,7 +207,9 @@ const SignUp: React.FC = () => {
               <Button
                 className="emailCheckBtn"
                 type="button"
-                onClick={() => handleEmailVerification(formData.userEmail || "")}
+                onClick={() =>
+                  handleEmailVerification(formData.userEmail || "")
+                }
               >
                 인증
               </Button>
@@ -273,14 +249,22 @@ const SignUp: React.FC = () => {
             <OverlayPanel className="overlay-panel overlay-left">
               <H1>개인 회원가입</H1>
               <P>개인이라면 여기에서 회원가입해주세요.</P>
-              <Button className="ghost" id="user-signUp" onClick={handleUserSignUpClick}>
+              <Button
+                className="ghost"
+                id="user-signUp"
+                onClick={handleUserSignUpClick}
+              >
                 개인 가입하기
               </Button>
             </OverlayPanel>
             <OverlayPanel className="overlay-panel overlay-right">
               <H1>회사 회원가입</H1>
               <P>회사라면 여기에서 회원가입해주세요.</P>
-              <Button className="ghost" id="company-signUp" onClick={handleCompanySignUpClick}>
+              <Button
+                className="ghost"
+                id="company-signUp"
+                onClick={handleCompanySignUpClick}
+              >
                 회사 가입하기
               </Button>
             </OverlayPanel>
