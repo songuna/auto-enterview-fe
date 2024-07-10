@@ -1,18 +1,17 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import styled, { keyframes } from "styled-components";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import axios from 'axios';
+import { postSignup } from "../axios/http/user";
 
-const API_URL = 'http://api.example.com';
-
-const signup = async (formData: any) => {
+const signup = async (userData: any) => {
   try {
-    const response = await axios.post(`${API_URL}/signup`, formData);
-    return response.data;
+    const userData = { formData:name, email, password, phone}
+    const response = await postSignup(userData)
   } catch (error) {
     throw new Error(error.response?.data?.message || '회원가입에 실패했습니다.');
   }
 };
+
 
 // 회원가입
 const SignUp: React.FC = () => {
@@ -31,6 +30,7 @@ const SignUp: React.FC = () => {
     userPassword: "",
     userPhoneNumber: "",
   });
+
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -208,7 +208,7 @@ const SignUp: React.FC = () => {
               value={formData.companyPhoneNumber}
               onChange={handleInputChange}
             />
-            <Button type="submit">회사 등록하기</Button>
+            <Button type="submit">회사 회원가입</Button>
           </Form>
         </FormContainer>
         <FormContainer className="form-container user-sign-up">
