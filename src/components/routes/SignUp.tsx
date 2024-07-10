@@ -1,7 +1,7 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import styled, { keyframes } from "styled-components";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { postSignup } from "../axios/http/user";
+import { postSignup, postCompanySignup } from "../axios/http/user";
 import { postSendVerificationCode } from '../axios/http/user';
 import { http } from "../axios/instances";
 
@@ -40,8 +40,8 @@ const SignUp: React.FC = () => {
   
   // 이메일 중복
   const checkEmailDuplication = async (email: string) => {
-    return await http.post<{ isDuplicated: boolean }>('/common/duplicate-email', { email });
-};
+    return await http.post<{ isDuplicated: boolean }>("/common/duplicate-email", { email });
+  };
 
   // 이메일 인증 코드 전송
  const handleEmailVerification = async (email: string) => {
@@ -51,7 +51,7 @@ const SignUp: React.FC = () => {
   }
   try {
     const response = await checkEmailDuplication(email);
-    if (response) {
+    if (response && response.isDuplicated) {
       alert("이메일이 중복되었습니다");
     } else {
       try {
@@ -97,21 +97,22 @@ const SignUp: React.FC = () => {
       // 회사 회원가입 처리
       const companyUserData = {
         email: userData.companyEmail,
-        emailNumber: userData.companyEmailNumber,
+        verificationCode: userData.companyEmailNumber,
         password: userData.companyPassword,
-        name: userData.companyName,
-        phoneNumber: userData.companyPhoneNumber,
+        companyName: userData.companyName,
+        companyNumber: userData.companyPhoneNumber,
       };
-      await postSignup(companyUserData);
+      await postCompanySignup(companyUserData);
+
     } else {
       // 개인 회원가입 처리
-      const userFormData = {
-        name: userData.userName,
-        email: userData.userEmail,
-        emailNumber: userData.userEmailNumber,
-        password: userData.userPassword,
-        phoneNumber: userData.userPhoneNumber,
-      };
+       const userFormData = {
+          name: userData.userName,
+          email: userData.userEmail,
+          verificationCode: userData.userEmailNumber,
+          password: userData.userPassword,
+          phoneNumber: userData.userPhoneNumber,
+        };
       await postSignup(userFormData);
     }
     
