@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
-export const Form = styled.div`
+export const Form = styled.form`
+  width: 100%;
   height: 100%;
 
   button {
@@ -13,10 +14,29 @@ export const Form = styled.div`
 `;
 
 export const Settings = styled.div`
-  height: calc(100% - 66px);
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  height: calc(100% - 80px);
+`;
+
+export const Field = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 24px 0 32px;
+  background-color: var(--bg-light-blue);
+  border-radius: var(--box-radius);
+  text-align: center;
 `;
 
 export const Label = styled.label``;
+
+export const Text = styled.p`
+  margin-bottom: 16px;
+  font-weight: 500;
+`;
 
 export const Buttons = styled.div`
   display: flex;

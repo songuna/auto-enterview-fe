@@ -1,14 +1,21 @@
 import styled from "styled-components";
 import { DataPickerInput } from "../css/input";
 import DatePicker from "react-datepicker";
+import { Placement } from "./DatePickerOne";
 
 interface Props {
   value: Date;
   onChange: (date: Date) => void;
   disabled?: boolean;
+  popperPlacement?: Placement;
 }
 
-const TimePicker = ({ value, onChange, disabled }: Props) => {
+const TimePicker = ({
+  value,
+  onChange,
+  disabled,
+  popperPlacement = "bottom",
+}: Props) => {
   return (
     <TimePickerContainer>
       <DatePicker
@@ -22,6 +29,7 @@ const TimePicker = ({ value, onChange, disabled }: Props) => {
         timeCaption=""
         customInput={<DataPickerInput />}
         disabled={disabled}
+        popperPlacement={popperPlacement}
       />
     </TimePickerContainer>
   );
@@ -30,13 +38,13 @@ const TimePicker = ({ value, onChange, disabled }: Props) => {
 const TimePickerContainer = styled.div`
   position: relative;
   width: 100px;
-  z-index: 2;
+  z-index: 10;
 
   .react-datepicker-popper {
+    width: 100%;
     background-color: #ffffff;
     border: 1px solid #b7b7b7;
     border-radius: var(--button-radius);
-    transform: translate(0px, -250px) !important;
   }
 
   .react-datepicker__triangle {
@@ -50,7 +58,7 @@ const TimePickerContainer = styled.div`
 
   .react-datepicker__time-list-item {
     list-style: none;
-    width: 100px;
+    width: 100%;
     padding: 8px;
     text-align: center;
     cursor: pointer;

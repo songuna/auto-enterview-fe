@@ -55,7 +55,11 @@ const Modal = ({ type, id, step, onClose }: ModalProps) => {
             <SubTitle>예약 메일 발송하기</SubTitle>
             <Field>
               <Form>
-                <TextArea name="email" id="email" onChange={e => handleOnChange(e)}>
+                <TextArea
+                  name="email"
+                  id="email"
+                  onChange={e => handleOnChange(e)}
+                >
                   {emailText}
                 </TextArea>
                 <Label htmlFor="date">날짜</Label>
@@ -181,66 +185,5 @@ const Field = styled.div`
 `;
 
 const TextArea = styled.textarea``;
-
-const TimePickerContainer = styled.div`
-  position: relative;
-  z-index: 2;
-
-  .react-datepicker-popper {
-    background-color: #ffffff;
-    border: 1px solid #b7b7b7;
-    border-radius: var(--button-radius);
-    transform: translate(0px, -250px) !important;
-  }
-
-  .react-datepicker__triangle {
-    display: none;
-  }
-
-  .react-datepicker__time-list {
-    height: 250px;
-    overflow-y: scroll;
-  }
-
-  .react-datepicker__time-list-item {
-    list-style: none;
-    width: 100px;
-    padding: 8px;
-    text-align: center;
-    cursor: pointer;
-
-    &:hover {
-      color: #ffffff;
-      background-color: var(--primary-color);
-    }
-
-    &[aria-selected="true"] {
-      color: #ffffff;
-      background-color: var(--primary-color);
-    }
-  }
-
-  .react-datepicker__aria-live {
-    display: none;
-  }
-`;
-
-const TimeInput = styled.input`
-  display: inline-block;
-  width: 100px;
-  text-align: center;
-  padding: 16px;
-  border: 1px solid #b7b7b7;
-  border-radius: 8px;
-  cursor: pointer;
-  word-break: keep-all;
-  font-size: 1rem;
-
-  &:disabled {
-    border: 1px solid var(--bg-light-gray);
-    color: var(--bg-light-gray);
-    background-color: #f8f8f8;
-  }
-`;
 
 export default Modal;
