@@ -13,13 +13,16 @@ const ViewResume: React.FC  = () => {
   // 삭제버튼 구현
   const handleDelete = () => {
     if (deleteConfirm) {
-      // 삭제 로직 수행 예시
-      alert('이력서가 삭제되었습니다!');
-      setDeleteConfirm(false);
-      navigate('/user-mypage');
+      // 이미 확인된 상태에서 더블 클릭 시
+      alert('이력서가 이미 삭제되었습니다!');
+      return;
     } else {
-      setDeleteConfirm(true);
-      alert('정말 삭제하시겠습니까?');
+      // 처음 클릭 시 확인 알림
+      if (window.confirm('정말 삭제하시겠습니까?')) {
+        alert('이력서가 삭제되었습니다!');
+        setDeleteConfirm(true);
+        navigate('/user-mypage');
+      }
     }
   };
 
