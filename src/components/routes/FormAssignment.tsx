@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { Buttons, CreateButton, Form, Label, NextButton, Settings } from "../css/ScheduleFormStyle";
 
 const FormAssignment = () => {
