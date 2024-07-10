@@ -5,8 +5,9 @@ import React, { useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm, Controller } from "react-hook-form";
 import { JobPosting } from "../type/jobPosting";
-import { postCompaniesJobPosting } from "../axios/http";
+import { postCompaniesJobPosting } from "../axios/http/jobPosting";
 import { useNavigate } from "react-router-dom";
+import { getTwoDigit } from "../common/Format";
 
 const CreateJobPost = () => {
   //enum
@@ -108,10 +109,6 @@ const CreateJobPost = () => {
   const uploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.split("\\");
     setFileName(value[value.length - 1]);
-  };
-
-  const getTwoDigit = (number: number) => {
-    return number < 10 ? `0${number}` : `${number}`;
   };
 
   const getStringWorkingHour = (startTime: Date, endTime: Date) => {

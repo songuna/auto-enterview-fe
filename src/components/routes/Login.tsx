@@ -1,7 +1,8 @@
-import { useState, FormEvent, ChangeEvent } from 'react';
-import styled, { keyframes } from 'styled-components';
+import { useState, FormEvent, ChangeEvent } from "react";
+import styled, { keyframes } from "styled-components";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { Link } from 'react-router-dom'; 
+import { Link } from "react-router-dom";
+import { postSignin } from "../axios/http/user";
 //import axios from 'axios';
 
 const Login = () => {
@@ -10,11 +11,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-const togglePasswordVisibility = () => {
+  const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       alert("정보를 입력하지 않았습니다");
@@ -30,15 +31,12 @@ const handleSubmit = (e: FormEvent) => {
 
     try {
       // 서버 API 호출
-      //const response = await axios.post('https://api.example.com/login', {
-        //email,
-        //password
-      //});
-      // 서버에서 응답을 받은 후 처리
-      //console.log("서버 응답:", response.data);
+      const userData = { email, password };
+      const response = await postSignin(userData);
+      // console.log("서버 응답:", response.data);
+
       // 로그인 완료 알림창 띄우기
       alert("로그인 완료되었습니다");
-
     } catch (error) {
       console.error("서버 요청 실패:", error);
       alert("로그인에 실패했습니다. 다시 시도해주세요.");
@@ -47,38 +45,47 @@ const handleSubmit = (e: FormEvent) => {
     console.log("로그인 시도:", { email, password });
   };
 
-// 비밀번호 유효성 검사 로직 추가
+  // 비밀번호 유효성 검사 로직 추가
   const validatePassword = (password: string) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
     return regex.test(password);
   };
 
-
-// 로그인 JSX
+  // 로그인 JSX
   return (
-  <Wrapper>
-    <Container id="container">
-      <FormContainer className="form-container">
-        <Form onSubmit={handleSubmit}>
-          <H1>로그인</H1>
-          <Span>이메일과 비밀번호를 입력해주세요.</Span>
-          <Input type="email" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <PassWordCheck>
-          <Input type={isPasswordVisible ? "text" : "password"} placeholder="비밀번호" onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}/>
-          <Icon onClick={togglePasswordVisibility}>{isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}</Icon>
-          </PassWordCheck>
-          <ErrorSpan>{passwordError}</ErrorSpan>
-          <Button type="submit">로그인</Button>
-          <FindLink to="/find-email">
-          <FindEmailButton>이메일 찾기</FindEmailButton>
-          </FindLink>
-        </Form>
-      </FormContainer>
+    <Wrapper>
+      <Container id="container">
+        <FormContainer className="form-container">
+          <Form onSubmit={handleSubmit}>
+            <H1>로그인</H1>
+            <Span>이메일과 비밀번호를 입력해주세요.</Span>
+            <Input
+              type="email"
+              placeholder="이메일"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+            <PassWordCheck>
+              <Input
+                type={isPasswordVisible ? "text" : "password"}
+                placeholder="비밀번호"
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              />
+              <Icon onClick={togglePasswordVisibility}>
+                {isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
+              </Icon>
+            </PassWordCheck>
+            <ErrorSpan>{passwordError}</ErrorSpan>
+            <Button type="submit">로그인</Button>
+            <FindLink to="/find-email">
+              <FindEmailButton>이메일 찾기</FindEmailButton>
+            </FindLink>
+          </Form>
+        </FormContainer>
       </Container>
     </Wrapper>
   );
 };
-
 
 // 로그인 style
 const show = keyframes`
@@ -98,12 +105,14 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 80px;
-`
+`;
 
 const Container = styled.div`
   background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.25),
+    0 10px 10px rgba(0, 0, 0, 0.22);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -112,14 +121,14 @@ const Container = styled.div`
   width: 500px;
   max-width: 100%;
   min-height: 480px;
-`
+`;
 
 const FormContainer = styled.div`
   position: absolute;
   top: 0;
   height: 100%;
   transition: all 0.6s ease-in-out;
-`
+`;
 
 const Form = styled.form`
   background-color: #ffffff;
@@ -130,18 +139,18 @@ const Form = styled.form`
   padding: 0 50px;
   height: 100%;
   text-align: center;
-`
+`;
 
 const H1 = styled.h1`
   font-weight: bold;
   margin-bottom: 12px;
-`
+`;
 
 const Span = styled.span`
   font-size: 12px;
   margin-top: 5px;
   margin-bottom: 5px;
-`
+`;
 
 const Input = styled.input`
   background-color: #eee;
@@ -149,7 +158,7 @@ const Input = styled.input`
   padding: 15px 40px;
   margin: 10px 0;
   width: 100%;
-`
+`;
 
 const Button = styled.button`
   border-radius: 20px;
@@ -164,7 +173,7 @@ const Button = styled.button`
   text-transform: uppercase;
   transition: transform 80ms ease-in;
   width: 100%;
-  `
+`;
 
 const FindEmailButton = styled(Button)`
   background-color: #f1f1f1;
@@ -173,13 +182,13 @@ const FindEmailButton = styled(Button)`
   border: 1px solid #000694;
   border-radius: 20px;
   width: 100%;
-`
+`;
 
 const PassWordCheck = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
-`
+`;
 
 const Icon = styled.div`
   cursor: pointer;
@@ -188,15 +197,14 @@ const Icon = styled.div`
   align-items: center;
 `;
 
-const FindLink= styled(Link)`
+const FindLink = styled(Link)`
   width: 100%;
-`
+`;
 
 const ErrorSpan = styled.span`
   color: red;
   font-size: 12px;
   margin-top: 5px;
 `;
-
 
 export default Login;

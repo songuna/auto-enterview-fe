@@ -7,6 +7,22 @@ import { IoMdClose } from "react-icons/io";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Container, Inner, SubTitle, UserName, Wrapper } from "../css/Common";
+import { IconButton } from "../css/ReactIconButton";
+import {
+  Dday,
+  Info,
+  InfoDesc,
+  InfoTitle,
+  Label,
+  LabelWrap,
+  ListCareer,
+  ListStep,
+  ListTitle,
+  RecruitList,
+  RecruitLists,
+  Top,
+  UserInfo,
+} from "../css/MypageStyle";
 
 const infoTitles = ["대표자", "설립년도", "주소", "사원수", "회사 홈페이지 URL"];
 
@@ -99,17 +115,17 @@ const CompanyMypage = () => {
             <Buttons>
               {editMode ? (
                 <>
-                  <Button className="cancel" onClick={cancelEdit}>
+                  <IconButton className="cancel" onClick={cancelEdit}>
                     <IoMdClose />
-                  </Button>
-                  <Button className="save" onClick={saveInfo}>
+                  </IconButton>
+                  <IconButton className="save" onClick={saveInfo}>
                     <GiSaveArrow />
-                  </Button>
+                  </IconButton>
                 </>
               ) : (
-                <Button className="edit" onClick={editInfo}>
+                <IconButton className="edit" onClick={editInfo}>
                   <CiEdit />
-                </Button>
+                </IconButton>
               )}
             </Buttons>
           </Top>
@@ -196,56 +212,9 @@ const CompanyMypage = () => {
   );
 };
 
-const Top = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`;
-
 const Buttons = styled.div`
   display: flex;
   gap: 0.5rem;
-`;
-
-const Button = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: var(--button-radius);
-  font-size: 1.5rem;
-
-  &.cancel {
-    background-color: var(--bg-light-gray);
-    border: 1px solid var(--border-gray-100);
-  }
-  &.save {
-    background-color: #00cc21;
-  }
-  &.edit {
-    background-color: var(--primary-color);
-    color: #fff;
-  }
-`;
-
-const UserInfo = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(48%, 1fr));
-  row-gap: 40px;
-  column-gap: 4%;
-  padding: 40px;
-  background-color: var(--bg-light-blue);
-`;
-
-const Info = styled.div`
-  display: flex;
-  gap: 1rem;
-`;
-
-const InfoTitle = styled.p`
-  width: 150px;
-  font-weight: 700;
 `;
 
 const InfoInput = styled.input`
@@ -268,10 +237,6 @@ const InfoInput = styled.input`
   }
 `;
 
-const InfoDesc = styled.p`
-  width: calc(100% - 150px);
-`;
-
 const CreatePost = styled(Link)`
   display: flex;
   justify-content: center;
@@ -282,52 +247,6 @@ const CreatePost = styled(Link)`
   background-color: var(--primary-color);
   font-size: 1.5rem;
   color: #fff;
-`;
-
-const RecruitLists = styled.ul`
-  display: flex;
-  flex-direction: column;
-  padding: 1rem 2rem;
-  border: 1px solid var(--border-gray-100);
-  border-radius: var(--box-radius);
-`;
-
-const RecruitList = styled.li`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 0;
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--border-gray-100);
-  }
-`;
-
-const LabelWrap = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`;
-
-const Label = styled.span`
-  display: inline-block;
-  width: 0.5rem;
-  height: 2rem;
-  background-color: #00cc21;
-`;
-
-const Dday = styled.p``;
-
-const ListTitle = styled.h4`
-  width: 450px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const ListCareer = styled.p``;
-
-const ListStep = styled.p`
-  font-weight: 700;
 `;
 
 export default CompanyMypage;
