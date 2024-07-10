@@ -150,7 +150,6 @@ const CreateResume = () => {
       </Helmet>
       <Wrapper className="inner-1200">
         <InputContainer>
-        
           <Title>이력서 작성</Title>
           <Input type ="text" placeholder="한 줄 소개를 작성하세요."></Input>
           <AllContainer>
