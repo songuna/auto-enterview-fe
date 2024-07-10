@@ -251,10 +251,12 @@ const Icon = styled.div`
 
 const Edit = styled.div`
   color: #000694;
+  cursor: pointer;
 `
 
 const Delet = styled.div`
   color: #000694;
+  cursor: pointer;
 `
 
 export default ViewResume;
