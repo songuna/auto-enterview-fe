@@ -10,12 +10,7 @@ interface Props {
   popperPlacement?: Placement;
 }
 
-const TimePicker = ({
-  value,
-  onChange,
-  disabled,
-  popperPlacement = "bottom",
-}: Props) => {
+const TimePicker = ({ value, onChange, disabled, popperPlacement = "bottom" }: Props) => {
   return (
     <TimePickerContainer>
       <DatePicker
@@ -38,9 +33,9 @@ const TimePicker = ({
 const TimePickerContainer = styled.div`
   position: relative;
   width: 100px;
-  z-index: 10;
 
   .react-datepicker-popper {
+    z-index: 100;
     width: 100%;
     background-color: #ffffff;
     border: 1px solid #b7b7b7;
