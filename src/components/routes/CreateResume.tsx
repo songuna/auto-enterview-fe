@@ -3,28 +3,30 @@ import styled from "styled-components";
 import Select from "react-select";
 import { useForm, Controller } from "react-hook-form";
 import { PiPlusThin, PiMinusThin } from "react-icons/pi";
-//import DatePicker from "react-datepicker";
-import { useState} from 'react';
-import { Link } from 'react-router-dom'; 
+import DatePickerDuration from "../input/DatePickerDuration";
+import DatePickerOne from "../input/DatePickerOne";
+import SelectInput from "../input/SelectInput";
+import { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
+
 
  interface Career {
   company: string;
   role: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date | null;
+  endDate: Date | null;
   }
 
   interface Experience {
   name: string;
-  start: string;
-  end: string;
+  start: Date | null;
+  end: Date | null;
 }
 
 interface Qualification {
   name: string;
-  date: string;
+  date: Date | null;
 }
-
 
 const CreateResume = () => {
   const optionJob = [
@@ -75,34 +77,73 @@ const CreateResume = () => {
     "Xcode",
   ];
 
+
   const {
     control,
+    handleSubmit,
     //watch,
     formState: { errors },
   } = useForm();
 
+
+  // 이미지 업로드
+  const [imgURL, setImgURL] = useState('');
+  const inputRef = useRef(null);
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const imageURL = URL.createObjectURL(file);
+      setImgURL(imageURL);
+    }
+  };
+  const handleClickImage = () => {
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
+  };
+  
   //성별
   const [gender, setGender] = useState<string>(''); // 성별 상태 추가
-
   const handleGenderSelect = (selectedGender: string) => {
     setGender(selectedGender); // 성별 선택 시 상태 업데이트
   };
 
   //파일업로드
   const [fileName, setFileName] = useState("");
-  const uploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+  const uploadFile = (event) => {
     if (event.target.files && event.target.files[0]) {
       setFileName(event.target.files[0].name);
     }
   };
+  // 파일 삭제
+  const handleFileRemove = () => {
+    setFileName(""); // 파일명 초기화
+    if (inputRef.current) {
+      inputRef.current.value = ""; // input 요소의 값 초기화
+    }
+  };
+
+  // 희망 직무 상태 추가
+  const [jobCategory, setJobCategory] = useState<string | null>(null);
+  const handleJobChange = (optionJob: any) => {
+    setJobCategory(optionJob?.value || null);
+  };
+  
+  // 최종 경력 상태 추가
+  const [education, setEducation] = useState<string | null>(null);
+  const handleEducationChange = (optionEducation: any) => {
+    setEducation(optionEducation?.value || null);
+  }; 
+
 
   // 경력사항 추가 기능
   const [careerList, setCareerList] = useState<Career[]>([
-    { company: "", role: "", startDate: "", endDate: "" }
+    { company: "", role: "", startDate: new Date(), endDate: new Date() }
   ]);
 
   const addCareer = () => {
-    const newCareer: Career = { company: "", role: "", startDate: "", endDate: "" };
+    const newCareer: Career = { company: "", role: "", startDate: new Date(), endDate: new Date() };
     setCareerList([...careerList, newCareer]);
   };
 
@@ -113,11 +154,11 @@ const CreateResume = () => {
 
   // 경험/활동/교육 추가 기능
  const [experiences, setExperiences] = useState<Experience[]>([
-    { name: "", start: "", end: "" }
+    { name: "", start: new Date(), end: new Date() }
   ]);
 
   const addExperience = () => {
-    const newExperience: Experience = { name: "", start: "", end: "" };
+    const newExperience: Experience = { name: "", start: new Date(), end: new Date() };
     setExperiences([...experiences, newExperience]);
   };
 
@@ -128,11 +169,11 @@ const CreateResume = () => {
 
   // 자격/어학/수상 추가 기능
    const [qualifications, setQualifications] = useState<Qualification[]>([
-    { name: "", date: "" }
+    { name: "", date: new Date() }
   ]);
 
   const addQualification = () => {
-    const newQualification: Qualification = { name: "", date: "" };
+    const newQualification: Qualification = { name: "", date: new Date() };
     setQualifications([...qualifications, newQualification]);
   };
 
@@ -140,6 +181,8 @@ const CreateResume = () => {
     const updatedList = qualifications.filter((_, i) => i !== index);
     setQualifications(updatedList);
   };
+
+
 
 
 
@@ -154,10 +197,17 @@ const CreateResume = () => {
           <Input type ="text" placeholder="한 줄 소개를 작성하세요."></Input>
           <AllContainer>
           <Image>
-            <div>
-              <LabelName >
-              <ImgInput type="file"/>
-              </LabelName>
+            <div onClick={handleClickImage}>
+              {imgURL ? (
+               <img src={imgURL} alt="Selected" style={{ width: '200px', height: '250px' }} />
+              ) : (
+                <LabelName>
+                  <ImgInput type="file" onChange={handleFileChange} ref={inputRef} />
+                </LabelName>
+              )}
+              {imgURL && (
+                <ImgInput type="file" onChange={handleFileChange} ref={inputRef} style={{ display: 'none' }} />
+              )}
             </div>
           </Image>
           <FlexContainer>
@@ -191,35 +241,18 @@ const CreateResume = () => {
 
         <InputContainer>
           <InputTitle>희망 직무</InputTitle>
-            <Controller
-              control={control}
-              name="jobCategory"
-              rules={{ required: "희망하는 직무를 선택해주세요." }}
-              render={({ field: { onChange, value, ref } }) => (
-                <Select
-                  options={optionJob}
-                  styles={{
-                    control: (baseStyles, state) => ({
-                      ...baseStyles,
-                      borderColor: state.isFocused ? "#000694" : "#B7B7B7",
-                      borderRadius: "8px",
-                      padding: "6px 5px",
-                    }),
-                    option: (baseStyles, state) => ({
-                      ...baseStyles,
-                      backgroundColor: state.isFocused ? "#000694" : "",
-                      color: state.isFocused ? "#ffffff" : "#000000",
-                      padding: "8px 13px",
-                    }),
-                  }}
-                  placeholder="희망하는 직무를 선택하세요"
-                  ref={ref}
-                  value={optionJob.find(option => option.value === value)}
-                  onChange={option => onChange(option?.value)}
-                />
-              )}
+            <SelectInput
+              placeholder="희망하는 직무를 선택하세요"
+              options={[
+                { value: "서버/백엔드 개발", label: "서버/백엔드 개발" },
+                { value: "프론트엔드 개발", label: "프론트엔드 개발" },
+                { value: "웹 풀스택 개발", label: "웹 풀스택 개발" },
+                { value: "안드로이드 개발", label: "안드로이드 개발" },
+                { value: "iOS 개발", label: "iOS 개발" },
+              ]}
+              value={jobCategory}
+              onChange={handleJobChange}
             />
-            <ErrorMessage>{errors.jobCategory && String(errors.jobCategory?.message)}</ErrorMessage>
         </InputContainer>
 
         <InputContainer>
@@ -262,35 +295,15 @@ const CreateResume = () => {
           </InputContainer>
           <InputContainer>
             <InputTitle>최종학력</InputTitle>
-            <Controller
-              control={control}
-              name="education"
-              rules={{ required: "최종학력을 선택해주세요." }}
-              render={({ field: { onChange, value, ref } }) => (
-                <Select
-                  options={optionEducation}
-                  styles={{
-                    control: (baseStyles, state) => ({
-                      ...baseStyles,
-                      borderColor: state.isFocused ? "#5690FB" : "#B7B7B7",
-                      borderRadius: "8px",
-                      padding: "6px 5px",
-                    }),
-                    option: (baseStyles, state) => ({
-                      ...baseStyles,
-                      backgroundColor: state.isFocused ? "#5690FB" : "",
-                      color: state.isFocused ? "#ffffff" : "#000000",
-                      padding: "8px 13px",
-                    }),
-                  }}
-                  placeholder="최종 학력을 선택하세요"
-                  ref={ref}
-                  value={optionEducation.find(option => option.value === value)}
-                  onChange={option => onChange(option?.value)}
-                />
-              )}
+            <SelectInput
+              options={optionEducation}
+              placeholder="최종 학력을 선택하세요"
+              value={education}
+              onChange={handleEducationChange}
             />
             <ErrorMessage>{errors.education && String(errors.education?.message)}</ErrorMessage>
+            <InputTitle>학교명</InputTitle>
+            <Input1 type="text" placeholder="학교명" ></Input1 >
           </InputContainer>
           
           <Label2>경력</Label2>
@@ -306,16 +319,21 @@ const CreateResume = () => {
             updatedList[index].role = e.target.value;
             setCareerList(updatedList);
           }} />
-          <Input1 type="text" placeholder="입사년도/월" value={career.startDate} onChange={(e) => {
-            const updatedList = [...careerList];
-            updatedList[index].startDate = e.target.value;
-            setCareerList(updatedList);
-          }} />
-          <Input1 type="text" placeholder="퇴사년도/월" value={career.endDate} onChange={(e) => {
-            const updatedList = [...careerList];
-            updatedList[index].endDate = e.target.value;
-            setCareerList(updatedList);
-          }} />
+          <DatePickerDuration
+                startDate={career.startDate}
+                endDate={career.endDate}
+                onChangeStartDate={(date) => {
+                  const updatedCareerList = [...careerList];
+                  updatedCareerList[index].startDate = date;
+                  setCareerList(updatedCareerList);
+                }}
+                onChangeEndDate={(date) => {
+                  const updatedCareerList = [...careerList];
+                  updatedCareerList[index].endDate = date;
+                  setCareerList(updatedCareerList);
+                }}
+                betweenString=" ~ "
+              />
           {index === careerList.length - 1 && (
             <PlusIcon onClick={addCareer}>
               <PiPlusThin size={20} color="#B7B7B7" />
@@ -338,18 +356,22 @@ const CreateResume = () => {
               setExperiences(updatedList);
             }}
           />
-          <Input1 type="text" placeholder="활동시작/월" value={experience.start} onChange={(e) => {
-              const updatedList = [...experiences];
-              updatedList[index].start = e.target.value;
-              setExperiences(updatedList);
-            }}
-          />
-          <Input1 type="text" placeholder="활동종료/월" value={experience.end} onChange={(e) => {
-              const updatedList = [...experiences];
-              updatedList[index].end = e.target.value;
-              setExperiences(updatedList);
-            }}
-          />
+          <DatePickerDuration
+                startDate={experience.start}
+                endDate={experience.end}
+                onChangeStartDate={(date) => {
+                  const updatedExperiences = [...experiences];
+                  updatedExperiences[index].start = date;
+                  setExperiences(updatedExperiences);
+                }}
+                onChangeEndDate={(date) => {
+                  const updatedExperiences = [...experiences];
+                  updatedExperiences[index].end = date;
+                  setExperiences(updatedExperiences);
+                }}
+                betweenString=" ~ "
+                dateFormat="YYYY.MM.dd"
+              />
           {index === experiences.length - 1 && (
             <PlusIcon onClick={addExperience}>
               <PiPlusThin size={20} color="#B7B7B7" />
@@ -376,14 +398,12 @@ const CreateResume = () => {
               setQualifications(updatedList);
             }}
           />
-          <Input1
-            type="text"
-            placeholder="취득년도/월"
+          <DatePickerOne
             value={qualification.date}
-            onChange={(e) => {
-              const updatedList = [...qualifications];
-              updatedList[index].date = e.target.value;
-              setQualifications(updatedList);
+            onChange={(date: Date | null) => {
+            const updatedList = [...qualifications];
+            updatedList[index].date = date;
+            setQualifications(updatedList);
             }}
           />
           {index === qualifications.length - 1 && (
@@ -401,9 +421,10 @@ const CreateResume = () => {
           
           <Label2>포트폴리오</Label2>
           <FileContainer>
-            <FileName>{fileName || ""}</FileName>
-            <FileInput type="file" id="file" placeholder="" onChange={uploadFile} />
-            <label htmlFor="file">파일 업로드</label>
+            <FileName>{fileName || "포트폴리오를 첨부해주세요"}</FileName>
+            <FileInput type="file" id="file" placeholder="" onChange={uploadFile} ref={inputRef}/>
+            <label htmlFor="file"> 파일 업로드</label>
+            {fileName && <RemoveButton onClick={handleFileRemove}>파일 삭제</RemoveButton>}
           </FileContainer>
 
           <Container className="resumeBtn">
@@ -474,6 +495,7 @@ const LabelName = styled.label`
   background-color: #B7B7B7;
   width: 200px;
   height: 250px;
+  cursor: pointer;
 ` 
 
 const GenderContainer = styled.div`
@@ -493,7 +515,6 @@ const GenderLabel = styled.label`
   margin-left: 20px;
   margin-right: 20px;
 `;
-
 
 const Title = styled.h2`
   margin-top: 120px;
@@ -534,7 +555,7 @@ const Input1 = styled.input`
   width: 200px;
   display: flex;
   align-items: center;
-  padding: 10px 15px;
+  padding: 16px;
   margin-right: 20px;
   border: 1px solid #B7B7B7;
   border-radius: 8px;
@@ -619,12 +640,14 @@ const PlusIcon = styled.div`
   cursor: pointer;
   border: 1px solid #B7B7B7;
   border-radius: 5px;
+  margin-left: 15px;
 `;
 
 const MinusIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-left: 15px;
   cursor: pointer;
   border: 1px solid #B7B7B7;
   border-radius: 5px;
@@ -692,6 +715,39 @@ const Button = styled.button`
   font-size: 15px;
   padding: 12px 45px;
 `
+
+const RemoveButton = styled.button`
+  color: #e74c3c;
+  padding: 16px;
+  background-color: #ffffff;
+  border: 1px solid #e74c3c;
+  border-radius: var(--button-radius);
+  word-break: keep-all;
+  transition: all 0.1s;
+  cursor: pointer;
+  user-select: none;
+
+  &:active {
+    transform: scale(99%);
+  }
+`;
+
+const AddButton = styled.button`
+  color: #ffffff;
+  padding: 16px;
+  background-color: #3498db;
+  border: 1px solid #3498db;
+  border-radius: var(--button-radius);
+  word-break: keep-all;
+  transition: all 0.1s;
+  cursor: pointer;
+  user-select: none;
+
+  &:active {
+    transform: scale(99%);
+  }
+`;
+
 
 const ViewLink= styled(Link)`
   width: 100%;
