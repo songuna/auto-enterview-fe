@@ -6,6 +6,7 @@ import { PiPlusThin, PiMinusThin } from "react-icons/pi";
 import DatePickerDuration from "../input/DatePickerDuration";
 import DatePickerOne from "../input/DatePickerOne";
 import SelectInput from "../input/SelectInput";
+//import Checkbox from "../input/Checkbox";
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -99,9 +100,16 @@ const CreateResume = () => {
 
   // 희망 직무 상태 추가
   const [jobCategory, setJobCategory] = useState<string | null>(null);
-  const handleJobChange = (selectedOption: any) => {
-    setJobCategory(selectedOption?.value || null);
+  const handleJobChange = (optionJob: any) => {
+    setJobCategory(optionJob?.value || null);
   };
+  
+  // 최종 경력 상태 추가
+  const [education, setEducation] = useState<string | null>(null);
+  const handleEducationChange = (optionEducation: any) => {
+    setEducation(optionEducation?.value || null);
+  }; 
+
 
   // 경력사항 추가 기능
   const [careerList, setCareerList] = useState<Career[]>([
@@ -251,33 +259,11 @@ const CreateResume = () => {
           </InputContainer>
           <InputContainer>
             <InputTitle>최종학력</InputTitle>
-            <Controller
-              control={control}
-              name="education"
-              rules={{ required: "최종학력을 선택해주세요." }}
-              render={({ field: { onChange, value, ref } }) => (
-                <Select
-                  options={optionEducation}
-                  styles={{
-                    control: (baseStyles, state) => ({
-                      ...baseStyles,
-                      borderColor: state.isFocused ? "#5690FB" : "#B7B7B7",
-                      borderRadius: "8px",
-                      padding: "6px 5px",
-                    }),
-                    option: (baseStyles, state) => ({
-                      ...baseStyles,
-                      backgroundColor: state.isFocused ? "#5690FB" : "",
-                      color: state.isFocused ? "#ffffff" : "#000000",
-                      padding: "8px 13px",
-                    }),
-                  }}
-                  placeholder="최종 학력을 선택하세요"
-                  ref={ref}
-                  value={optionEducation.find(option => option.value === value)}
-                  onChange={option => onChange(option?.value)}
-                />
-              )}
+            <SelectInput
+              options={optionEducation}
+              placeholder="최종 학력을 선택하세요"
+              value={education}
+              onChange={handleEducationChange}
             />
             <ErrorMessage>{errors.education && String(errors.education?.message)}</ErrorMessage>
             <InputTitle>학교명</InputTitle>
