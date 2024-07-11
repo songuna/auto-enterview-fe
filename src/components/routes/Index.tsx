@@ -1,9 +1,13 @@
 import styled from "styled-components";
 import { Wrapper } from "../css/Common";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { authUserState } from "../../recoil/store";
 
 const Index = () => {
+  const authUser = useRecoilValue(authUserState);
   const navigate = useNavigate();
+  console.log(authUser);
 
   const goDetail = () => {
     navigate("/jobpost-detail/1");
@@ -16,10 +20,12 @@ const Index = () => {
 
   return (
     <Wrapper className="inner-1200">
-      <InfoMessage>
-        아직 이력서를 작성하지 않았습니다. 아직 회사정보를 작성하지 않았습니다.
-        마이페이지에서 작성해주세요.
-      </InfoMessage>
+      {!authUser && (
+        <InfoMessage>
+          아직 이력서를 작성하지 않았습니다. 아직 회사정보를 작성하지 않았습니다. 마이페이지에서
+          작성해주세요.
+        </InfoMessage>
+      )}
       <JobsContainer>
         <JobContainer onClick={goDetail}>
           <CompanyName>(주)회사이름</CompanyName>
