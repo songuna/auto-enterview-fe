@@ -23,9 +23,6 @@ interface Props {
  */
 
 const SelectInput = ({ placeholder, options, value, onChange }: Props) => {
-  console.log(options);
-  console.log(value);
-
   return (
     <Select
       options={options}

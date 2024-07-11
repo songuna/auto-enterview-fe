@@ -1,5 +1,9 @@
-import DatePicker from "react-datepicker";
+import DatePicker, { registerLocale } from "react-datepicker";
 import { DataPickerInput, DatePickerContainer } from "../css/input";
+import { Placement } from "./DatePickerOne";
+import { ko } from "date-fns/locale";
+
+registerLocale("ko", ko);
 
 interface Props {
   startDate: Date;
@@ -7,6 +11,7 @@ interface Props {
   endDate: Date;
   onChangeEndDate: (date: Date) => void;
   betweenString?: string;
+  popperPlacement?: Placement;
 }
 
 /**
@@ -20,23 +25,30 @@ const DatePickerDuration = ({
   endDate,
   onChangeEndDate,
   betweenString,
+  popperPlacement = "bottom",
 }: Props) => {
   return (
     <>
       <DatePickerContainer>
         <DatePicker
+          locale="ko"
           selected={startDate}
           onChange={date => onChangeStartDate(date || new Date())}
           selectsStart
           dateFormat="YYYY.MM.dd"
           customInput={<DataPickerInput />}
+          popperPlacement={popperPlacement}
           startDate={startDate}
           endDate={endDate}
+          showMonthDropdown
+          showYearDropdown
+          yearDropdownItemNumber={100}
         />
       </DatePickerContainer>
       {betweenString && <p>{betweenString}</p>}
       <DatePickerContainer>
         <DatePicker
+          locale="ko"
           selected={endDate}
           onChange={date => onChangeEndDate(date || new Date())}
           selectsEnd
@@ -44,6 +56,9 @@ const DatePickerDuration = ({
           customInput={<DataPickerInput />}
           startDate={startDate}
           endDate={endDate}
+          showMonthDropdown
+          showYearDropdown
+          yearDropdownItemNumber={100}
         />
       </DatePickerContainer>
     </>
