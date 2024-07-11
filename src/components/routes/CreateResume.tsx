@@ -6,9 +6,9 @@ import { PiPlusThin, PiMinusThin } from "react-icons/pi";
 import DatePickerDuration from "../input/DatePickerDuration";
 import DatePickerOne from "../input/DatePickerOne";
 import SelectInput from "../input/SelectInput";
-//import Checkbox from "../input/Checkbox";
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+
 
  interface Career {
   company: string;
@@ -80,6 +80,7 @@ const CreateResume = () => {
 
   const {
     control,
+    handleSubmit,
     //watch,
     formState: { errors },
   } = useForm();
@@ -88,7 +89,6 @@ const CreateResume = () => {
   // 이미지 업로드
   const [imgURL, setImgURL] = useState('');
   const inputRef = useRef(null);
-
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -96,7 +96,6 @@ const CreateResume = () => {
       setImgURL(imageURL);
     }
   };
-
   const handleClickImage = () => {
     if (inputRef.current) {
       inputRef.current.click();
@@ -111,9 +110,17 @@ const CreateResume = () => {
 
   //파일업로드
   const [fileName, setFileName] = useState("");
-  const uploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+  const uploadFile = (event) => {
     if (event.target.files && event.target.files[0]) {
       setFileName(event.target.files[0].name);
+    }
+  };
+  // 파일 삭제
+  const handleFileRemove = () => {
+    setFileName(""); // 파일명 초기화
+    if (inputRef.current) {
+      inputRef.current.value = ""; // input 요소의 값 초기화
     }
   };
 
@@ -174,6 +181,9 @@ const CreateResume = () => {
     const updatedList = qualifications.filter((_, i) => i !== index);
     setQualifications(updatedList);
   };
+
+
+
 
 
   return (
@@ -411,9 +421,10 @@ const CreateResume = () => {
           
           <Label2>포트폴리오</Label2>
           <FileContainer>
-            <FileName>{fileName || ""}</FileName>
-            <FileInput type="file" id="file" placeholder="" onChange={uploadFile} />
-            <label htmlFor="file">파일 업로드</label>
+            <FileName>{fileName || "포트폴리오를 첨부해주세요"}</FileName>
+            <FileInput type="file" id="file" placeholder="" onChange={uploadFile} ref={inputRef}/>
+            <label htmlFor="file"> 파일 업로드</label>
+            {fileName && <RemoveButton onClick={handleFileRemove}>파일 삭제</RemoveButton>}
           </FileContainer>
 
           <Container className="resumeBtn">
@@ -704,6 +715,39 @@ const Button = styled.button`
   font-size: 15px;
   padding: 12px 45px;
 `
+
+const RemoveButton = styled.button`
+  color: #e74c3c;
+  padding: 16px;
+  background-color: #ffffff;
+  border: 1px solid #e74c3c;
+  border-radius: var(--button-radius);
+  word-break: keep-all;
+  transition: all 0.1s;
+  cursor: pointer;
+  user-select: none;
+
+  &:active {
+    transform: scale(99%);
+  }
+`;
+
+const AddButton = styled.button`
+  color: #ffffff;
+  padding: 16px;
+  background-color: #3498db;
+  border: 1px solid #3498db;
+  border-radius: var(--button-radius);
+  word-break: keep-all;
+  transition: all 0.1s;
+  cursor: pointer;
+  user-select: none;
+
+  &:active {
+    transform: scale(99%);
+  }
+`;
+
 
 const ViewLink= styled(Link)`
   width: 100%;
