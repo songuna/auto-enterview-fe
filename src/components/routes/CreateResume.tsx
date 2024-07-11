@@ -3,29 +3,29 @@ import styled from "styled-components";
 import Select from "react-select";
 import { useForm, Controller } from "react-hook-form";
 import { PiPlusThin, PiMinusThin } from "react-icons/pi";
-//import DatePicker from "react-datepicker";
-import { useState} from 'react';
-import { Link } from 'react-router-dom'; 
+import DatePickerDuration from "../input/DatePickerDuration";
+import DatePickerOne from "../input/DatePickerOne";
 import SelectInput from "../input/SelectInput";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
  interface Career {
   company: string;
   role: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date | null;
+  endDate: Date | null;
   }
 
   interface Experience {
   name: string;
-  start: string;
-  end: string;
+  start: Date | null;
+  end: Date | null;
 }
 
 interface Qualification {
   name: string;
-  date: string;
+  date: Date | null;
 }
-
 
 const CreateResume = () => {
   const optionJob = [
@@ -105,11 +105,11 @@ const CreateResume = () => {
 
   // 경력사항 추가 기능
   const [careerList, setCareerList] = useState<Career[]>([
-    { company: "", role: "", startDate: "", endDate: "" }
+    { company: "", role: "", startDate: new Date(), endDate: new Date() }
   ]);
 
   const addCareer = () => {
-    const newCareer: Career = { company: "", role: "", startDate: "", endDate: "" };
+    const newCareer: Career = { company: "", role: "", startDate: new Date(), endDate: new Date() };
     setCareerList([...careerList, newCareer]);
   };
 
@@ -120,11 +120,11 @@ const CreateResume = () => {
 
   // 경험/활동/교육 추가 기능
  const [experiences, setExperiences] = useState<Experience[]>([
-    { name: "", start: "", end: "" }
+    { name: "", start: new Date(), end: new Date() }
   ]);
 
   const addExperience = () => {
-    const newExperience: Experience = { name: "", start: "", end: "" };
+    const newExperience: Experience = { name: "", start: new Date(), end: new Date() };
     setExperiences([...experiences, newExperience]);
   };
 
@@ -135,11 +135,11 @@ const CreateResume = () => {
 
   // 자격/어학/수상 추가 기능
    const [qualifications, setQualifications] = useState<Qualification[]>([
-    { name: "", date: "" }
+    { name: "", date: new Date() }
   ]);
 
   const addQualification = () => {
-    const newQualification: Qualification = { name: "", date: "" };
+    const newQualification: Qualification = { name: "", date: new Date() };
     setQualifications([...qualifications, newQualification]);
   };
 
@@ -147,7 +147,6 @@ const CreateResume = () => {
     const updatedList = qualifications.filter((_, i) => i !== index);
     setQualifications(updatedList);
   };
-
 
 
   return (
@@ -298,16 +297,21 @@ const CreateResume = () => {
             updatedList[index].role = e.target.value;
             setCareerList(updatedList);
           }} />
-          <Input1 type="text" placeholder="입사년도/월" value={career.startDate} onChange={(e) => {
-            const updatedList = [...careerList];
-            updatedList[index].startDate = e.target.value;
-            setCareerList(updatedList);
-          }} />
-          <Input1 type="text" placeholder="퇴사년도/월" value={career.endDate} onChange={(e) => {
-            const updatedList = [...careerList];
-            updatedList[index].endDate = e.target.value;
-            setCareerList(updatedList);
-          }} />
+          <DatePickerDuration
+                startDate={career.startDate}
+                endDate={career.endDate}
+                onChangeStartDate={(date) => {
+                  const updatedCareerList = [...careerList];
+                  updatedCareerList[index].startDate = date;
+                  setCareerList(updatedCareerList);
+                }}
+                onChangeEndDate={(date) => {
+                  const updatedCareerList = [...careerList];
+                  updatedCareerList[index].endDate = date;
+                  setCareerList(updatedCareerList);
+                }}
+                betweenString=" ~ "
+              />
           {index === careerList.length - 1 && (
             <PlusIcon onClick={addCareer}>
               <PiPlusThin size={20} color="#B7B7B7" />
@@ -330,18 +334,22 @@ const CreateResume = () => {
               setExperiences(updatedList);
             }}
           />
-          <Input1 type="text" placeholder="활동시작/월" value={experience.start} onChange={(e) => {
-              const updatedList = [...experiences];
-              updatedList[index].start = e.target.value;
-              setExperiences(updatedList);
-            }}
-          />
-          <Input1 type="text" placeholder="활동종료/월" value={experience.end} onChange={(e) => {
-              const updatedList = [...experiences];
-              updatedList[index].end = e.target.value;
-              setExperiences(updatedList);
-            }}
-          />
+          <DatePickerDuration
+                startDate={experience.start}
+                endDate={experience.end}
+                onChangeStartDate={(date) => {
+                  const updatedExperiences = [...experiences];
+                  updatedExperiences[index].start = date;
+                  setExperiences(updatedExperiences);
+                }}
+                onChangeEndDate={(date) => {
+                  const updatedExperiences = [...experiences];
+                  updatedExperiences[index].end = date;
+                  setExperiences(updatedExperiences);
+                }}
+                betweenString=" ~ "
+                dateFormat="YYYY.MM.dd"
+              />
           {index === experiences.length - 1 && (
             <PlusIcon onClick={addExperience}>
               <PiPlusThin size={20} color="#B7B7B7" />
@@ -368,14 +376,12 @@ const CreateResume = () => {
               setQualifications(updatedList);
             }}
           />
-          <Input1
-            type="text"
-            placeholder="취득년도/월"
+          <DatePickerOne
             value={qualification.date}
-            onChange={(e) => {
-              const updatedList = [...qualifications];
-              updatedList[index].date = e.target.value;
-              setQualifications(updatedList);
+            onChange={(date: Date | null) => {
+            const updatedList = [...qualifications];
+            updatedList[index].date = date;
+            setQualifications(updatedList);
             }}
           />
           {index === qualifications.length - 1 && (
@@ -486,7 +492,6 @@ const GenderLabel = styled.label`
   margin-right: 20px;
 `;
 
-
 const Title = styled.h2`
   margin-top: 120px;
   margin-bottom: 24px;
@@ -526,7 +531,7 @@ const Input1 = styled.input`
   width: 200px;
   display: flex;
   align-items: center;
-  padding: 10px 15px;
+  padding: 16px;
   margin-right: 20px;
   border: 1px solid #B7B7B7;
   border-radius: 8px;
@@ -611,12 +616,14 @@ const PlusIcon = styled.div`
   cursor: pointer;
   border: 1px solid #B7B7B7;
   border-radius: 5px;
+  margin-left: 15px;
 `;
 
 const MinusIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-left: 15px;
   cursor: pointer;
   border: 1px solid #B7B7B7;
   border-radius: 5px;
