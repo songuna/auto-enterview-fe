@@ -10,63 +10,9 @@ import SelectInput from "../input/SelectInput";
 import { InputDefault } from "../css/input";
 import Checkbox from "../input/Checkbox";
 import TimePicker from "../input/TimePicker";
+import { optionEducation, optionEmploymentType, optionJob, techStacks } from "../../enum/options";
 
 const CreateJobPost = () => {
-  //enum
-  const optionJob = [
-    { value: "backend", label: "서버/백엔드 개발" },
-    { value: "frontend", label: "프론트엔드 개발" },
-    { value: "fullstack", label: "웹 풀스택 개발" },
-    { value: "android", label: "안드로이드 개발" },
-    { value: "ios", label: "iOS 개발" },
-  ];
-
-  const optionEducation = [
-    { value: "학력무관", label: "학력무관" },
-    { value: "중졸 이하", label: "중졸 이하" },
-    { value: "고졸", label: "고졸" },
-    { value: "대학 2,3년제", label: "대학 2,3년제" },
-    { value: "대학 4년제", label: "대학 4년제" },
-    { value: "석사", label: "석사" },
-    { value: "박사", label: "박사" },
-  ];
-
-  const optionEmploymentType = [
-    { value: "인턴직", label: "인턴직" },
-    { value: "계약직", label: "계약직" },
-    { value: "정규직", label: "정규직" },
-  ];
-
-  const teckStacks = [
-    "Java",
-    "Spring Boot",
-    "Node.js",
-    "Python",
-    "Django",
-    "PHP",
-    "C++",
-    "C#",
-    "AWS",
-    "MySQL",
-    "Oracle",
-    "React",
-    "Vue.js",
-    "JavaScript",
-    "TypeScript",
-    "Svelte",
-    "HTML5",
-    "CSS3",
-    "AngularJS",
-    "jQuery",
-    "Kotlin",
-    "RxJava",
-    "Swift",
-    "Objective-C",
-    "Rxswift",
-    "SwiftUI",
-    "Xcode",
-  ];
-
   // 필요경력, 급여같은 input에서 disable될 때 임시로 저장해두는 값
   const inputMemory = useRef({ career: 0, salary: 0 });
   const [freeHour, setFreeHour] = useState(false);
@@ -74,12 +20,12 @@ const CreateJobPost = () => {
   const [formData, setFormData] = useState({
     jobCategory: "",
     title: "",
-    career: 0,
-    teckstack: [],
+    career: "",
+    teckStack: [],
     workLocation: "",
     education: "",
     employmentType: "",
-    salary: 0,
+    salary: "",
     startHour: new Date(2024, 7, 13, 9, 0),
     endHour: new Date(2024, 7, 13, 18, 0),
     startDate: new Date(),
@@ -87,6 +33,10 @@ const CreateJobPost = () => {
     jobPostingSteps: ["서류전형"],
     jobPostingContent: "",
     filteringRank: 20,
+    image: {
+      fileName: "",
+      file: null,
+    },
   });
 
   //전형절차단계
@@ -115,10 +65,10 @@ const CreateJobPost = () => {
   };
 
   //파일업로드
-  const [fileName, setFileName] = useState("");
   const uploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.split("\\");
-    setFileName(value[value.length - 1]);
+    const fileName = value[value.length - 1];
+    setFormData({ ...formData, image: { fileName: fileName, file: event.target.files[0] } });
   };
 
   const getStringWorkingHour = (startTime: Date, endTime: Date) => {
@@ -130,7 +80,7 @@ const CreateJobPost = () => {
   const editMode = location.state;
   const jobPostingInfo = location.state?.jobPostInfo;
 
-  // 수정하기 할땐, 정보 불러오기
+  // 수정하기 할땐, 정보를 미리 넣어놓기
   useEffect(() => {
     if (jobPostingInfo) {
       inputMemory.current.salary = jobPostingInfo.salary;
@@ -140,7 +90,7 @@ const CreateJobPost = () => {
         jobCategory: jobPostingInfo.jobCategory,
         title: jobPostingInfo.title,
         career: jobPostingInfo.career,
-        teckstack: jobPostingInfo.techStack,
+        teckStack: jobPostingInfo.techStack,
         workLocation: jobPostingInfo.workLocation,
         education: jobPostingInfo.education,
         employmentType: jobPostingInfo.employmentType,
@@ -170,9 +120,33 @@ const CreateJobPost = () => {
         jobPostingSteps: jobPostingInfo.jobPostingStep,
         jobPostingContent: jobPostingInfo.jobPostingContent,
         filteringRank: 20,
+        image: {
+          fileName: "",
+          file: null,
+        },
+        // image: formData.image
       });
     }
   }, [jobPostingInfo]);
+
+  // input을 모두 채웠는지 체크
+  const inputCheck = () => {
+    return (
+      formData.title &&
+      formData.jobCategory &&
+      formData.career &&
+      formData.teckStack.length > 0 &&
+      formData.jobPostingSteps &&
+      formData.jobPostingSteps.length > 1 &&
+      formData.workLocation &&
+      formData.education &&
+      formData.employmentType &&
+      formData.salary &&
+      (freeHour || (formData.startHour && formData.endHour)) &&
+      formData.startDate &&
+      formData.endDate
+    );
+  };
 
   // 채용공고생성 api
   const navigate = useNavigate();
@@ -191,11 +165,7 @@ const CreateJobPost = () => {
         startDateTime: formData.startDateTime,
         endDateTime: formData.endDateTime,
         jobPostingContent: formData.jobPostingContent,
-        image: {
-          fileName: fileName,
-          originalFileName: fileName,
-          filePath: fileName,
-        },
+        // image: formData.image
       };
 
       await putCompaniesJobPosting(1, requestData);
@@ -217,14 +187,15 @@ const CreateJobPost = () => {
         startDateTime: formData.startDateTime,
         endDateTime: formData.endDateTime,
         jobPostingContent: formData.jobPostingContent,
-        image: {
-          fileName: fileName,
-          originalFileName: fileName,
-          filePath: fileName,
-        },
+        // image: formData.image
       };
 
-      await postCompaniesJobPosting(1, requestData);
+      // const fileData = new FormData();
+      // fileData.append("file");
+      // fileData.append("fileName", fileName);
+      await postCompaniesJobPosting(1, requestData, {
+        headers: { "Contest-Type": "multipart/form-data" },
+      });
       navigate("/company-mypage");
     }
   };
@@ -241,13 +212,7 @@ const CreateJobPost = () => {
             <InputTitle>채용직무</InputTitle>
             <SelectInput
               placeholder="채용할 직무를 선택하세요"
-              options={[
-                { value: "서버/백엔드 개발", label: "서버/백엔드 개발" },
-                { value: "프론트엔드 개발", label: "프론트엔드 개발" },
-                { value: "웹 풀스택 개발", label: "웹 풀스택 개발" },
-                { value: "안드로이드 개발", label: "안드로이드 개발" },
-                { value: "iOS 개발", label: "iOS 개발" },
-              ]}
+              options={optionJob}
               value={formData.jobCategory}
               onChange={value => setFormData({ ...formData, jobCategory: value })}
             />
@@ -310,7 +275,7 @@ const CreateJobPost = () => {
             ) : (
               <>
                 <StackInputContainer>
-                  {teckStacks.map(stack => {
+                  {techStacks.map(stack => {
                     return (
                       <StackInputGroup key={stack}>
                         <Checkbox
@@ -319,14 +284,14 @@ const CreateJobPost = () => {
                           onChange={event => {
                             if (event.target.checked) {
                               // 체크하면 추가
-                              const temp = formData.teckstack;
+                              const temp = formData.teckStack;
                               temp.push(stack);
-                              setFormData({ ...formData, teckstack: temp });
+                              setFormData({ ...formData, teckStack: temp });
                             } else {
                               //해제하면 빼기
-                              const temp = [...formData.teckstack];
+                              const temp = [...formData.teckStack];
                               const result = temp.filter(el => el !== stack);
-                              setFormData({ ...formData, teckstack: result });
+                              setFormData({ ...formData, teckStack: result });
                             }
                           }}
                         />
@@ -335,7 +300,7 @@ const CreateJobPost = () => {
                   })}
                 </StackInputContainer>
                 <ErrorMessage>
-                  {formData.teckstack ? "" : "테크스택을 1개이상 선택해주세요."}
+                  {formData.teckStack.length > 0 ? "" : "테크스택을 1개이상 선택해주세요."}
                 </ErrorMessage>
               </>
             )}
@@ -510,11 +475,11 @@ const CreateJobPost = () => {
                     </Button>
                   </StepInputContianer>
                 </InputContents>
-                <ErrorMessage>
-                  {formData.jobPostingSteps.length > 1 ? "" : "전형단계를 추가해주세요."}
-                </ErrorMessage>
               </>
             )}
+            <ErrorMessage>
+              {formData.jobPostingSteps.length > 1 ? "" : "전형단계를 추가해주세요."}
+            </ErrorMessage>
           </InputContainer>
 
           <InputContainer>
@@ -553,7 +518,7 @@ const CreateJobPost = () => {
               }
             />
             <FileContainer>
-              <FileName>{fileName || ""}</FileName>
+              <FileName>{formData.image.fileName || ""}</FileName>
               <FileInput type="file" id="image" onChange={uploadFile} />
               <label htmlFor="image">이미지 업로드</label>
             </FileContainer>
@@ -562,6 +527,7 @@ const CreateJobPost = () => {
             type="submit"
             className="sub-title"
             value={editMode ? "채용공고 수정" : "채용공고 등록"}
+            disabled={!inputCheck()}
           />
         </form>
       </Wrapper>
@@ -749,6 +715,11 @@ const SubmitButton = styled.input`
   border-radius: var(--button-radius);
   background-color: var(--primary-color);
   cursor: pointer;
+
+  &:disabled {
+    color: #ffffff;
+    background-color: var(--bg-light-gray);
+  }
 `;
 
 export default CreateJobPost;
