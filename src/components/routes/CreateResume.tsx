@@ -7,7 +7,7 @@ import DatePickerDuration from "../input/DatePickerDuration";
 import DatePickerOne from "../input/DatePickerOne";
 import SelectInput from "../input/SelectInput";
 //import Checkbox from "../input/Checkbox";
-import { useState } from 'react';
+import { useState} from 'react';
 import { Link } from 'react-router-dom';
 
  interface Career {
@@ -76,6 +76,7 @@ const CreateResume = () => {
     "SwiftUI",
     "Xcode",
   ];
+
 
   const {
     control,
