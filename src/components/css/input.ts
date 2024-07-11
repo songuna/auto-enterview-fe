@@ -63,20 +63,12 @@ export const DatePickerContainer = styled.div`
   width: 150px;
 
   .react-datepicker-popper {
-    z-index: 2;
+    z-index: 10;
 
     position: relative;
     background-color: #ffffff;
     border: 1px solid #b7b7b7;
     border-radius: var(--button-radius);
-  }
-
-  &:nth-child(1) .react-datepicker-popper {
-    transform: translate(0, -300px) !important;
-  }
-
-  &:nth-child(3) .react-datepicker-popper {
-    transform: translate(-137px, -300px) !important;
   }
 
   .react-datepicker__aria-live {
@@ -186,7 +178,9 @@ export const DatePickerContainer = styled.div`
       background-color: var(--primary-color);
     }
 
-    &.react-datepicker__day--in-range:not(.react-datepicker__day--in-selecting-range) {
+    &.react-datepicker__day--in-range:not(
+        .react-datepicker__day--in-selecting-range
+      ) {
       color: var(--text-black);
       background-color: var(--bg-light-blue);
     }
