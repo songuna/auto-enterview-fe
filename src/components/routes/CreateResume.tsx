@@ -84,9 +84,25 @@ const CreateResume = () => {
     formState: { errors },
   } = useForm();
 
+
+  // 이미지 업로드
+  const [imgURL, setImgURL] = useState('');
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const imageURL = URL.createObjectURL(file);
+      setImgURL(imageURL);
+    }
+  };
+  const handleClickImage = () => {
+    // 클릭 시 input 엘리먼트를 클릭하는 방법
+    if (inputRef.current) {
+      inputRef.current.click();
+    }
+  };
+  
   //성별
   const [gender, setGender] = useState<string>(''); // 성별 상태 추가
-
   const handleGenderSelect = (selectedGender: string) => {
     setGender(selectedGender); // 성별 선택 시 상태 업데이트
   };
@@ -169,10 +185,13 @@ const CreateResume = () => {
           <Input type ="text" placeholder="한 줄 소개를 작성하세요."></Input>
           <AllContainer>
           <Image>
-            <div>
-              <LabelName >
-              <ImgInput type="file"/>
+            <div onClick={handleClickImage}>
+              {imgURL ? ( // imgURL이 존재하면 이미지 표시
+                <img src={imgURL} alt="Selected" style={{ width: '200px', height: '250px' }} />) : (
+              <LabelName>
+                <ImgInput type="file" onChange={handleFileChange} />
               </LabelName>
+               )}
             </div>
           </Image>
           <FlexContainer>
