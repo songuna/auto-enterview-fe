@@ -5,7 +5,7 @@ import { IoPersonCircleOutline, IoSettings } from "react-icons/io5";
 import { FaKey } from "react-icons/fa6";
 import axios from "axios";
 import { useRecoilState } from "recoil";
-import { authUserState } from "../../recoil/atoms/userAtom";
+import { authUserState } from "../../recoil/store";
 import { IoIosLock } from "react-icons/io";
 
 const Header = () => {

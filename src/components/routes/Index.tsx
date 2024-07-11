@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Wrapper } from "../css/Common";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import { authUserState } from "../../recoil/atoms/userAtom";
+import { authUserState } from "../../recoil/store";
 
 const Index = () => {
   const authUser = useRecoilValue(authUserState);
