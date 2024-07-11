@@ -291,6 +291,8 @@ const CreateResume = () => {
               )}
             />
             <ErrorMessage>{errors.education && String(errors.education?.message)}</ErrorMessage>
+            <InputTitle>학교명</InputTitle>
+            <Input1 type="text" placeholder="학교명" ></Input1 >
           </InputContainer>
           
           <Label2>경력</Label2>

@@ -76,8 +76,10 @@ const ViewResume: React.FC  = () => {
             <InputTitle>기술 스택</InputTitle>
           </InputContainer>
 
-          <InputContainer>
+          <InputContainer className="school">
             <InputTitle>최종 학력</InputTitle>
+            <H3 className="input textBox"></H3>
+            <InputTitle className="schoolName">학교명</InputTitle>
             <H3 className="input textBox"></H3>
           </InputContainer>
 
@@ -143,6 +145,13 @@ const InputContainer = styled.div`
   flex-direction: column;
   margin-top: 30px;
   margin-bottom: 20px;
+  &.school{
+  display: flex;
+  flex-direction: row;
+  }
+  &.schoolName{
+    margin-left: 50px;
+  }
 `;
 
 const AllContainer = styled.div`
