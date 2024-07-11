@@ -6,6 +6,7 @@ import { PiPlusThin, PiMinusThin } from "react-icons/pi";
 //import DatePicker from "react-datepicker";
 import { useState} from 'react';
 import { Link } from 'react-router-dom'; 
+import SelectInput from "../input/SelectInput";
 
  interface Career {
   company: string;
@@ -94,6 +95,12 @@ const CreateResume = () => {
     if (event.target.files && event.target.files[0]) {
       setFileName(event.target.files[0].name);
     }
+  };
+
+  // 희망 직무 상태 추가
+  const [jobCategory, setJobCategory] = useState<string | null>(null);
+  const handleJobChange = (selectedOption: any) => {
+    setJobCategory(selectedOption?.value || null);
   };
 
   // 경력사항 추가 기능
@@ -191,35 +198,18 @@ const CreateResume = () => {
 
         <InputContainer>
           <InputTitle>희망 직무</InputTitle>
-            <Controller
-              control={control}
-              name="jobCategory"
-              rules={{ required: "희망하는 직무를 선택해주세요." }}
-              render={({ field: { onChange, value, ref } }) => (
-                <Select
-                  options={optionJob}
-                  styles={{
-                    control: (baseStyles, state) => ({
-                      ...baseStyles,
-                      borderColor: state.isFocused ? "#000694" : "#B7B7B7",
-                      borderRadius: "8px",
-                      padding: "6px 5px",
-                    }),
-                    option: (baseStyles, state) => ({
-                      ...baseStyles,
-                      backgroundColor: state.isFocused ? "#000694" : "",
-                      color: state.isFocused ? "#ffffff" : "#000000",
-                      padding: "8px 13px",
-                    }),
-                  }}
-                  placeholder="희망하는 직무를 선택하세요"
-                  ref={ref}
-                  value={optionJob.find(option => option.value === value)}
-                  onChange={option => onChange(option?.value)}
-                />
-              )}
+            <SelectInput
+              placeholder="희망하는 직무를 선택하세요"
+              options={[
+                { value: "서버/백엔드 개발", label: "서버/백엔드 개발" },
+                { value: "프론트엔드 개발", label: "프론트엔드 개발" },
+                { value: "웹 풀스택 개발", label: "웹 풀스택 개발" },
+                { value: "안드로이드 개발", label: "안드로이드 개발" },
+                { value: "iOS 개발", label: "iOS 개발" },
+              ]}
+              value={jobCategory}
+              onChange={handleJobChange}
             />
-            <ErrorMessage>{errors.jobCategory && String(errors.jobCategory?.message)}</ErrorMessage>
         </InputContainer>
 
         <InputContainer>
