@@ -7,7 +7,7 @@ import DatePickerDuration from "../input/DatePickerDuration";
 import DatePickerOne from "../input/DatePickerOne";
 import SelectInput from "../input/SelectInput";
 //import Checkbox from "../input/Checkbox";
-import { useState} from 'react';
+import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
  interface Career {
@@ -87,6 +87,8 @@ const CreateResume = () => {
 
   // 이미지 업로드
   const [imgURL, setImgURL] = useState('');
+  const inputRef = useRef(null);
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -94,8 +96,8 @@ const CreateResume = () => {
       setImgURL(imageURL);
     }
   };
+
   const handleClickImage = () => {
-    // 클릭 시 input 엘리먼트를 클릭하는 방법
     if (inputRef.current) {
       inputRef.current.click();
     }
@@ -186,12 +188,16 @@ const CreateResume = () => {
           <AllContainer>
           <Image>
             <div onClick={handleClickImage}>
-              {imgURL ? ( // imgURL이 존재하면 이미지 표시
-                <img src={imgURL} alt="Selected" style={{ width: '200px', height: '250px' }} />) : (
-              <LabelName>
-                <ImgInput type="file" onChange={handleFileChange} />
-              </LabelName>
-               )}
+              {imgURL ? (
+               <img src={imgURL} alt="Selected" style={{ width: '200px', height: '250px' }} />
+              ) : (
+                <LabelName>
+                  <ImgInput type="file" onChange={handleFileChange} ref={inputRef} />
+                </LabelName>
+              )}
+              {imgURL && (
+                <ImgInput type="file" onChange={handleFileChange} ref={inputRef} style={{ display: 'none' }} />
+              )}
             </div>
           </Image>
           <FlexContainer>
@@ -478,6 +484,7 @@ const LabelName = styled.label`
   background-color: #B7B7B7;
   width: 200px;
   height: 250px;
+  cursor: pointer;
 ` 
 
 const GenderContainer = styled.div`
