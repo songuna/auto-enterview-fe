@@ -2,20 +2,23 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { HiArrowLeftOnRectangle } from "react-icons/hi2";
 import { IoPersonCircleOutline, IoSettings } from "react-icons/io5";
-import { useState } from "react";
 import { FaKey } from "react-icons/fa6";
 import axios from "axios";
+import { useRecoilState } from "recoil";
+import { authUserState } from "../../recoil/atoms/userAtom";
+import { IoIosLock } from "react-icons/io";
 
 const Header = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [authUser, setAuthUser] = useRecoilState(authUserState);
   const navigate = useNavigate();
 
   const logOut = async () => {
     const ok = confirm("로그아웃 하시겠어요?");
     if (ok) {
       try {
-        await axios.post("/common/signout");
-        navigate("/main");
+        // await axios.post("/common/signout");
+        setAuthUser(null);
+        navigate("/");
       } catch (error) {
         alert("로그아웃 중 문제가 발생했습니다. 다시 시도해주세요.");
       }
@@ -31,14 +34,14 @@ const Header = () => {
           </Link>
         </Logo>
         <Buttons>
-          {isLogin ? (
+          {authUser ? (
             <>
               <Logout className="log-out" onClick={logOut}>
                 <HiArrowLeftOnRectangle />
                 <Text>로그 아웃</Text>
               </Logout>
               {/* <Button to={isCompany ? "/company-mypage" : "/user-mypage"}> */}
-              <Button to="/">
+              <Button to={authUser.role === "ROLE_CANDIDATE" ? "/user-mypage" : "/company-mypage"}>
                 <IoPersonCircleOutline />
                 <Text>마이 페이지</Text>
               </Button>
@@ -48,10 +51,16 @@ const Header = () => {
               </Button>
             </>
           ) : (
-            <Button className="login" to={"/sign-up"}>
-              <FaKey />
-              <Text>로그인/회원가입</Text>
-            </Button>
+            <>
+              <Button className="login" to={"/login"}>
+                <FaKey />
+                <Text>로그인</Text>
+              </Button>
+              <Button className="login" to={"/sign-up"}>
+                <IoIosLock />
+                <Text>회원가입</Text>
+              </Button>
+            </>
           )}
         </Buttons>
       </HdInner>
@@ -80,14 +89,14 @@ const Img = styled.img`
 const Buttons = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 8px;
 `;
 
 const Logout = styled.button`
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 1rem 1.2rem;
+  padding: 1rem 0;
   font-size: 1.5rem;
   color: var(--color-red);
 `;
@@ -98,6 +107,7 @@ const Button = styled(Link)`
   gap: 8px;
   padding: 1rem 1.2rem;
   font-size: 1.5rem;
+  font-weight: 500;
 
   svg {
     color: var(--primary-color);
@@ -105,13 +115,18 @@ const Button = styled(Link)`
   &.account,
   &.login {
     border-radius: var(--button-radius);
-    box-shadow: inset 0 0 8px rgba(132, 132, 132, 0.5);
+    background-color: var(--primary-color);
+    color: #fff;
+    svg {
+      color: #fff;
+    }
   }
 `;
 
 const Text = styled.div`
+  font-family: "Pretendard";
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 700;
 `;
 
 export default Header;

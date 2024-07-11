@@ -1,8 +1,10 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import styled, { keyframes } from "styled-components";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { postSignin } from "../axios/http/user";
+import { useSetRecoilState } from "recoil";
+import { authUserState } from "../../recoil/atoms/userAtom";
 //import axios from 'axios';
 
 const Login = () => {
@@ -10,6 +12,8 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const setAuthUser = useSetRecoilState(authUserState);
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -33,10 +37,9 @@ const Login = () => {
       // 서버 API 호출
       const userData = { email, password };
       const response = await postSignin(userData);
-      // console.log("서버 응답:", response.data);
+      setAuthUser(response);
 
-      // 로그인 완료 알림창 띄우기
-      alert("로그인 완료되었습니다");
+      navigate("/");
     } catch (error) {
       console.error("서버 요청 실패:", error);
       alert("로그인에 실패했습니다. 다시 시도해주세요.");
