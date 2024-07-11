@@ -1,9 +1,14 @@
+import { AxiosRequestConfig } from "axios";
 import { companyInfo } from "../../type/company";
 import { JobPosting, JobPostingList } from "../../type/jobPosting";
 import { http } from "../instances";
 
-export const postCompaniesJobPosting = (companyKey: number, jobPosting: JobPosting) => {
-  return http.post<JobPosting>(`companies/${companyKey}/job-posting`, jobPosting);
+export const postCompaniesJobPosting = (
+  companyKey: number,
+  data: JobPosting,
+  config: AxiosRequestConfig,
+) => {
+  return http.post<JobPosting>(`companies/${companyKey}/job-posting`, data, config);
 };
 
 export const putCompaniesJobPosting = (companyKey: number, data: JobPosting) => {
