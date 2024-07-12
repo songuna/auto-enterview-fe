@@ -8,9 +8,9 @@ import {
   NextButton,
   Settings,
   Text,
-} from "../css/ScheduleFormStyle";
-import DatePickerOne from "../input/DatePickerOne";
-import TimePicker from "../input/TimePicker";
+} from "../assets/style/ScheduleFormStyle";
+import DatePickerOne from "../components/input/DatePickerOne";
+import TimePicker from "../components/input/TimePicker";
 
 const FormAssignment = () => {
   const [formData, setFormData] = useState({

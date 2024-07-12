@@ -6,8 +6,8 @@ import { HiOutlinePlus } from "react-icons/hi2";
 import { IoMdClose } from "react-icons/io";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { Container, Inner, SubTitle, UserName, Wrapper } from "../css/Common";
-import { IconButton } from "../css/ReactIconButton";
+import { Container, Inner, SubTitle, UserName, Wrapper } from "../assets/style/Common";
+import { IconButton } from "../assets/style/ReactIconButton";
 import {
   Dday,
   Info,
@@ -22,7 +22,7 @@ import {
   RecruitLists,
   Top,
   UserInfo,
-} from "../css/MypageStyle";
+} from "../assets/style/MypageStyle";
 
 const infoTitles = ["대표자", "설립년도", "주소", "사원수", "회사 홈페이지 URL"];
 

@@ -1,11 +1,11 @@
 import styled from "styled-components";
-import { Container, SubTitle } from "../css/Common";
+import { Container, SubTitle } from "../assets/style/Common";
 import { ModalType } from "./RecruitBoard";
 import { Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import { NavLink, Outlet, Params, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { CreateButton, Form, Label } from "../css/ScheduleFormStyle";
+import { CreateButton, Form, Label } from "../assets/style/ScheduleFormStyle";
 import { IoMdClose } from "react-icons/io";
 
 interface ModalProps {
@@ -55,11 +55,7 @@ const Modal = ({ type, id, step, onClose }: ModalProps) => {
             <SubTitle>예약 메일 발송하기</SubTitle>
             <Field>
               <Form>
-                <TextArea
-                  name="email"
-                  id="email"
-                  onChange={e => handleOnChange(e)}
-                >
+                <TextArea name="email" id="email" onChange={e => handleOnChange(e)}>
                   {emailText}
                 </TextArea>
                 <Label htmlFor="date">날짜</Label>

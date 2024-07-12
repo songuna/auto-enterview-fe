@@ -2,9 +2,8 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import styled, { keyframes } from "styled-components";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { postSignup, postCompanySignup } from "../axios/http/user";
-import { postSendVerificationCode } from '../axios/http/user';
+import { postSendVerificationCode } from "../axios/http/user";
 import { http } from "../axios/instances";
-
 
 // 회원가입
 const SignUp: React.FC = () => {
@@ -36,92 +35,84 @@ const SignUp: React.FC = () => {
   const handleUserSignUpClick = () => {
     setIsRightPanelActive(false);
   };
-  
-  
+
   // 이메일 중복
   const checkEmailDuplication = async (email: string) => {
     return await http.post<{ isDuplicated: boolean }>("/common/duplicate-email", { email });
   };
 
   // 이메일 인증 코드 전송
- const handleEmailVerification = async (email: string) => {
-  if (!email) {
-    alert("이메일을 입력해 주세요.");
-    return;
-  }
-  try {
-    const response = await checkEmailDuplication(email);
-    if (response && response.isDuplicated) {
-      alert("이메일이 중복되었습니다");
-    } else {
-      try {
-        await postSendVerificationCode(email);
-        alert("인증번호가 발송되었습니다");
-      } catch (error) {
-        alert(`인증번호 발송 중 오류가 발생했습니다: ${error.message}`);
-      }
+  const handleEmailVerification = async (email: string) => {
+    if (!email) {
+      alert("이메일을 입력해 주세요.");
+      return;
     }
-  } catch (error) {
-    alert(`이메일 중복 확인 중 오류가 발생했습니다: ${error.message}`);
-  }
-};
+    try {
+      const response = await checkEmailDuplication(email);
+      if (response && response.isDuplicated) {
+        alert("이메일이 중복되었습니다");
+      } else {
+        try {
+          await postSendVerificationCode(email);
+          alert("인증번호가 발송되었습니다");
+        } catch (error) {
+          alert(`인증번호 발송 중 오류가 발생했습니다: ${error.message}`);
+        }
+      }
+    } catch (error) {
+      alert(`이메일 중복 확인 중 오류가 발생했습니다: ${error.message}`);
+    }
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-  
-  const fields = isRightPanelActive
-    ? [
-        "companyEmail",
-        "companyEmailNumber",
-        "companyPassword",
-        "companyName",
-        "companyPhoneNumber",
-      ]
-    : [
-      "userName", 
-      "userEmail", 
-      "userEmailNumber", 
-      "userPassword", 
-      "userPhoneNumber"
-    ];
-  
-  for (const field of fields) {
-    if (!userData[field]) {
-      alert("정보를 입력해주세요");
-      return;
-    }
-  }
-  
-  try {
-    if (isRightPanelActive) {
-      // 회사 회원가입 처리
-      const companyUserData = {
-        email: userData.companyEmail,
-        verificationCode: userData.companyEmailNumber,
-        password: userData.companyPassword,
-        companyName: userData.companyName,
-        companyNumber: userData.companyPhoneNumber,
-      };
-      await postCompanySignup(companyUserData);
 
-    } else {
-      // 개인 회원가입 처리
-       const userFormData = {
+    const fields = isRightPanelActive
+      ? [
+          "companyEmail",
+          "companyEmailNumber",
+          "companyPassword",
+          "companyName",
+          "companyPhoneNumber",
+        ]
+      : ["userName", "userEmail", "userEmailNumber", "userPassword", "userPhoneNumber"];
+
+    for (const field of fields) {
+      if (!userData[field]) {
+        alert("정보를 입력해주세요");
+        return;
+      }
+    }
+
+    try {
+      if (isRightPanelActive) {
+        // 회사 회원가입 처리
+        const companyUserData = {
+          email: userData.companyEmail,
+          verificationCode: userData.companyEmailNumber,
+          password: userData.companyPassword,
+          companyName: userData.companyName,
+          companyNumber: userData.companyPhoneNumber,
+        };
+        await postCompanySignup(companyUserData);
+      } else {
+        // 개인 회원가입 처리
+        const userFormData = {
           name: userData.userName,
           email: userData.userEmail,
           verificationCode: userData.userEmailNumber,
           password: userData.userPassword,
           phoneNumber: userData.userPhoneNumber,
         };
-      await postSignup(userFormData);
-    }
-    
-    // 회원가입 성공 처리 로직 추가
-     alert("회원가입이 완료되었습니다.");
+        await postSignup(userFormData);
+      }
+
+      // 회원가입 성공 처리 로직 추가
+      alert("회원가입이 완료되었습니다.");
       console.log("Form submitted", userData);
     } catch (error) {
-      alert('회원가입에 실패했습니다.');
-      console.error('Signup error:', error);
+      alert("회원가입에 실패했습니다.");
+      console.error("Signup error:", error);
     }
   };
 
@@ -131,8 +122,7 @@ const SignUp: React.FC = () => {
 
   // 비밀번호 유효성 검사 로직 추가
   const validatePassword = (password: string) => {
-    const regex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
     return regex.test(password);
   };
 
@@ -141,9 +131,7 @@ const SignUp: React.FC = () => {
     if (validatePassword(value)) {
       setPasswordError("");
     } else {
-      setPasswordError(
-        "8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다",
-      );
+      setPasswordError("8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다");
     }
     setUserData({ ...userData, [e.target.name]: value });
   };
@@ -151,10 +139,7 @@ const SignUp: React.FC = () => {
   // 회원가입 JSX
   return (
     <Wrapper>
-      <Container
-        id="container"
-        className={isRightPanelActive ? "right-panel-active" : ""}
-      >
+      <Container id="container" className={isRightPanelActive ? "right-panel-active" : ""}>
         <FormContainer className="form-container company-sign-up">
           <Form onSubmit={handleSubmit}>
             <H1>회사 회원가입</H1>
@@ -274,22 +259,14 @@ const SignUp: React.FC = () => {
             <OverlayPanel className="overlay-panel overlay-left">
               <H1>개인 회원가입</H1>
               <P>개인이라면 여기에서 회원가입해주세요.</P>
-              <Button
-                className="ghost"
-                id="user-signUp"
-                onClick={handleUserSignUpClick}
-              >
+              <Button className="ghost" id="user-signUp" onClick={handleUserSignUpClick}>
                 개인 가입하기
               </Button>
             </OverlayPanel>
             <OverlayPanel className="overlay-panel overlay-right">
               <H1>회사 회원가입</H1>
               <P>회사라면 여기에서 회원가입해주세요.</P>
-              <Button
-                className="ghost"
-                id="company-signUp"
-                onClick={handleCompanySignUpClick}
-              >
+              <Button className="ghost" id="company-signUp" onClick={handleCompanySignUpClick}>
                 회사 가입하기
               </Button>
             </OverlayPanel>

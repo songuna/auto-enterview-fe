@@ -1,3 +1,11 @@
+export interface JobInfo {
+  jobPostingKey: string;
+  companyName: string;
+  title: string;
+  techStack: string[];
+  endDate: string;
+}
+
 export interface JobPosting {
   companyKey: 1;
   title: string;

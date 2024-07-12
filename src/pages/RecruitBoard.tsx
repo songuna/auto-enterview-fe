@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Container, FullBtn, Inner, SubTitle, UserName, Wrapper } from "../css/Common";
+import { Container, FullBtn, Inner, SubTitle, UserName, Wrapper } from "../assets/style/Common";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";

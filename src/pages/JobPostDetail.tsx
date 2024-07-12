@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { Container, Inner, Wrapper } from "../css/Common";
+import { Container, Inner, Wrapper } from "../assets/style/Common";
 import { CiEdit } from "react-icons/ci";
-import { IconButton } from "../css/ReactIconButton";
+import { IconButton } from "../assets/style/ReactIconButton";
 import { getCompanyInfomation, getJobPosting, postJobPostingApply } from "../axios/http/jobPosting";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -11,7 +11,7 @@ import { companyInfo } from "../type/company";
 import { Helmet } from "react-helmet-async";
 
 const JobPostDetail = () => {
-  const { postId } = useParams();
+  const { jobPostingKey } = useParams();
 
   const [jobPostingInfo, setJobPostingInfo] = useState<JobPosting>({
     companyKey: 1,
@@ -66,12 +66,12 @@ const JobPostDetail = () => {
 
   // 지원하기
   const Apply = async () => {
-    if (!postId) return;
+    if (!jobPostingKey) return; // url에 jobPostingKey가 없음
 
     // TODO: 로그인하지 않았다면 로그인으로 보내기 alert
 
     // 로그인한 사용자만
-    await postJobPostingApply(Number(postId));
+    await postJobPostingApply(jobPostingKey);
   };
 
   return (
@@ -138,7 +138,7 @@ const JobPostDetail = () => {
                 <StepContainer>
                   {jobPostingInfo.jobPostingStep.map((stepName, idx) => {
                     return (
-                      <Step>
+                      <Step key={`${idx} ${stepName}`}>
                         <StepNumber>{idx + 1}단계</StepNumber>
                         <p>{stepName}</p>
                       </Step>
