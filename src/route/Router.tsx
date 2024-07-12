@@ -1,20 +1,20 @@
 import { createBrowserRouter } from "react-router-dom";
-import Index from "./components/routes/Index";
-import Login from "./components/routes/Login";
-import SignUp from "./components/routes/SignUp";
-import FindEmail from "./components/routes/FindEmail";
-import Account from "./components/routes/Account";
-import JobPostDetail from "./components/routes/JobPostDetail";
-import UserMypage from "./components/routes/UserMypage";
-import CompanyMypage from "./components/routes/CompanyMypage";
-import CreateResume from "./components/routes/CreateResume";
-import CreateJobPost from "./components/routes/CreateJobPost";
-import ViewResume from "./components/routes/ViewResume";
-import RecruitBoard from "./components/routes/RecruitBoard";
-import ProtectedRoute from "./components/routes/ProtectedRoute";
-import Layout from "./components/routes/Layout";
-import FormAssignment from "./components/routes/FormAssignment";
-import FormInterview from "./components/routes/FormInterview";
+import Index from "../pages/Index";
+import Login from "../pages/Login";
+import SignUp from "../pages/SignUp";
+import FindEmail from "../pages/FindEmail";
+import Account from "../pages/Account";
+import JobPostDetail from "../pages/JobPostDetail";
+import UserMypage from "../pages/UserMypage";
+import CompanyMypage from "../pages/CompanyMypage";
+import CreateResume from "../pages/CreateResume";
+import CreateJobPost from "../pages/CreateJobPost";
+import ViewResume from "../pages/ViewResume";
+import RecruitBoard from "../pages/RecruitBoard";
+import ProtectedRoute from "../pages/ProtectedRoute";
+import Layout from "../pages/Layout";
+import FormAssignment from "../pages/FormAssignment";
+import FormInterview from "../pages/FormInterview";
 
 const router = createBrowserRouter([
   {

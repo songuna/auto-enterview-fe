@@ -5,12 +5,12 @@ import { JobPosting } from "../type/jobPosting";
 import { postCompaniesJobPosting, putCompaniesJobPosting } from "../axios/http/jobPosting";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getTwoDigit } from "../utils/Format";
-import DatePickerDuration from "../input/DatePickerDuration";
-import SelectInput from "../input/SelectInput";
-import { InputDefault } from "../css/input";
-import Checkbox from "../input/Checkbox";
-import TimePicker from "../input/TimePicker";
-import { optionEducation, optionEmploymentType, optionJob, techStacks } from "../../enum/options";
+import DatePickerDuration from "../components/input/DatePickerDuration";
+import SelectInput from "../components/input/SelectInput";
+import { InputDefault } from "../assets/style/input";
+import Checkbox from "../components/input/Checkbox";
+import TimePicker from "../components/input/TimePicker";
+import { optionEducation, optionEmploymentType, optionJob, techStacks } from "../enum/options";
 
 const CreateJobPost = () => {
   // 필요경력, 급여같은 input에서 disable될 때 임시로 저장해두는 값

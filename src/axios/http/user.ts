@@ -1,4 +1,4 @@
-import { IUser, IUserAuth } from "../../type/user";
+import { IUser, IUserAuth } from "../../../type/user";
 import { http } from "../instances";
 
 export const postSignin = (userData: IUserAuth) => {
@@ -10,20 +10,17 @@ export const postSignup = (userData: IUserAuth) => {
 };
 
 export const postCompanySignup = (userData: IUserAuth) => {
-  return http.post(`companies/signup`, userData)
-}
+  return http.post(`companies/signup`, userData);
+};
 
 export const checkEmailDuplication = (email: string) => {
-  return http.post<void>('/common/duplicate-email', { email });
+  return http.post<void>("/common/duplicate-email", { email });
 };
 
 export const postSendVerificationCode = (email: string) => {
-  return http.post<void>('/common/send-verification-code', { email });
+  return http.post<void>("/common/send-verification-code", { email });
 };
 
-export const postVerifyEmailCode = (email: string, verificationCode :string) => {
-  return http.post<void>('/common/verify-email', { email, verificationCode });
+export const postVerifyEmailCode = (email: string, verificationCode: string) => {
+  return http.post<void>("/common/verify-email", { email, verificationCode });
 };
-
-
-

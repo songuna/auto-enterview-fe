@@ -8,10 +8,10 @@ import {
   NextButton,
   Settings,
   Text,
-} from "../css/ScheduleFormStyle";
-import DatePickerOne from "../input/DatePickerOne";
-import TimePicker from "../input/TimePicker";
-import { InputDefault } from "../css/input";
+} from "../assets/style/ScheduleFormStyle";
+import DatePickerOne from "../components/input/DatePickerOne";
+import TimePicker from "../components/input/TimePicker";
+import { InputDefault } from "../assets/style/input";
 import styled from "styled-components";
 
 interface IInterviewData {
@@ -63,9 +63,7 @@ const FormInterview = () => {
               type="number"
               placeholder="공고 제목을 입력하세요"
               value={formData.count}
-              onChange={e =>
-                setFormData({ ...formData, count: e.target.value })
-              }
+              onChange={e => setFormData({ ...formData, count: e.target.value })}
             />
           </Label>
           <AddButton>일정 추가</AddButton>

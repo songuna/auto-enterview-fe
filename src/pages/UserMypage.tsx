@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Container, Inner, SubTitle, Wrapper } from "../css/Common";
+import { Container, Inner, SubTitle, Wrapper } from "../assets/style/Common";
 import {
   Dday,
   Info,
@@ -13,7 +13,7 @@ import {
   RecruitLists,
   Top,
   UserInfo,
-} from "../css/MypageStyle";
+} from "../assets/style/MypageStyle";
 import { useEffect, useState } from "react";
 import { getResume } from "../axios/http/resume";
 import { Link } from "react-router-dom";

@@ -4,7 +4,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { postSignin } from "../axios/http/user";
 import { useSetRecoilState } from "recoil";
-import { authUserState } from "../../recoil/atoms/userAtom";
+import { authUserState } from "../recoil/atoms/userAtom";
 //import axios from 'axios';
 
 const Login = () => {

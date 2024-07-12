@@ -1,4 +1,4 @@
-import { InputCheckbox } from "../css/input";
+import { InputCheckbox } from "../../assets/style/input";
 
 interface Props {
   id: string;
