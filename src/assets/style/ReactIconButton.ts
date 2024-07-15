@@ -20,4 +20,7 @@ export const IconButton = styled.button`
     background-color: var(--primary-color);
     color: #fff;
   }
+  &.delete {
+    color: var(--color-red);
+  }
 `;

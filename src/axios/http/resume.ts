@@ -1,4 +1,4 @@
-import { Method } from "../../../type/resume";
+import { Method } from "../../type/resume";
 import { http } from "../instances";
 
 const resumeEndpoint = (method: Method, candidateKey: string) => {
