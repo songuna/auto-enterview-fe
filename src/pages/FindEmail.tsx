@@ -1,24 +1,21 @@
 import styled, { keyframes } from 'styled-components';
 import React, { useState } from 'react';
-//import axios from 'axios';
+import { postFindEmail } from '../axios/http/user';
 
 const FindEmail: React.FC = () => {
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phoneNumber, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!name || !phone) {
+    if (!name || !phoneNumber) {
       alert('정보를 입력해주세요');
     } else {
       try {
-        //const response = await axios.post('https://api.example.com/find-email', {
-          //name,
-          //phone,
-        //});
-        setEmail(response.data.email);
+        const response = await postFindEmail(name, phoneNumber); // 이메일 찾기 API 호출
+        setEmail(response.email);
         setIsModalOpen(true);
       } catch (error) {
         console.error('Error finding email:', error);
@@ -38,9 +35,8 @@ const FindEmail: React.FC = () => {
         <H1>이메일 찾기</H1>
         <Span>이름과 휴대폰 번호를 입력해주세요.</Span>
         <Input type="text" placeholder="이름" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input type="text" placeholder="휴대폰 번호 ( - 사용)" value={phone} onChange={(e) => setPhone(e.target.value)}/>
+        <Input type="text" placeholder="휴대폰 번호 ( - 사용)" value={phoneNumber} onChange={(e) => setPhone(e.target.value)}/>
         <Button>이메일 찾기</Button>
-        <Span>회사는 이메일 찾기를 지원하지않습니다.</Span>
         <Span className='companySpan'>회사는 이메일 찾기를 지원하지않습니다.</Span>
       </Form>
     </Container>
