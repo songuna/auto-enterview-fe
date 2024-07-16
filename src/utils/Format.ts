@@ -36,3 +36,16 @@ export const getDday = (endDate: string): string => {
     return `D${remainDate}`;
   }
 };
+
+/**
+ *
+ * @param time
+ * @returns `18:00`
+ */
+export const getTimeFormat = (time: Date) => {
+  return time.toLocaleTimeString("ko-KR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+};

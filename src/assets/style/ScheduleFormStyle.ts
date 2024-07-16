@@ -3,8 +3,9 @@ import styled from "styled-components";
 export const Form = styled.form`
   width: 100%;
   height: 100%;
+  max-height: 432px;
 
-  button {
+  .btn {
     padding: 16px 32px;
     border-radius: var(--button-radius);
     font: inherit;
@@ -15,9 +16,10 @@ export const Form = styled.form`
 
 export const Settings = styled.div`
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
   width: 100%;
-  height: calc(100% - 80px);
+  height: 100%;
+  max-height: calc(100% - 80px);
 `;
 
 export const Field = styled.div`
@@ -25,7 +27,7 @@ export const Field = styled.div`
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 24px 0 32px;
+  padding: 24px 0;
   background-color: var(--bg-light-blue);
   border-radius: var(--box-radius);
   text-align: center;
@@ -42,6 +44,7 @@ export const Buttons = styled.div`
   display: flex;
   justify-content: center;
   gap: 8px;
+  margin-top: 16px;
 `;
 
 export const CreateButton = styled.button`

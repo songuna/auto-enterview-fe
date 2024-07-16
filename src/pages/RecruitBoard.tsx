@@ -6,14 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { FaEnvelopeOpenText } from "react-icons/fa";
 import Modal from "./Modal";
 import { useParams } from "next/navigation";
+import { ModalType } from "../type/modal";
 
 interface ICandidateList {
   candidateKey: string;
   candidateName: string;
   createdAt: string;
 }
-
-export type ModalType = "email" | "schedule";
 
 const RecruitBoard = () => {
   // const param = useParams();
@@ -53,6 +52,7 @@ const RecruitBoard = () => {
     // fetchData();
   }, []);
 
+  // 칸반보드 1200px 넘어가면 양쪽으로 드래그
   let isDragging = false;
   let startX = 0;
   let scrollLeft = 0;
@@ -81,10 +81,12 @@ const RecruitBoard = () => {
     }
   };
 
+  // 이력서 보기
   const handleOpenResume = (key: string) => {
     navigate(`/view-resume/${key}`);
   };
 
+  // 지원자 선택하기
   const handleClickList = (stepKey: string) => {
     setActiveList(prevActiveList => {
       if (prevActiveList.length === 0) {
@@ -108,6 +110,7 @@ const RecruitBoard = () => {
     });
   };
 
+  // 모달 오픈
   const openModal = (type: ModalType, step: string) => {
     setModalType(type);
     setModalStep(step);
@@ -168,9 +171,9 @@ const RecruitBoard = () => {
                 </Step>
               ))}
             </Steps>
-            {/* <Modal type={modalType} id={param} /> */}
+            {/* <Modal type={modalType} key={param} /> */}
             {modal ? (
-              <Modal type={modalType} step={modalStep} onClose={() => setModal(false)} />
+              <Modal type={modalType} key={`id`} step={modalStep} onClose={() => setModal(false)} />
             ) : null}
           </Board>
         </Container>
