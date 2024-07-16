@@ -41,6 +41,7 @@ const FindEmail: React.FC = () => {
         <Input type="text" placeholder="휴대폰 번호 ( - 사용)" value={phone} onChange={(e) => setPhone(e.target.value)}/>
         <Button>이메일 찾기</Button>
         <Span>회사는 이메일 찾기를 지원하지않습니다.</Span>
+        <Span className='companySpan'>회사는 이메일 찾기를 지원하지않습니다.</Span>
       </Form>
     </Container>
     {isModalOpen && (
@@ -138,6 +139,9 @@ const Span = styled.span`
   font-size: 12px;
   margin-top: 5px;
   margin-bottom: 5px;
+  &.companySpan{
+    color: red;
+  }
 `
 
 // 이메일 찾기 후 모달
