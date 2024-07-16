@@ -55,8 +55,8 @@ const Index = () => {
         },
       ]);
 
-      const response = await getJobPostings();
-      setJobInfos(response);
+      //const response = await getJobPostings();
+      //setJobInfos(response);
     })();
   }, []);
 
