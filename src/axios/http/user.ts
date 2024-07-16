@@ -28,3 +28,8 @@ export const postVerifyEmailCode = (email: string, verificationCode: string) => 
 export const postFindEmail = (name: string, phoneNumber: string) => {
   return http.post<{ email: string }>("candidates/find-email", { name, phoneNumber });
 };
+
+export const postChangePassword = (candidateKey: string, oldPassword: string, newPassword: string) => {
+  const url = `/candidates/${candidateKey}/password`;
+  return http.put<IUser>(url, { oldPassword, newPassword });
+};

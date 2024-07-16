@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { postSignin } from "../axios/http/user";
 import { useSetRecoilState } from "recoil";
 import { authUserState } from "../recoil/atoms/userAtom";
-//import axios from 'axios';
 
 const Login = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -14,6 +13,7 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const setAuthUser = useSetRecoilState(authUserState);
   const navigate = useNavigate();
+
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
