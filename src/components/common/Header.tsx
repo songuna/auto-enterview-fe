@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { HiArrowLeftOnRectangle } from "react-icons/hi2";
 import { IoPersonCircleOutline, IoSettings } from "react-icons/io5";
 import { FaKey } from "react-icons/fa6";
-import axios from "axios";
 import { useRecoilState } from "recoil";
 import { authUserState } from "../../recoil/store";
 import { IoIosLock } from "react-icons/io";
@@ -18,6 +17,7 @@ const Header = () => {
       try {
         // await axios.post("/common/signout");
         setAuthUser(null);
+        localStorage.removeItem("token");
         navigate("/");
       } catch (error) {
         alert("로그아웃 중 문제가 발생했습니다. 다시 시도해주세요.");
