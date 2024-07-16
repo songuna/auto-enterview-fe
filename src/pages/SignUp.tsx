@@ -4,6 +4,8 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { postSignup, postCompanySignup } from "../axios/http/user";
 import { postSendVerificationCode } from "../axios/http/user";
 import { http } from "../axios/instances";
+import { useNavigate } from "react-router-dom"; 
+
 
 // 회원가입
 const SignUp: React.FC = () => {
@@ -22,6 +24,8 @@ const SignUp: React.FC = () => {
     userPassword: "",
     userPhoneNumber: "",
   });
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -56,11 +60,11 @@ const SignUp: React.FC = () => {
           await postSendVerificationCode(email);
           alert("인증번호가 발송되었습니다");
         } catch (error) {
-          alert(`인증번호 발송 중 오류가 발생했습니다: ${error.message}`);
+          alert(`인증번호 발송 중 오류가 발생했습니다`);
         }
       }
     } catch (error) {
-      alert(`이메일 중복 확인 중 오류가 발생했습니다: ${error.message}`);
+      alert(`이메일 중복 확인 중 오류가 발생했습니다`);
     }
   };
 
@@ -110,6 +114,7 @@ const SignUp: React.FC = () => {
       // 회원가입 성공 처리 로직 추가
       alert("회원가입이 완료되었습니다.");
       console.log("Form submitted", userData);
+      navigate("/login");
     } catch (error) {
       alert("회원가입에 실패했습니다.");
       console.error("Signup error:", error);

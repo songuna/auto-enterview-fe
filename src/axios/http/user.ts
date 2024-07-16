@@ -1,4 +1,4 @@
-import { IUser, IUserAuth } from "../../../type/user";
+import { IUser, IUserAuth } from "../../type/user";
 import { http } from "../instances";
 
 export const postSignin = (userData: IUserAuth) => {
@@ -23,4 +23,8 @@ export const postSendVerificationCode = (email: string) => {
 
 export const postVerifyEmailCode = (email: string, verificationCode: string) => {
   return http.post<void>("/common/verify-email", { email, verificationCode });
+};
+
+export const postFindEmail = (name: string, phoneNumber: string) => {
+  return http.post<{ email: string }>("candidates/find-email", { name, phoneNumber });
 };
