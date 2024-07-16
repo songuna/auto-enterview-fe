@@ -54,9 +54,8 @@ const Index = () => {
           endDate: "2024-08-02",
         },
       ]);
-
-      const response = await getJobPostings();
-      setJobInfos(response);
+      // const response = await getJobPostings();
+      // setJobInfos(response);
     })();
   }, []);
 
