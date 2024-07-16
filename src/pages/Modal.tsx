@@ -48,13 +48,12 @@ const Modal = ({ type, key, step, onClose }: ModalProps) => {
   };
 
   // 메일 예약하기
-  // const sendEmail = async() => {
-  //   try {
-  //     await
-  //   } catch (error) {
-
-  //   }
-  // }
+  const sendEmail = async () => {
+    // try {
+    //   await
+    // } catch (error) {
+    // }
+  };
 
   return (
     <Background>

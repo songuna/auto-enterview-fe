@@ -1,11 +1,16 @@
 import { AxiosRequestConfig } from "axios";
-import { companyInfo } from "../../../type/company";
-import { JobInfo, JobPosting, JobPostingList } from "../../../type/jobPosting";
+import { companyInfo, PostedJobPoting } from "../../type/company";
+import { JobInfo, JobPosting, JobPostingList } from "../../type/jobPosting";
 import { http } from "../instances";
 
 // 전체 공고 조회
 export const getJobPostings = () => {
   return http.get<JobInfo[]>(`common/job-postings`);
+};
+
+// 회사 마이페이지 공고 조회
+export const getPostedJobPostings = (companyKey: string) => {
+  return http.get<PostedJobPoting[]>(`common/${companyKey}/posted-job-postings`);
 };
 
 export const postCompaniesJobPosting = (
