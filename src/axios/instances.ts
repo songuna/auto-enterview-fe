@@ -17,11 +17,8 @@ export const http: HttpClient = axiosInstance;
 axiosInstance.interceptors.response.use(
   response => {
     // 인증 토큰이 있다면 로컬스토리지에 저장
-    console.log(response);
-
     if (response.headers["authorization"]) {
       localStorage.setItem("token", `${response.headers["authorization"]}`);
-      console.log(response.headers["authorization"]);
     }
 
     return response.data;
@@ -39,7 +36,6 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `${token}`;
     }
-    console.log(config);
 
     return config;
   },
