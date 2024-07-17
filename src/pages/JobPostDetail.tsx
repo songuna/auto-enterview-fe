@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { JobPosting } from "../type/jobPosting";
 import { getDateFormat } from "../utils/Format";
-import { companyInfo } from "../type/company";
+import { CompanyInfo } from "../type/company";
 import { Helmet } from "react-helmet-async";
 
 const JobPostDetail = () => {
@@ -19,23 +19,19 @@ const JobPostDetail = () => {
     jobCategory: "안드로이드 개발",
     career: 4,
     techStack: ["Kotlin", "Spring Boot", "Java", "Node.js", "Python", "Dijango"],
-    jobPostingStep: ["서류전형", "1차면접", "2차면접"],
+    step: ["서류전형", "1차면접", "2차면접"],
     workLocation: "부산광역시 강서구 녹산산단382로14번가길 10~29번지(송정동)",
     education: "4년제",
     employmentType: "정규직",
     salary: 3000,
     workTime: "10:00 ~ 19:00",
-    startDateTime: new Date(),
-    endDateTime: new Date(),
+    startDate: new Date(),
+    endDate: new Date(),
     jobPostingContent:
       "설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명",
-    image: {
-      fileName: "파일명",
-      originalFileName: "원본파일명",
-      filePath: "url",
-    },
+    image: "",
   });
-  const [companyInfo, setCompanyInfo] = useState<companyInfo>({
+  const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({
     companyInfoKey: "(주)안드로메다",
     employees: 1315,
     companyAge: new Date(),
@@ -45,23 +41,33 @@ const JobPostDetail = () => {
   });
 
   useEffect(() => {
-    async () => {
+    (async () => {
       // 공고내용
-      const response = await getJobPosting(1);
-      setJobPostingInfo(response);
+      if (jobPostingKey) {
+        console.log(jobPostingKey);
 
-      // 파일 해결되면 TODO: url 추출
+        const response = await getJobPosting(jobPostingKey);
+        console.log(response);
 
-      // 회사정보
-      const companyResponse = await getCompanyInfomation(1);
-      setCompanyInfo(companyResponse);
-    };
-  }, []);
+        setJobPostingInfo(response);
+
+        console.log(response);
+
+        // 파일 해결되면 TODO: url 추출
+
+        // 회사정보
+        const companyResponse = await getCompanyInfomation(response.companyKey);
+        setCompanyInfo(companyResponse);
+      }
+    })();
+  }, [jobPostingKey]);
 
   const navigate = useNavigate();
   // 수정하기
   const goEdit = () => {
-    navigate("/create-jobpost", { state: { jobPostInfo: jobPostingInfo, jobPostingid: 1 } });
+    navigate("/create-jobpost", {
+      state: { jobPostInfo: jobPostingInfo, jobPostingid: jobPostingInfo.companyKey },
+    });
   };
 
   // 지원하기
@@ -112,7 +118,9 @@ const JobPostDetail = () => {
               </Info>
               <Info>
                 <InfoTitle>필요경력</InfoTitle>
-                <InfoDesc>{jobPostingInfo?.career}년</InfoDesc>
+                <InfoDesc>
+                  {jobPostingInfo?.career == -1 ? "경력무관" : `${jobPostingInfo?.career}년`}
+                </InfoDesc>
               </Info>
               <Info>
                 <InfoTitle>필요학력</InfoTitle>
@@ -120,13 +128,17 @@ const JobPostDetail = () => {
               </Info>
               <Info>
                 <InfoTitle>급여</InfoTitle>
-                <InfoDesc>{jobPostingInfo?.salary}만원</InfoDesc>
+                <InfoDesc>
+                  {jobPostingInfo?.salary == -1
+                    ? "회사내규에따름"
+                    : `${jobPostingInfo?.salary}만원`}
+                </InfoDesc>
               </Info>
               <Info>
                 <InfoTitle>접수기간</InfoTitle>
                 <InfoDesc>
-                  {getDateFormat(jobPostingInfo?.startDateTime)} ~{" "}
-                  {getDateFormat(jobPostingInfo?.endDateTime)}
+                  {getDateFormat(new Date(jobPostingInfo?.startDate))} ~{" "}
+                  {getDateFormat(new Date(jobPostingInfo?.endDate))}
                 </InfoDesc>
               </Info>
               <LongInfo>
@@ -136,7 +148,7 @@ const JobPostDetail = () => {
               <LongInfo>
                 <InfoTitle>전형절차</InfoTitle>
                 <StepContainer>
-                  {jobPostingInfo.jobPostingStep.map((stepName, idx) => {
+                  {jobPostingInfo.step.map((stepName, idx) => {
                     return (
                       <Step key={`${idx} ${stepName}`}>
                         <StepNumber>{idx + 1}단계</StepNumber>
@@ -150,8 +162,8 @@ const JobPostDetail = () => {
             <ContentsContianer>
               <h2>공고내용</h2>
               <div>{jobPostingInfo.jobPostingContent}</div>
-              {jobPostingInfo.image.fileName && (
-                <ContentImage src={jobPostingInfo.image.filePath} alt="채용공고 설명 이미지" />
+              {jobPostingInfo.image && (
+                <ContentImage src={jobPostingInfo.image} alt="채용공고 설명 이미지" />
               )}
             </ContentsContianer>
           </Container>
@@ -175,7 +187,7 @@ const JobPostDetail = () => {
               </Info>
               <Info>
                 <InfoTitle>설립년도</InfoTitle>
-                <InfoDesc>{companyInfo.companyAge.getFullYear()}년</InfoDesc>
+                <InfoDesc>{new Date(companyInfo.companyAge).getFullYear()}년</InfoDesc>
               </Info>
               <LongInfo>
                 <InfoTitle>주소</InfoTitle>

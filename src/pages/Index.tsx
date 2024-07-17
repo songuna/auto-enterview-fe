@@ -14,6 +14,8 @@ const Index = () => {
 
   const [jobInfos, setJobInfos] = useState<JobInfo[]>([]);
 
+  const [page, setpage] = useState(1);
+
   useEffect(() => {
     (async () => {
       // Mock 데이터
@@ -54,6 +56,10 @@ const Index = () => {
           endDate: "2024-08-02",
         },
       ]);
+
+      const response = await getJobPostings(page);
+      setJobInfos(response.jobPostingsList);
+      console.log(response);
     })();
   }, []);
 

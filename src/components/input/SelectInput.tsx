@@ -42,7 +42,7 @@ const SelectInput = ({ placeholder, options, value, onChange }: Props) => {
       }}
       placeholder={placeholder}
       value={options?.filter(option => option.value === value)}
-      onChange={value => onChange(value)}
+      onChange={value => onChange(value.value)}
     />
   );
 };

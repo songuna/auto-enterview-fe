@@ -12,20 +12,16 @@ export interface JobPosting {
   jobCategory: string;
   career: number;
   techStack: string[];
-  jobPostingStep: string[];
+  step: string[];
   workLocation: string;
   education: string;
   employmentType: string;
   salary: number;
   workTime: string;
-  startDateTime: Date;
-  endDateTime: Date;
+  startDate: Date;
+  endDate: Date;
   jobPostingContent: string;
-  image: {
-    fileName: string;
-    originalFileName: string;
-    filePath: string;
-  };
+  image: string;
 }
 
 export interface JobPostingForCompany {
