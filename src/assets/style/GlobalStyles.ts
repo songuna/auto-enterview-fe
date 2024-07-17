@@ -66,7 +66,7 @@ export const GlobalStyles = createGlobalStyle`
   }
   ol, ul {
 	list-style: none;
-}
+  }
   a {
     display: block;
     text-decoration: none;
@@ -75,6 +75,7 @@ export const GlobalStyles = createGlobalStyle`
   button {
     border: none;
     background-color: transparent;
+    font-family: inherit;
     font-size: 1rem;
     cursor: pointer;
   }
