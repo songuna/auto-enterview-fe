@@ -4,6 +4,8 @@ import { MdOutlineEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { deleteResume } from '../axios/http/resume'
+
 
 const ViewResume: React.FC  = () => {
   const [deleteConfirm, setDeleteConfirm] = useState(false);
@@ -11,7 +13,7 @@ const ViewResume: React.FC  = () => {
 
 
   // 삭제버튼 구현
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteConfirm) {
       // 이미 확인된 상태에서 더블 클릭 시
       alert('이력서가 이미 삭제되었습니다!');
@@ -19,9 +21,15 @@ const ViewResume: React.FC  = () => {
     } else {
       // 처음 클릭 시 확인 알림
       if (window.confirm('정말 삭제하시겠습니까?')) {
-        alert('이력서가 삭제되었습니다!');
-        setDeleteConfirm(true);
-        navigate('/user-mypage');
+        try {
+          await deleteResume('candidateKey'); 
+          alert('이력서가 삭제되었습니다!');
+          setDeleteConfirm(true);
+          navigate('/user-mypage');
+        } catch (error) {
+          console.error("삭제 실패:", error);
+          alert('이력서 삭제에 실패했습니다. 다시 시도해주세요.');
+        }
       }
     }
   };
