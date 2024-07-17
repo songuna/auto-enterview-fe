@@ -2,17 +2,44 @@ import { Helmet } from "react-helmet-async";
 import styled from "styled-components";
 import { MdOutlineEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { useState } from 'react';
+import { useState, useEffect  } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { deleteResume } from '../axios/http/resume'
+import { getResume, deleteResume } from '../axios/http/resume'
+
+interface ResumeData {
+  title: string;
+  name: string;
+  gender: string;
+  birthDate: string;
+  phoneNumber: string;
+  email: string;
+  address: string;
+  jobWant: string;
+  techStack: string;
+  scholarship:string;
+  schoolName: string;
+  career : string;
+  companyName : string;
+  startDate : string;
+  endDate : string;
+  education: { degree: string, schoolName: string };
+  certificates : string;
+  certificateName : string;
+  certificateDate : string;
+  experience: string[];
+  activities: string[];
+  qualifications: string[];
+  portfolio: string;
+}
 
 
 const ViewResume: React.FC  = () => {
+  const [resumeData, setResumeData] = useState<ResumeData | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const navigate = useNavigate();
 
 
-  // 삭제버튼 구현
+  // 이력서 삭제버튼 구현
   const handleDelete = async () => {
     if (deleteConfirm) {
       // 이미 확인된 상태에서 더블 클릭 시
@@ -34,7 +61,21 @@ const ViewResume: React.FC  = () => {
     }
   };
 
-  // 수정버튼 구현
+  // 이력서 불러오기 (조회)
+  useEffect(() => {
+    const fetchResume = async () => {
+      try {
+        const data = await getResume('candidateKey');
+        setResumeData(data);
+      } catch (error) {
+        console.error('이력서 불러오기 실패:', error);
+      }
+    };
+
+    fetchResume();
+  }, []);
+
+  // 이력서 수정버튼 구현
   const handleEdit = () => {
     if (window.confirm('이력서를 수정하시겠습니까?')) {
       navigate('/create-resume');
@@ -47,84 +88,84 @@ const ViewResume: React.FC  = () => {
         <title>이력서</title>
       </Helmet>
       <Wrapper className="inner-1200">
-          <Title>이력서
-            <Icon>
+        <Title>
+          이력서
+          <Icon>
             <Edit onClick={handleEdit}>
-              <MdOutlineEdit size={20}></MdOutlineEdit>
+              <MdOutlineEdit size={20} />
             </Edit>
-            
             <Delet onClick={handleDelete}>
-              <RiDeleteBin6Line size={20}></RiDeleteBin6Line>
+              <RiDeleteBin6Line size={20} />
             </Delet>
-            </Icon>
-          </Title>
+          </Icon>
+        </Title>
         <All>
           <InputContainer>
             <H2 className="inputBox">" 한줄 소개 "</H2>
             <AllContainer>
               <Image></Image>
               <FlexContainer>
-                <H3 className="input textBox">이름</H3>
-                <H3 className="input textBox">성별</H3>
-                <H3 className="input textBox">생년월일</H3>
-                <H3 className="input textBox">전화번호</H3>
-                <H3 className="input emailBox">이메일</H3>
-                <H3 className="input addressBox">주소</H3>
+                <H3 className="input textBox">{resumeData.name}</H3>
+                <H3 className="input textBox">{resumeData.gender}</H3>
+                <H3 className="input textBox">{resumeData.birthDate}</H3>
+                <H3 className="input textBox">{resumeData.phoneNumber}</H3>
+                <H3 className="input emailBox">{resumeData.email}</H3>
+                <H3 className="input addressBox">{resumeData.address}</H3>
               </FlexContainer>
             </AllContainer>
             <Line></Line>
-           </InputContainer>
+          </InputContainer>
 
           <InputContainer>
             <InputTitle>희망 직무</InputTitle>
-            <H3 className="input textBox"></H3>
+            <H3 className="input textBox">{resumeData.jobWant}</H3>
           </InputContainer>
 
           <InputContainer>
             <InputTitle>기술 스택</InputTitle>
+            <H3 className="input textBox">{resumeData.techStack}</H3>
           </InputContainer>
 
           <InputContainer className="school">
             <InputTitle>최종 학력</InputTitle>
-            <H3 className="input textBox"></H3>
+            <H3 className="input textBox">{resumeData.scholarship}</H3>
             <InputTitle className="schoolName">학교명</InputTitle>
-            <H3 className="input textBox"></H3>
+            <H3 className="input textBox">{resumeData.schoolName}</H3>
           </InputContainer>
 
           <InputContainer>
             <InputTitle>경력</InputTitle>
             <Container>
-              <Input1></Input1>
-              <Input1></Input1>
-              <Input1></Input1>
-              <Input1></Input1>
+              {resumeData.career.map((exp, index) => (
+                <Input1 key={index} value={exp} readOnly />
+              ))}
             </Container>
           </InputContainer>
 
           <InputContainer>
             <InputTitle>경험/활동/교육</InputTitle>
             <Container>
-              <Input1></Input1>
-              <Input1></Input1>
-              <Input1></Input1>
+              {resumeData.experience.map((activity, index) => (
+                <Input1 key={index} value={activity} readOnly />
+              ))}
             </Container>
           </InputContainer>
 
           <InputContainer>
             <InputTitle>자격/어학/수상</InputTitle>
             <Container>
-              <Input1></Input1>
-              <Input1></Input1>
+              {resumeData.certificates.map((certificates, index) => (
+                <Input1 key={index} value={certificates} readOnly />
+              ))}
             </Container>
           </InputContainer>
 
           <InputContainer>
             <InputTitle>포트폴리오</InputTitle>
             <Container>
-              <H4>URL - </H4>
+              <H4>URL - {resumeData.portfolio}</H4>
             </Container>
           </InputContainer>
-
         </All>
       </Wrapper>
     </>
