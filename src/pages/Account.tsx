@@ -1,14 +1,17 @@
 import styled, { keyframes } from 'styled-components';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useState, FormEvent, ChangeEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { postChangePassword } from '../axios/http/user';
+import { useRecoilValue } from 'recoil';
+import { authUserState } from '../recoil/atoms/userAtom'
 
 interface AccountProps {
   role: string;
 }
 
-const Account: React.FC<AccountProps> = ({ role }) => {
+
+
+const Account: React.FC<AccountProps> = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -16,6 +19,8 @@ const Account: React.FC<AccountProps> = ({ role }) => {
   const [message, setMessage] = useState('');
   const [confirmMessage, setConfirmMessage] = useState('');
   const [passwordError, setPasswordError] = useState('');
+
+  const authUser = useRecoilValue(authUserState);
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -41,39 +46,19 @@ const Account: React.FC<AccountProps> = ({ role }) => {
       setConfirmMessage('비밀번호가 일치합니다');
     }
 
-    // 기존 비밀번호가 서버 API와 일치하는지 확인 및 비밀번호 변경 로직
     try {
-      const response = await axios.post('https://api.example.com/check-password', {
-        password: oldPassword,
-      });
+      // 기존 비밀번호가 서버 API와 일치하는지 확인 및 비밀번호 변경 로직
+      const response = await postChangePassword(authUser.key, oldPassword, newPassword);
 
-      if (response.data.success) {
-        setMessage('기존 비밀번호가 일치합니다');
-
-        // 비밀번호 변경 로직 추가 및 서버 API 호출
-        try {
-          const changeResponse = await axios.post('https://api.example.com/change-password', {
-            newPassword: newPassword,
-          });
-
-          if (changeResponse.data.success) {
-            alert('비밀번호가 성공적으로 변경되었습니다');
-            // 성공적으로 변경된 경우 추가적인 처리
-          } else {
-            alert('비밀번호 변경 실패');
-            // 변경 실패 시 처리
-          }
-        } catch (error) {
-          console.error('비밀번호 변경 오류:', error);
-          setMessage('비밀번호 변경 중 오류가 발생했습니다');
-        }
-
+      if (response) {
+        alert('비밀번호가 성공적으로 변경되었습니다');
+        // 성공적으로 변경된 경우 추가적인 처리
       } else {
         setMessage('기존 비밀번호가 일치하지 않습니다');
       }
     } catch (error) {
-      console.error('기존 비밀번호 확인 오류:', error);
-      setMessage('기존 비밀번호 확인 중 오류가 발생했습니다');
+      console.error('비밀번호 변경 오류:', error);
+      setMessage('비밀번호 변경 중 오류가 발생했습니다');
     }
   };
 
@@ -113,8 +98,6 @@ const Account: React.FC<AccountProps> = ({ role }) => {
           </PassWordCheck>
           {passwordError && <ErrorSpan>{passwordError}</ErrorSpan>}
           <MessageSpan>{confirmMessage}</MessageSpan>
-          {role === "company" && (
-          <Input type="text" name="companyName" placeholder="회사명"/> )}
           <Button type="submit">비밀번호 변경</Button>
           <Button className="out" type="button" onClick={handleDeleteAccount}>회원 탈퇴</Button>
       </Form>
