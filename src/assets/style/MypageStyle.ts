@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 export const Top = styled.div`
@@ -29,7 +30,7 @@ export const InfoDesc = styled.p`
   width: calc(100% - 150px);
 `;
 
-export const RecruitLists = styled.ul`
+export const RecruitLists = styled.div`
   display: flex;
   flex-direction: column;
   padding: 16px 32px;
@@ -37,7 +38,7 @@ export const RecruitLists = styled.ul`
   border-radius: var(--box-radius);
 `;
 
-export const RecruitList = styled.li`
+export const RecruitList = styled(Link)`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -66,13 +67,15 @@ export const Dday = styled.p``;
 
 export const ListTitle = styled.h4`
   width: 100%;
-  max-width: 450px;
+  max-width: 350px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-export const ListCareer = styled.p``;
+export const ListCareer = styled.p`
+  font-weight: 500;
+`;
 
 export const ListStep = styled.p`
   flex-shrink: 0;
