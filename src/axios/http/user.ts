@@ -28,3 +28,4 @@ export const postVerifyEmailCode = (email: string, verificationCode: string) => 
 export const postFindEmail = (name: string, phoneNumber: string) => {
   return http.post<{ email: string }>("candidates/find-email", { name, phoneNumber });
 };
+

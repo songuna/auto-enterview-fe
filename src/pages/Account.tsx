@@ -4,6 +4,8 @@ import { useState, FormEvent, ChangeEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
+
 interface AccountProps {
   role: string;
 }
@@ -83,10 +85,18 @@ const Account: React.FC<AccountProps> = ({ role }) => {
     return regex.test(password);
   };
 
-  const handleDeleteAccount = () => {
+
+  const candidateKey = '';
+  const handleDeleteAccount = async () => {
     if (window.confirm("정말 탈퇴하시겠습니까?")) {
-      alert("탈퇴되었습니다");
-      window.location.href = "/"; // 메인 화면으로 이동
+      try {
+        await postWithdrawCandidate(candidateKey); // 탈퇴 API 호출
+        alert("탈퇴되었습니다");
+        window.location.href = "/"; // 메인 화면으로 이동
+      } catch (error) {
+        console.error("탈퇴 중 오류가 발생했습니다:", error);
+        alert("탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
