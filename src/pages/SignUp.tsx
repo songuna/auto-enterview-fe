@@ -42,7 +42,7 @@ const SignUp: React.FC = () => {
 
   // 이메일 중복
   const checkEmailDuplication = async (email: string) => {
-    return await http.post<{ isDuplicated: boolean }>("/common/duplicate-email", { email });
+    return await http.post("/common/duplicate-email", { email });
   };
 
   // 이메일 인증 코드 전송
@@ -53,18 +53,14 @@ const SignUp: React.FC = () => {
     }
     try {
       const response = await checkEmailDuplication(email);
-      if (response && response.isDuplicated) {
-        alert("이메일이 중복되었습니다");
-      } else {
-        try {
-          await postSendVerificationCode(email);
-          alert("인증번호가 발송되었습니다");
-        } catch (error) {
-          alert(`인증번호 발송 중 오류가 발생했습니다`);
-        }
+      try {
+        await postSendVerificationCode(email);
+        alert("인증번호가 발송되었습니다");
+      } catch (error) {
+        alert(`인증번호 발송 중 오류가 발생했습니다`);
       }
     } catch (error) {
-      alert(`이메일 중복 확인 중 오류가 발생했습니다`);
+      alert(`이미 가입된 이메일입니다.`);
     }
   };
 
