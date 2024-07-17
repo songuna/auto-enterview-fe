@@ -1,6 +1,5 @@
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components";
-import Select from "react-select";
 import { useForm, Controller } from "react-hook-form";
 import { PiPlusThin, PiMinusThin } from "react-icons/pi";
 import DatePickerDuration from "../components/input/DatePickerDuration";
