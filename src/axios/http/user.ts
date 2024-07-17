@@ -34,7 +34,7 @@ export const postChangePassword = (key: string, oldPassword: string, newPassword
   return http.put<IUser>(url, { oldPassword, newPassword });
 };
 
-export const postWithdrawCandidate = (candidateKey: string) => {
-  const url = `/candidates/${candidateKey}/withdraw`; // 실제 API 엔드포인트로 변경해야 합니다.
+export const postWithdrawCandidate = (key: string) => {
+  const url = `/common/${key}/withdraw`; 
   return http.delete(url);
 };
