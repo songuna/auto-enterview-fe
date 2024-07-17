@@ -29,7 +29,12 @@ export const postFindEmail = (name: string, phoneNumber: string) => {
   return http.post<{ email: string }>("candidates/find-email", { name, phoneNumber });
 };
 
-export const postChangePassword = (Key: string, oldPassword: string, newPassword: string) => {
-  const url = `/common/${Key}/password`;
+export const postChangePassword = (key: string, oldPassword: string, newPassword: string) => {
+  const url = `/common/${key}/password`;
   return http.put<IUser>(url, { oldPassword, newPassword });
+};
+
+export const postWithdrawCandidate = (candidateKey: string) => {
+  const url = `/candidates/${candidateKey}/withdraw`; // 실제 API 엔드포인트로 변경해야 합니다.
+  return http.delete(url);
 };

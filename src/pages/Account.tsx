@@ -2,8 +2,11 @@ import styled, { keyframes } from 'styled-components';
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useState, FormEvent, ChangeEvent } from 'react';
 import { postChangePassword } from '../axios/http/user';
+import { postWithdrawCandidate } from '../axios/http/user';
 import { useRecoilValue } from 'recoil';
 import { authUserState } from '../recoil/atoms/userAtom'
+
+
 
 interface AccountProps {
   role: string;
@@ -68,10 +71,18 @@ const Account: React.FC<AccountProps> = () => {
     return regex.test(password);
   };
 
-  const handleDeleteAccount = () => {
+
+  const candidateKey = '';
+  const handleDeleteAccount = async () => {
     if (window.confirm("정말 탈퇴하시겠습니까?")) {
-      alert("탈퇴되었습니다");
-      window.location.href = "/"; // 메인 화면으로 이동
+      try {
+        await postWithdrawCandidate(candidateKey); // 탈퇴 API 호출
+        alert("탈퇴되었습니다");
+        window.location.href = "/"; // 메인 화면으로 이동
+      } catch (error) {
+        console.error("탈퇴 중 오류가 발생했습니다:", error);
+        alert("탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.");
+      }
     }
   };
 
