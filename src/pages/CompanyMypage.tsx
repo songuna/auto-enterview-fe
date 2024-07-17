@@ -1,5 +1,4 @@
-import axios from "axios";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { GiSaveArrow } from "react-icons/gi";
 import { HiOutlinePlus } from "react-icons/hi2";
@@ -16,80 +15,119 @@ import {
   Label,
   LabelWrap,
   ListCareer,
-  ListStep,
   ListTitle,
   RecruitList,
   RecruitLists,
   Top,
   UserInfo,
 } from "../assets/style/MypageStyle";
-
-const infoTitles = ["대표자", "설립년도", "주소", "사원수", "회사 홈페이지 URL"];
-
-const infoTypes = ["text", "date", "text", "number", "text"];
-
-interface ICompanyInfo {
-  boss: string;
-  company_age: number;
-  address: string;
-  employees: number;
-  company_url: string;
-  created_at: number;
-  updated_at: number;
-}
+import { getPostedJobPostings } from "../axios/http/jobPosting";
+import { useRecoilValue } from "recoil";
+import { authUserState } from "../recoil/store";
+import { getDateFormat, getDday } from "../utils/Format";
+import { InfoItem, PostedJobPoting } from "../type/company";
+import { getCompanyInfo, postCompanyInfo, putCompanyInfo } from "../axios/http/company";
 
 const CompanyMypage = () => {
-  /* todo: api 회사정보(info) 받아오기, 채용공고 목록 받아오기 */
-  const [info, setInfo] = useState<ICompanyInfo>();
+  const [info, setInfo] = useState<InfoItem[]>([
+    { title: "대표자", desc: "" },
+    { title: "설립년도", desc: "" },
+    { title: "주소", desc: "" },
+    { title: "사원수", desc: "" },
+    { title: "회사 홈페이지 URL", desc: "" },
+  ]);
+  const [jobPostingList, setJobPostingList] = useState<PostedJobPoting[]>();
   const [editMode, setEditMode] = useState(false);
   const [bossValue, setBossValue] = useState("");
   const [ageValue, setAgeValue] = useState("");
   const [addressValue, setAddressValue] = useState("");
   const [employeesValue, setEmployeesValue] = useState("");
   const [urlValue, setUrlValue] = useState("");
-  const firstInputRef = useRef<HTMLInputElement>(null);
-
-  const companyKey = "";
-  const infoURL = `/companies/${companyKey}/information`;
+  const authUser = useRecoilValue(authUserState);
   const values = [bossValue, ageValue, addressValue, employeesValue, urlValue];
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {
-      target: { name, value },
-    } = e;
-    if (name === "대표자") {
-      setBossValue(value);
-    } else if (name === "설립년도") {
-      setAgeValue(value);
-    } else if (name === "주소") {
-      setAddressValue(value);
-    } else if (name === "사원수") {
-      setEmployeesValue(value);
-    } else if (name === "회사 홈페이지 URL") {
-      setUrlValue(value);
+  useEffect(() => {
+    if (!authUser || authUser.role !== "ROLE_COMPANY") return;
+    // 회사정보 불러오기
+    const fetchCompanyInfo = async () => {
+      try {
+        const response = await getCompanyInfo(authUser.key);
+        setInfo([
+          { title: "대표자", desc: response.boss },
+          { title: "설립년도", desc: response.companyAge },
+          { title: "주소", desc: response.address },
+          { title: "사원수", desc: response.employees },
+          { title: "회사 홈페이지 URL", desc: response.companyUrl },
+        ]);
+
+        // 상태를 각각 업데이트
+        setBossValue(response.boss);
+        setAgeValue(getDateFormat(response.companyAge));
+        setAddressValue(response.address);
+        setEmployeesValue(response.employees.toString());
+        setUrlValue(response.companyUrl);
+      } catch (error) {
+        alert("회사 정보를 불러오는데 문제가 생겼습니다.");
+      }
+    };
+
+    fetchCompanyInfo();
+  }, [authUser]);
+
+  useEffect(() => {
+    if (!authUser || authUser.role !== "ROLE_COMPANY") return;
+    // 채용공고 목록 불러오기
+    const fetchJobPosting = async () => {
+      try {
+        const response = await getPostedJobPostings(authUser.key);
+        setJobPostingList(response);
+      } catch (error) {
+        alert("채용공고 목록을 불러오는데 문제가 생겼습니다.");
+      }
+    };
+    fetchJobPosting();
+  }, [authUser]);
+
+  // 회사정보 input 이벤트
+  const onChange = (title: string, newValue: string) => {
+    if (title === "대표자") {
+      setBossValue(newValue);
+    } else if (title === "설립년도") {
+      setAgeValue(newValue);
+    } else if (title === "주소") {
+      setAddressValue(newValue);
+    } else if (title === "사원수") {
+      setEmployeesValue(newValue);
+    } else if (title === "회사 홈페이지 URL") {
+      setUrlValue(newValue);
     }
   };
 
+  // 수정 취소
   const cancelEdit = () => {
     setEditMode(edit => !edit);
   };
 
+  // 회사정보 저장
   const saveInfo = async () => {
+    if (!authUser || authUser.role !== "ROLE_COMPANY") return;
+
     const body = {
-      employees: employeesValue,
-      company_age: ageValue,
-      company_url: urlValue,
+      companyInfoKey: authUser.key,
+      employees: Number(employeesValue),
+      companyAge: new Date(ageValue),
+      companyUrl: urlValue,
       boss: bossValue,
       address: addressValue,
     };
-    const bodyFill = Object.values(body).every(v => v.trim());
-
+    const bodyFill = Object.values(body).every(v => v.toString().trim());
+    console.log(bodyFill);
     if (bodyFill) {
       try {
-        if (info) {
-          await axios.put(`${infoURL}`, body);
+        if (info[0].desc !== "") {
+          await putCompanyInfo(authUser.key, body);
         } else {
-          await axios.post(`${infoURL}`, body);
+          await postCompanyInfo(authUser.key, body);
         }
         setEditMode(edit => !edit);
       } catch (error) {
@@ -100,9 +138,9 @@ const CompanyMypage = () => {
     }
   };
 
+  // 회사정보 수정
   const editInfo = () => {
     setEditMode(edit => !edit);
-    firstInputRef.current?.focus();
   };
 
   return (
@@ -130,49 +168,27 @@ const CompanyMypage = () => {
             </Buttons>
           </Top>
           <UserInfo>
-            {editMode
-              ? infoTitles.map((info, idx) => (
-                  <Info className="text" key={info}>
-                    <InfoTitle>{info}</InfoTitle>
-                    {idx === 0 ? (
-                      <InfoInput
-                        type={infoTypes[idx]}
-                        name={info}
-                        value={values[idx]}
-                        onChange={onChange}
-                        ref={firstInputRef}
-                      />
-                    ) : infoTypes[idx] === "number" ? (
-                      <InfoInput
-                        type={infoTypes[idx]}
-                        name={info}
-                        value={values[idx]}
-                        min={0}
-                        onChange={onChange}
-                      />
-                    ) : infoTypes[idx] === "date" ? (
-                      <InfoInput
-                        type={infoTypes[idx]}
-                        name={info}
-                        value={values[idx]}
-                        onChange={onChange}
-                      />
-                    ) : (
-                      <InfoInput
-                        type={infoTypes[idx]}
-                        name={info}
-                        value={values[idx]}
-                        onChange={onChange}
-                      />
-                    )}
-                  </Info>
-                ))
-              : infoTitles.map(info => (
-                  <Info className="text" key={info}>
-                    <InfoTitle>{info}</InfoTitle>
-                    <InfoDesc>{info}</InfoDesc>
-                  </Info>
-                ))}
+            {info.map(({ title, desc }, idx) => (
+              <Info className="text" key={title}>
+                <InfoTitle>{title}</InfoTitle>
+                {editMode ? (
+                  <InfoInput
+                    type={title === "설립년도" ? "date" : title === "사원수" ? "number" : "text"}
+                    name={title}
+                    value={values[idx]}
+                    min={typeof values[idx] === "number" ? 0 : undefined}
+                    onChange={e => {
+                      const newValue = e.target.value;
+                      onChange(title, newValue);
+                    }}
+                  />
+                ) : (
+                  <InfoDesc>
+                    {desc instanceof Date ? desc.toISOString().substring(0, 10) : desc}
+                  </InfoDesc>
+                )}
+              </Info>
+            ))}
           </UserInfo>
         </Container>
         <Container>
@@ -183,28 +199,19 @@ const CompanyMypage = () => {
             </CreatePost>
           </Top>
           <RecruitLists>
-            <RecruitList>
-              <LabelWrap>
-                <Label />
-                <Dday>{"D-3"}</Dday>
-              </LabelWrap>
-              <ListTitle>
-                {"제목입니다ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ"}
-              </ListTitle>
-              <ListCareer>{"경력"}</ListCareer>
-              <ListStep>{"서류 접수중"}</ListStep>
-            </RecruitList>
-            <RecruitList>
-              <LabelWrap>
-                <Label />
-                <Dday>{"D-3"}</Dday>
-              </LabelWrap>
-              <ListTitle>
-                {"제목입니다ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ"}
-              </ListTitle>
-              <ListCareer>{"경력"}</ListCareer>
-              <ListStep>{"서류 접수중"}</ListStep>
-            </RecruitList>
+            {jobPostingList?.map(jobPosting => (
+              <RecruitList to={`/jobpost-detail/${jobPosting.jobPostingKey}`}>
+                <LabelWrap>
+                  <Label />
+                  <Dday>{getDday(jobPosting.endDateTime)}</Dday>
+                </LabelWrap>
+                <ListTitle>{jobPosting.title}</ListTitle>
+                <ListCareer>{jobPosting.career}</ListCareer>
+                <StepsButton to={`/recruit-board/${jobPosting.jobPostingKey}`}>
+                  채용단계 관리
+                </StepsButton>
+              </RecruitList>
+            ))}
           </RecruitLists>
         </Container>
       </Inner>
@@ -246,6 +253,14 @@ const CreatePost = styled(Link)`
   border-radius: var(--button-radius);
   background-color: var(--primary-color);
   font-size: 1.5rem;
+  color: #fff;
+`;
+
+const StepsButton = styled(Link)`
+  padding: 16px 32px;
+  border-radius: var(--button-radius);
+  background-color: var(--primary-color);
+  font-size: 1.125rem;
   color: #fff;
 `;
 

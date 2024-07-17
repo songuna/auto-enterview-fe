@@ -1,8 +1,6 @@
 import styled from "styled-components";
 import { Container, SubTitle } from "../assets/style/Common";
-import { Controller } from "react-hook-form";
-import DatePicker from "react-datepicker";
-import { NavLink, Outlet, Params, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CreateButton, Field, Form, Label, Text } from "../assets/style/ScheduleFormStyle";
 import { IoMdClose } from "react-icons/io";
@@ -23,7 +21,7 @@ const Modal = ({ type, key, step, onClose }: ModalProps) => {
   useEffect(() => {
     navigate("/recruit-board/assignment");
     type === "email" && setTypeEmail(true);
-  }, [navigate]);
+  }, [navigate, type]);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEmailText(e.target.value);
@@ -50,13 +48,12 @@ const Modal = ({ type, key, step, onClose }: ModalProps) => {
   };
 
   // 메일 예약하기
-  const sendEmail = async() => {
-    try {
-      await 
-    } catch (error) {
-      
-    }
-  }
+  const sendEmail = async () => {
+    // try {
+    //   await
+    // } catch (error) {
+    // }
+  };
 
   return (
     <Background>
@@ -91,6 +88,7 @@ const Modal = ({ type, key, step, onClose }: ModalProps) => {
                   id="email"
                   onChange={e => handleOnChange(e)}
                   placeholder="일정은 자동으로 포함됩니다. 일정 외에 추가 전달사항이 있으시면 작성해주세요."
+                  value={emailText}
                 ></TextArea>
                 <Field>
                   <Label>
