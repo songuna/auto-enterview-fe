@@ -55,6 +55,7 @@ const Account: React.FC<AccountProps> = () => {
 
       if (response) {
         alert('비밀번호가 성공적으로 변경되었습니다');
+        window.location.href = "/";
         // 성공적으로 변경된 경우 추가적인 처리
       } else {
         setMessage('기존 비밀번호가 일치하지 않습니다');
@@ -72,7 +73,7 @@ const Account: React.FC<AccountProps> = () => {
   };
 
 
-  const candidateKey = '';
+  const candidateKey = `/common/${key}/withdraw`;
   const handleDeleteAccount = async () => {
     if (window.confirm("정말 탈퇴하시겠습니까?")) {
       try {
