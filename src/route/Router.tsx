@@ -114,7 +114,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "/jobpost-detail/:postId",
+        path: "/jobpost-detail/:jobPostingKey",
         element: <JobPostDetail />,
       },
     ],

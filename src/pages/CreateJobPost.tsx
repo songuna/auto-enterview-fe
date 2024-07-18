@@ -10,9 +10,14 @@ import SelectInput from "../components/input/SelectInput";
 import { InputDefault } from "../assets/style/input";
 import Checkbox from "../components/input/Checkbox";
 import TimePicker from "../components/input/TimePicker";
-import { optionEducation, optionEmploymentType, optionJob, techStacks } from "../enum/options";
+import { useRecoilValue } from "recoil";
+import { authUserState } from "../recoil/store";
+import { optionEducation, optionEmploymentType, optionJob, techStacks } from "../constants/options";
 
 const CreateJobPost = () => {
+  //유저
+  const authUser = useRecoilValue(authUserState);
+
   // 필요경력, 급여같은 input에서 disable될 때 임시로 저장해두는 값
   const inputMemory = useRef({ career: 0, salary: 0 });
   const [freeHour, setFreeHour] = useState(false);
@@ -33,10 +38,7 @@ const CreateJobPost = () => {
     jobPostingSteps: ["서류전형"],
     jobPostingContent: "",
     filteringRank: 20,
-    image: {
-      fileName: "",
-      file: null,
-    },
+    image: null,
   });
 
   //전형절차단계
@@ -68,7 +70,9 @@ const CreateJobPost = () => {
   const uploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.split("\\");
     const fileName = value[value.length - 1];
-    setFormData({ ...formData, image: { fileName: fileName, file: event.target.files[0] } });
+    console.log(event.target.files[0]);
+    // data.append('image', event.target.files[0]);
+    setFormData({ ...formData, image: event.target.files[0] });
   };
 
   const getStringWorkingHour = (startTime: Date, endTime: Date) => {
@@ -151,7 +155,9 @@ const CreateJobPost = () => {
   // 채용공고생성 api
   const navigate = useNavigate();
 
-  const onSubmit = async (formData: any) => {
+  const onSubmit = async (event: React.FormEvent<HTMLInputElement>) => {
+    event.preventDefault();
+
     if (editMode) {
       const requestData: JobPosting = {
         title: formData.title,
@@ -162,8 +168,8 @@ const CreateJobPost = () => {
         workTime: freeHour
           ? "자율출근제"
           : getStringWorkingHour(formData.startHour, formData.endHour),
-        startDateTime: formData.startDateTime,
-        endDateTime: formData.endDateTime,
+        startDateTime: formData.startDate,
+        endDateTime: formData.endDate,
         jobPostingContent: formData.jobPostingContent,
         // image: formData.image
       };
@@ -184,17 +190,29 @@ const CreateJobPost = () => {
         workTime: freeHour
           ? "자율출근제"
           : getStringWorkingHour(formData.startHour, formData.endHour),
-        startDateTime: formData.startDateTime,
-        endDateTime: formData.endDateTime,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
         jobPostingContent: formData.jobPostingContent,
-        // image: formData.image
       };
 
-      // const fileData = new FormData();
-      // fileData.append("file");
-      // fileData.append("fileName", fileName);
-      await postCompaniesJobPosting(1, requestData, {
-        headers: { "Contest-Type": "multipart/form-data" },
+      const data = new FormData();
+      data.append("image", formData.image);
+
+      console.log(formData.image);
+
+      data.append(
+        "jobPostingInfo",
+        new Blob([JSON.stringify(requestData)], { type: "application/json" }),
+      );
+
+      console.log(data);
+      if (!authUser) {
+        console.log("유저정보없음");
+        return;
+      }
+
+      await postCompaniesJobPosting(authUser?.key, data, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
       navigate("/company-mypage");
     }
@@ -214,7 +232,9 @@ const CreateJobPost = () => {
               placeholder="채용할 직무를 선택하세요"
               options={optionJob}
               value={formData.jobCategory}
-              onChange={value => setFormData({ ...formData, jobCategory: value })}
+              onChange={value => {
+                setFormData({ ...formData, jobCategory: value });
+              }}
             />
             <ErrorMessage>{formData.jobCategory ? "" : "채용할 직무를 선택해주세요."}</ErrorMessage>
           </InputContainer>
@@ -518,7 +538,7 @@ const CreateJobPost = () => {
               }
             />
             <FileContainer>
-              <FileName>{formData.image.fileName || ""}</FileName>
+              <FileName>{formData.image?.name || ""}</FileName>
               <FileInput type="file" id="image" onChange={uploadFile} />
               <label htmlFor="image">이미지 업로드</label>
             </FileContainer>
