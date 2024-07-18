@@ -31,7 +31,9 @@ const Modal = ({ type, key, step, onClose }: ModalProps) => {
   const sendSchedule = async () => {
     const props = { jobPostingKey: key, stepId: step };
     try {
+      // 일정에 따른 지원자 분류
       await postInterviewParticipants(props);
+      // 면접 일정 생성
       await postInterviewSchedule(props);
       alert("일정이 성공적으로 저장되었습니다.");
     } catch (error) {

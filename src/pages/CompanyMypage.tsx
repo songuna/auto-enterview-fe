@@ -130,7 +130,7 @@ const CompanyMypage = () => {
     const bodyFill = Object.values(body).every(v => v.toString().trim());
 
     if (bodyFill) {
-      const isEdit = info.some(v => v.desc !== "");
+      const isEdit = info.some(v => v.desc);
 
       try {
         if (isEdit) {

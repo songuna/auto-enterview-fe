@@ -9,6 +9,7 @@ import { ModalType } from "../type/modal";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { deleteInterviewSchedule } from "../axios/http/interview";
 import { ICandidate, IStep } from "../type/recruitBoard";
+import { getSteps } from "../axios/http/recruitBoard";
 
 const RecruitBoard = () => {
   // const param = useParams();
@@ -70,7 +71,6 @@ const RecruitBoard = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [schedule, setSchedule] = useState<string[]>([]);
   const [activeList, setActiveList] = useState<ICandidate[]>([]);
-  const [restList, setRestList] = useState<ICandidate[]>([]);
   const [modal, setModal] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("schedule");
   const [modalStep, setModalStep] = useState<number>(0);
@@ -79,30 +79,30 @@ const RecruitBoard = () => {
 
   // 채용단계 fetch
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const steps = await axios.get(`/job-postings/${jobPostingKey}/steps`);
-        setSteps(steps);
-      } catch (error) {
-        alert("채용단계를 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
-      }
-    };
-    fetchData();
+    // const fetchData = async () => {
+    //   try {
+    //     const steps = await getSteps(param.toString());
+    //     setSteps(steps);
+    //   } catch (error) {
+    //     alert("채용단계를 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
+    //   }
+    // };
+    // fetchData();
   }, []);
 
   // 단계별 지원자 목록 fetch
   useEffect(() => {
-    const fetchCandidates = async () => {
-      try {
-        const candidates = await axios.get(
-          `/job-postings/${jobPostingKey}/steps/${stepId}/candidates-list`,
-        );
-        setCandidateList(candidates);
-      } catch (error) {
-        alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
-      }
-    };
-    fetchCandidates();
+    // const fetchCandidates = async () => {
+    //   try {
+    //     const candidates = await axios.get(
+    //       `/job-postings/${jobPostingKey}/steps/${stepId}/candidates-list`,
+    //     );
+    //     setCandidateList(candidates);
+    //   } catch (error) {
+    //     alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
+    //   }
+    // };
+    // fetchCandidates();
   }, []);
 
   // 칸반보드 1200px 넘어가면 양쪽으로 드래그
@@ -139,10 +139,7 @@ const RecruitBoard = () => {
     const response = confirm("일정이 초기화 됩니다. 전체 삭제를 진행하시겠어요?");
     if (response) {
       try {
-        await deleteInterviewSchedule({
-          jobPostingKey: param.toString(),
-          stepId: stepId,
-        });
+        await deleteInterviewSchedule({ jobPostingKey: param.toString(), stepId });
         alert("일정이 성공적으로 삭제되었습니다.");
       } catch (error) {
         alert("일정을 삭제하는데 문제가 발생했습니다.");
