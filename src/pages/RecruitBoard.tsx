@@ -79,28 +79,30 @@ const RecruitBoard = () => {
 
   // 채용단계 fetch
   useEffect(() => {
-    // const fetchData = async () => {
-    //   try {
-    //     const steps = await axios.get(`/job-postings/${jobPostingKey}/steps`);
-    //     setSteps(steps);
-    //   } catch (error) {
-    //     alert("채용단계를 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
-    //   }
-    // };
-    // fetchData();
+    const fetchData = async () => {
+      try {
+        const steps = await axios.get(`/job-postings/${jobPostingKey}/steps`);
+        setSteps(steps);
+      } catch (error) {
+        alert("채용단계를 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
+      }
+    };
+    fetchData();
   }, []);
 
   // 단계별 지원자 목록 fetch
   useEffect(() => {
-    // const fetchCandidates = async () => {
-    //   try {
-    //     const candidates = await axios.get(`/job-postings/${jobPostingKey}/steps/${stepId}/candidates-list`);
-    //     setCandidateList(candidates);
-    //   } catch (error) {
-    //     alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
-    //   }
-    // };
-    // fetchCandidates();
+    const fetchCandidates = async () => {
+      try {
+        const candidates = await axios.get(
+          `/job-postings/${jobPostingKey}/steps/${stepId}/candidates-list`,
+        );
+        setCandidateList(candidates);
+      } catch (error) {
+        alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
+      }
+    };
+    fetchCandidates();
   }, []);
 
   // 칸반보드 1200px 넘어가면 양쪽으로 드래그

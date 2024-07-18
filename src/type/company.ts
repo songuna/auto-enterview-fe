@@ -1,7 +1,7 @@
 export interface CompanyInfo {
-  companyInfoKey: string;
+  companyInfoKey?: string;
   employees: number;
-  companyAge: Date;
+  companyAge: string;
   companyUrl: string;
   boss: string;
   address: string;
