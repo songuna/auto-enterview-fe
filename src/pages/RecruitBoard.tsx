@@ -30,37 +30,42 @@ const RecruitBoard = () => {
       stepName: "3차면접",
     },
   ]);
-  const [candidateList, setCandidateList] = useState<ICandidate[]>([
-    {
-      candidateKey: "지원자 1",
-      candidateName: "지원자 이름",
-      createdAt: "지원 일자",
-    },
-    {
-      candidateKey: "지원자 2",
-      candidateName: "지원자 이름",
-      createdAt: "지원 일자",
-    },
-    {
-      candidateKey: "지원자 3",
-      candidateName: "지원자 이름",
-      createdAt: "지원 일자",
-    },
-    {
-      candidateKey: "지원자 4",
-      candidateName: "지원자 이름",
-      createdAt: "지원 일자",
-    },
-    {
-      candidateKey: "지원자 5",
-      candidateName: "지원자 이름",
-      createdAt: "지원 일자",
-    },
-    {
-      candidateKey: "지원자 6",
-      candidateName: "지원자 이름",
-      createdAt: "지원 일자",
-    },
+  const [candidateList, setCandidateList] = useState<ICandidate[][]>([
+    [
+      {
+        candidateKey: "지원자 1",
+        candidateName: "지원자 이름",
+        createdAt: "지원 일자",
+      },
+      {
+        candidateKey: "지원자 2",
+        candidateName: "지원자 이름",
+        createdAt: "지원 일자",
+      },
+      {
+        candidateKey: "지원자 3",
+        candidateName: "지원자 이름",
+        createdAt: "지원 일자",
+      },
+      {
+        candidateKey: "지원자 4",
+        candidateName: "지원자 이름",
+        createdAt: "지원 일자",
+      },
+      {
+        candidateKey: "지원자 5",
+        candidateName: "지원자 이름",
+        createdAt: "지원 일자",
+      },
+      {
+        candidateKey: "지원자 6",
+        candidateName: "지원자 이름",
+        createdAt: "지원 일자",
+      },
+    ],
+    [],
+    [],
+    [],
   ]);
   const [currentStep, setCurrentStep] = useState(1);
   const [schedule, setSchedule] = useState<string[]>([]);
@@ -71,23 +76,31 @@ const RecruitBoard = () => {
   const [modalStep, setModalStep] = useState<number>(0);
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
-  /* todo: 서류단계 통과한 지원자들 불러오기, jsx에도 적용 */
-  /* todo: 일정생성, 메일발송 이벤트 구현 */
 
+  // 채용단계 fetch
   useEffect(() => {
     // const fetchData = async () => {
     //   try {
     //     const steps = await axios.get(`/job-postings/${jobPostingKey}/steps`);
     //     setSteps(steps);
-    //     const candidate = await axios.get(
-    //       `/companies/${companyKey}/${jobPostingKey}/candidate-list`,
-    //     );
-    //     setCandidateList(candidate.data);
     //   } catch (error) {
     //     alert("채용단계를 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
     //   }
     // };
     // fetchData();
+  }, []);
+
+  // 단계별 지원자 목록 fetch
+  useEffect(() => {
+    // const fetchCandidates = async () => {
+    //   try {
+    //     const candidates = await axios.get(`/job-postings/${jobPostingKey}/steps/${stepId}/candidates-list`);
+    //     setCandidateList(candidates);
+    //   } catch (error) {
+    //     alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
+    //   }
+    // };
+    // fetchCandidates();
   }, []);
 
   // 칸반보드 1200px 넘어가면 양쪽으로 드래그
@@ -170,13 +183,21 @@ const RecruitBoard = () => {
     });
   };
 
+  // 다음 단계로 넘기기
   const handleNexteStep = () => {
     if (currentStep < steps.length) {
-      const activeCandidates = candidateList.filter(candidate => activeList.includes(candidate));
-      const inactiveCandidates = candidateList.filter(candidate => !activeList.includes(candidate));
+      const activeCandidates = activeList;
+      const inactiveCandidates = candidateList[currentStep - 1].filter(
+        candidate => !activeList.includes(candidate),
+      );
 
-      setRestList(prev => [...prev, ...inactiveCandidates]);
-      setCandidateList(activeCandidates);
+      setCandidateList(prev => {
+        const newCandidateList = [...prev];
+        newCandidateList[currentStep - 1] = inactiveCandidates;
+        newCandidateList[currentStep] = [...newCandidateList[currentStep], ...activeCandidates];
+        return newCandidateList;
+      });
+
       setActiveList([]);
       setCurrentStep(prev => prev + 1);
     }
@@ -200,7 +221,7 @@ const RecruitBoard = () => {
                 <Step key={step.stepId}>
                   <StepHead>
                     <StepTitle className="sub-title">{step.stepName}</StepTitle>
-                    {step.stepId !== 1 && (
+                    {step.stepId !== 1 && schedule && (
                       <RemoveBtn onClick={() => handleRemoveSchedule(step.stepId)}>
                         <span>일정 삭제</span>
                         <RiDeleteBin6Line />
@@ -217,29 +238,28 @@ const RecruitBoard = () => {
                     </ScheduleBtn>
                   )}
                   <Lists>
-                    {step.stepId === currentStep &&
-                      candidateList.map(candidate => (
-                        <List
-                          key={candidate.candidateKey}
-                          $isActive={activeList.includes(candidate)}
-                          onClick={() => handleClickList(candidate)}
+                    {candidateList[step.stepId - 1].map(candidate => (
+                      <List
+                        key={candidate.candidateKey}
+                        $isActive={activeList.includes(candidate)}
+                        onClick={() => handleClickList(candidate)}
+                      >
+                        <Name>{candidate.candidateName}</Name>
+                        <Skills>
+                          <Skill>{"Java"}</Skill>
+                          <Skill>{"React"}</Skill>
+                          <Skill>{"Typescript"}</Skill>
+                        </Skills>
+                        <View
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleOpenResume(candidate.candidateKey);
+                          }}
                         >
-                          <Name>{candidate.candidateName}</Name>
-                          <Skills>
-                            <Skill>{"Java"}</Skill>
-                            <Skill>{"React"}</Skill>
-                            <Skill>{"Typescript"}</Skill>
-                          </Skills>
-                          <View
-                            onClick={e => {
-                              e.stopPropagation();
-                              handleOpenResume(candidate.candidateKey);
-                            }}
-                          >
-                            <FaEnvelopeOpenText /> 이력서 보기
-                          </View>
-                        </List>
-                      ))}
+                          <FaEnvelopeOpenText /> 이력서 보기
+                        </View>
+                      </List>
+                    ))}
                   </Lists>
                   {step.stepId === currentStep &&
                     activeList.length &&
