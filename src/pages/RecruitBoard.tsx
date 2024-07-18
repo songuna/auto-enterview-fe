@@ -1,55 +1,106 @@
 import styled from "styled-components";
 import { Container, FullBtn, Inner, SubTitle, UserName, Wrapper } from "../assets/style/Common";
 import { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaEnvelopeOpenText } from "react-icons/fa";
 import Modal from "./Modal";
 import { useParams } from "next/navigation";
 import { ModalType } from "../type/modal";
-
-interface ICandidateList {
-  candidateKey: string;
-  candidateName: string;
-  createdAt: string;
-}
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { deleteInterviewSchedule } from "../axios/http/interview";
+import { ICandidate, IStep } from "../type/recruitBoard";
 
 const RecruitBoard = () => {
   // const param = useParams();
-  const [steps, setSteps] = useState(["서류전형", "과제전형"]);
-  const [candidateList, setCandidateList] = useState<ICandidateList[]>([
+  const [steps, setSteps] = useState<IStep[]>([
     {
-      candidateKey: "지원자 key",
-      candidateName: "지원자 이름",
-      createdAt: "지원 일자",
+      stepId: 1,
+      stepName: "서류전형",
+    },
+    {
+      stepId: 2,
+      stepName: "1차면접",
+    },
+    {
+      stepId: 3,
+      stepName: "2차면접",
+    },
+    {
+      stepId: 4,
+      stepName: "3차면접",
     },
   ]);
+  const [candidateList, setCandidateList] = useState<ICandidate[][]>([
+    [
+      {
+        candidateKey: "지원자 1",
+        candidateName: "지원자 이름",
+        createdAt: "지원 일자",
+      },
+      {
+        candidateKey: "지원자 2",
+        candidateName: "지원자 이름",
+        createdAt: "지원 일자",
+      },
+      {
+        candidateKey: "지원자 3",
+        candidateName: "지원자 이름",
+        createdAt: "지원 일자",
+      },
+      {
+        candidateKey: "지원자 4",
+        candidateName: "지원자 이름",
+        createdAt: "지원 일자",
+      },
+      {
+        candidateKey: "지원자 5",
+        candidateName: "지원자 이름",
+        createdAt: "지원 일자",
+      },
+      {
+        candidateKey: "지원자 6",
+        candidateName: "지원자 이름",
+        createdAt: "지원 일자",
+      },
+    ],
+    [],
+    [],
+    [],
+  ]);
+  const [currentStep, setCurrentStep] = useState(1);
   const [schedule, setSchedule] = useState<string[]>([]);
-  const [activeList, setActiveList] = useState<string[]>([]);
+  const [activeList, setActiveList] = useState<ICandidate[]>([]);
+  const [restList, setRestList] = useState<ICandidate[]>([]);
   const [modal, setModal] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("schedule");
-  const [modalStep, setModalStep] = useState("");
+  const [modalStep, setModalStep] = useState<number>(0);
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
-  /* todo: 서류단계 통과한 지원자들 불러오기, jsx에도 적용 */
-  /* todo: 일정생성, 메일발송 이벤트 구현 */
-  1;
+
+  // 채용단계 fetch
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const steps = await axios.get(`/companies/${companyKey}/${jobPostingKey}/job-posting-step`);
-        setSteps(steps.data);
-
-        const candidate = await axios.get(
-          `/companies/${companyKey}/${jobPostingKey}/candidate-list`,
-        );
-        setCandidateList(candidate.data);
-      } catch (error) {
-        alert("채용단계를 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
-      }
-    };
-
+    // const fetchData = async () => {
+    //   try {
+    //     const steps = await axios.get(`/job-postings/${jobPostingKey}/steps`);
+    //     setSteps(steps);
+    //   } catch (error) {
+    //     alert("채용단계를 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
+    //   }
+    // };
     // fetchData();
+  }, []);
+
+  // 단계별 지원자 목록 fetch
+  useEffect(() => {
+    // const fetchCandidates = async () => {
+    //   try {
+    //     const candidates = await axios.get(`/job-postings/${jobPostingKey}/steps/${stepId}/candidates-list`);
+    //     setCandidateList(candidates);
+    //   } catch (error) {
+    //     alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
+    //   }
+    // };
+    // fetchCandidates();
   }, []);
 
   // 칸반보드 1200px 넘어가면 양쪽으로 드래그
@@ -81,40 +132,75 @@ const RecruitBoard = () => {
     }
   };
 
+  // 일정 삭제
+  const handleRemoveSchedule = async (stepId: number) => {
+    const response = confirm("일정이 초기화 됩니다. 전체 삭제를 진행하시겠어요?");
+    if (response) {
+      try {
+        await deleteInterviewSchedule({
+          jobPostingKey: param.toString(),
+          stepId: stepId,
+        });
+        alert("일정이 성공적으로 삭제되었습니다.");
+      } catch (error) {
+        alert("일정을 삭제하는데 문제가 발생했습니다.");
+      }
+    }
+  };
+
+  // 모달 오픈
+  const openModal = (type: ModalType, step: number) => {
+    setModalType(type);
+    setModalStep(step);
+    setModal(true);
+  };
+
   // 이력서 보기
   const handleOpenResume = (key: string) => {
     navigate(`/view-resume/${key}`);
   };
 
   // 지원자 선택하기
-  const handleClickList = (stepKey: string) => {
+  const handleClickList = (candidate: ICandidate) => {
     setActiveList(prevActiveList => {
       if (prevActiveList.length === 0) {
-        return [stepKey];
-      }
-      //동일한 step의 지원자를 클릭했는지 검사
-      if (prevActiveList[0].split("/")[0] === stepKey.split("/")[0]) {
-        return prevActiveList.includes(stepKey)
-          ? prevActiveList.filter(item => item !== stepKey)
-          : [...prevActiveList, stepKey];
+        return [candidate];
       }
 
-      const ok = confirm(
-        "현재 다른 단계에서 선택중인 지원자가 있습니다. 클릭하신 단계의 지원자를 선택하시겠어요?",
-      );
+      //todo: 동일한 step의 지원자를 클릭했는지 검사할지?
+      return prevActiveList.includes(candidate)
+        ? prevActiveList.filter(item => item !== candidate)
+        : [...prevActiveList, candidate];
 
-      if (ok) {
-        return [stepKey];
-      }
-      return prevActiveList;
+      // const ok = confirm(
+      //   "현재 다른 단계에서 선택중인 지원자가 있습니다. 클릭하신 단계의 지원자를 선택하시겠어요?",
+      // );
+
+      // if (ok) {
+      //   return [stepName];
+      // }
+      // return prevActiveList;
     });
   };
 
-  // 모달 오픈
-  const openModal = (type: ModalType, step: string) => {
-    setModalType(type);
-    setModalStep(step);
-    setModal(true);
+  // 다음 단계로 넘기기
+  const handleNexteStep = () => {
+    if (currentStep < steps.length) {
+      const activeCandidates = activeList;
+      const inactiveCandidates = candidateList[currentStep - 1].filter(
+        candidate => !activeList.includes(candidate),
+      );
+
+      setCandidateList(prev => {
+        const newCandidateList = [...prev];
+        newCandidateList[currentStep - 1] = inactiveCandidates;
+        newCandidateList[currentStep] = [...newCandidateList[currentStep], ...activeCandidates];
+        return newCandidateList;
+      });
+
+      setActiveList([]);
+      setCurrentStep(prev => prev + 1);
+    }
   };
 
   return (
@@ -132,21 +218,31 @@ const RecruitBoard = () => {
           >
             <Steps>
               {steps.map(step => (
-                <Step key={step}>
-                  <StepTitle className="sub-title">{step}</StepTitle>
-                  {step === "서류전형" ? null : schedule.length ? (
-                    <EmailBtn onClick={() => openModal("email", step)}>예약 메일 발송하기</EmailBtn>
+                <Step key={step.stepId}>
+                  <StepHead>
+                    <StepTitle className="sub-title">{step.stepName}</StepTitle>
+                    {step.stepId !== 1 && schedule && (
+                      <RemoveBtn onClick={() => handleRemoveSchedule(step.stepId)}>
+                        <span>일정 삭제</span>
+                        <RiDeleteBin6Line />
+                      </RemoveBtn>
+                    )}
+                  </StepHead>
+                  {step.stepId === 1 ? null : schedule.length ? (
+                    <EmailBtn onClick={() => openModal("email", step.stepId)}>
+                      예약 메일 발송하기
+                    </EmailBtn>
                   ) : (
-                    <ScheduleBtn onClick={() => openModal("schedule", step)}>
+                    <ScheduleBtn onClick={() => openModal("schedule", step.stepId)}>
                       일정 생성하기
                     </ScheduleBtn>
                   )}
                   <Lists>
-                    {candidateList.map(candidate => (
+                    {candidateList[step.stepId - 1].map(candidate => (
                       <List
                         key={candidate.candidateKey}
-                        $isActive={activeList.includes(`${step}/${candidate.candidateKey}`)}
-                        onClick={() => handleClickList(`${step}/${candidate.candidateKey}`)}
+                        $isActive={activeList.includes(candidate)}
+                        onClick={() => handleClickList(candidate)}
                       >
                         <Name>{candidate.candidateName}</Name>
                         <Skills>
@@ -165,9 +261,11 @@ const RecruitBoard = () => {
                       </List>
                     ))}
                   </Lists>
-                  {activeList.length && activeList[0].split("/").includes(`${step}`) ? (
-                    <PassBtn>다음 단계로 넘기기</PassBtn>
-                  ) : null}
+                  {step.stepId === currentStep &&
+                    activeList.length &&
+                    step.stepId !== steps.length && (
+                      <PassBtn onClick={handleNexteStep}>다음 단계로 넘기기</PassBtn>
+                    )}
                 </Step>
               ))}
             </Steps>
@@ -232,6 +330,20 @@ const Step = styled.li`
     height: 60px;
     background: linear-gradient(to top, var(--bg-light-gray) 50%, transparent);
   }
+`;
+
+const StepHead = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const RemoveBtn = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 1.125rem;
+  color: var(--color-red);
 `;
 
 const StepTitle = styled.h3`
