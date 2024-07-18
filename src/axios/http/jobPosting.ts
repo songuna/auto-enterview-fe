@@ -10,18 +10,18 @@ export const getJobPostings = (page: number) => {
 
 // 회사 마이페이지 공고 조회
 export const getPostedJobPostings = (companyKey: string) => {
-  return http.get<PostedJobPoting[]>(`common/${companyKey}/posted-job-postings`);
+  return http.get<PostedJobPoting[]>(`companies/${companyKey}/posted-job-postings`);
 };
 
 export const postCompaniesJobPosting = (
-  companyKey: number,
+  companyKey: string,
   data: JobPosting,
   config?: AxiosRequestConfig,
 ) => {
   return http.post<JobPosting>(`companies/${companyKey}/job-postings`, data, config);
 };
 
-export const putCompaniesJobPosting = (companyKey: number, data: JobPosting) => {
+export const putCompaniesJobPosting = (companyKey: string, data: JobPosting) => {
   return http.put<JobPosting>(`companies/${companyKey}/job-posting`, data);
 };
 
@@ -33,10 +33,6 @@ export const getJobPosting = (jobPostingKey: string) => {
   return http.get<JobPosting>(`common/job-postings/${jobPostingKey}`);
 };
 
-export const getCompanyPostedJobPostings = (companyKey: number) => {
-  return http.get<JobPostingList>(`companies/${companyKey}/posted-job-postings`);
-};
-
-export const getCompanyInfomation = (companyKey: number) => {
+export const getCompanyInfomation = (companyKey: string) => {
   return http.get<CompanyInfo>(`companies/${companyKey}/information`);
 };

@@ -24,7 +24,7 @@ import {
 import { getPostedJobPostings } from "../axios/http/jobPosting";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
-import { getDateFormat, getDday } from "../utils/Format";
+import { getDday } from "../utils/Format";
 import { InfoItem, PostedJobPoting } from "../type/company";
 import { getCompanyInfo, postCompanyInfo, putCompanyInfo } from "../axios/http/company";
 
@@ -51,21 +51,23 @@ const CompanyMypage = () => {
     // 회사정보 불러오기
     const fetchCompanyInfo = async () => {
       try {
-        const response = await getCompanyInfo(authUser.key);
+        const { boss, companyAge, address, employees, companyUrl } = await getCompanyInfo(
+          authUser.key,
+        );
         setInfo([
-          { title: "대표자", desc: response.boss },
-          { title: "설립년도", desc: response.companyAge },
-          { title: "주소", desc: response.address },
-          { title: "사원수", desc: response.employees },
-          { title: "회사 홈페이지 URL", desc: response.companyUrl },
+          { title: "대표자", desc: boss },
+          { title: "설립년도", desc: companyAge },
+          { title: "주소", desc: address },
+          { title: "사원수", desc: employees },
+          { title: "회사 홈페이지 URL", desc: companyUrl },
         ]);
 
         // 상태를 각각 업데이트
-        setBossValue(response.boss);
-        setAgeValue(getDateFormat(response.companyAge));
-        setAddressValue(response.address);
-        setEmployeesValue(response.employees.toString());
-        setUrlValue(response.companyUrl);
+        setBossValue(boss);
+        setAgeValue(companyAge);
+        setAddressValue(address);
+        setEmployeesValue(employees.toString());
+        setUrlValue(companyUrl);
       } catch (error) {
         alert("회사 정보를 불러오는데 문제가 생겼습니다.");
       }
@@ -80,6 +82,7 @@ const CompanyMypage = () => {
     const fetchJobPosting = async () => {
       try {
         const response = await getPostedJobPostings(authUser.key);
+
         setJobPostingList(response);
       } catch (error) {
         alert("채용공고 목록을 불러오는데 문제가 생겼습니다.");
@@ -103,6 +106,11 @@ const CompanyMypage = () => {
     }
   };
 
+  // 회사정보 수정
+  const editInfo = () => {
+    setEditMode(edit => !edit);
+  };
+
   // 수정 취소
   const cancelEdit = () => {
     setEditMode(edit => !edit);
@@ -113,34 +121,37 @@ const CompanyMypage = () => {
     if (!authUser || authUser.role !== "ROLE_COMPANY") return;
 
     const body = {
-      companyInfoKey: authUser.key,
       employees: Number(employeesValue),
-      companyAge: new Date(ageValue),
+      companyAge: ageValue,
       companyUrl: urlValue,
       boss: bossValue,
       address: addressValue,
     };
     const bodyFill = Object.values(body).every(v => v.toString().trim());
-    console.log(bodyFill);
+
     if (bodyFill) {
+      const isEdit = info.some(v => v.desc !== "");
+
       try {
-        if (info[0].desc !== "") {
+        if (isEdit) {
           await putCompanyInfo(authUser.key, body);
         } else {
           await postCompanyInfo(authUser.key, body);
         }
         setEditMode(edit => !edit);
+        setInfo([
+          { title: "대표자", desc: bossValue },
+          { title: "설립년도", desc: ageValue },
+          { title: "주소", desc: addressValue },
+          { title: "사원수", desc: employeesValue },
+          { title: "회사 홈페이지 URL", desc: urlValue },
+        ]);
       } catch (error) {
         alert("회원 정보를 저장하는데 문제가 발생했습니다. 다시 시도해주세요.");
       }
     } else {
       alert("회사 정보를 모두 입력해주세요.");
     }
-  };
-
-  // 회사정보 수정
-  const editInfo = () => {
-    setEditMode(edit => !edit);
   };
 
   return (
