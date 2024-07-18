@@ -7,7 +7,6 @@ import { useRecoilValue } from 'recoil';
 import { authUserState } from '../recoil/atoms/userAtom'
 
 
-
 interface AccountProps {
   role: string;
 }
@@ -55,7 +54,7 @@ const Account: React.FC<AccountProps> = () => {
 
       if (response) {
         alert('비밀번호가 성공적으로 변경되었습니다');
-        // 성공적으로 변경된 경우 추가적인 처리
+        window.location.href = "/"; // 메인 화면으로 이동
       } else {
         setMessage('기존 비밀번호가 일치하지 않습니다');
       }
@@ -72,11 +71,10 @@ const Account: React.FC<AccountProps> = () => {
   };
 
 
-  const candidateKey = '';
   const handleDeleteAccount = async () => {
-    if (window.confirm("정말 탈퇴하시겠습니까?")) {
+    if (window.confirm("모든 정보가 다 사라집니다. 정말 탈퇴하시겠습니까?")) {
       try {
-        await postWithdrawCandidate(candidateKey); // 탈퇴 API 호출
+        await postWithdrawCandidate(authUser.key); // 탈퇴 API 호출
         alert("탈퇴되었습니다");
         window.location.href = "/"; // 메인 화면으로 이동
       } catch (error) {
