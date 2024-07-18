@@ -7,7 +7,6 @@ import { useRecoilValue } from 'recoil';
 import { authUserState } from '../recoil/atoms/userAtom'
 
 
-
 interface AccountProps {
   role: string;
 }
@@ -73,7 +72,7 @@ const Account: React.FC<AccountProps> = () => {
 
 
   const handleDeleteAccount = async () => {
-    if (window.confirm("정말 탈퇴하시겠습니까?")) {
+    if (window.confirm("모든 정보가 다 사라집니다. 정말 탈퇴하시겠습니까?")) {
       try {
         await postWithdrawCandidate(authUser.key); // 탈퇴 API 호출
         alert("탈퇴되었습니다");
