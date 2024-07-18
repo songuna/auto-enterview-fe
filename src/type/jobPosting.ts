@@ -12,7 +12,7 @@ export interface JobPosting {
   jobCategory: string;
   career: number;
   techStack: string[];
-  step: string[];
+  jobPostingStep: string[];
   workLocation: string;
   education: string;
   employmentType: string;
@@ -21,7 +21,8 @@ export interface JobPosting {
   startDate: Date;
   endDate: Date;
   jobPostingContent: string;
-  image: string;
+  image: File;
+  passingNumber: number;
 }
 
 export interface JobPostingForCompany {

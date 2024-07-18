@@ -28,8 +28,8 @@ export const optionEmploymentType = [
 // 기술스택
 export const techStacks = [
   "Java",
-  "Spring_Boot",
-  "Node_js",
+  "Spring Boot",
+  "Node.js",
   "Python",
   "Django",
   "PHP",
@@ -39,7 +39,7 @@ export const techStacks = [
   "MySQL",
   "Oracle",
   "React",
-  "Vue_js",
+  "Vue.js",
   "JavaScript",
   "TypeScript",
   "Svelte",
@@ -50,7 +50,7 @@ export const techStacks = [
   "Kotlin",
   "RxJava",
   "Swift",
-  "Objective_C",
+  "Objective-C",
   "Rxswift",
   "SwiftUI",
   "Xcode",

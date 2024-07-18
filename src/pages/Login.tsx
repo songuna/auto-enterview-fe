@@ -14,7 +14,6 @@ const Login = () => {
   const setAuthUser = useSetRecoilState(authUserState);
   const navigate = useNavigate();
 
-
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };

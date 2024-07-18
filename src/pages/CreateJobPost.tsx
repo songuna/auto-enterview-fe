@@ -19,7 +19,7 @@ const CreateJobPost = () => {
   const authUser = useRecoilValue(authUserState);
 
   // 필요경력, 급여같은 input에서 disable될 때 임시로 저장해두는 값
-  const inputMemory = useRef({ career: 0, salary: 0 });
+  const inputMemory = useRef({ career: "", salary: "" });
   const [freeHour, setFreeHour] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -37,7 +37,7 @@ const CreateJobPost = () => {
     endDate: new Date(),
     jobPostingSteps: ["서류전형"],
     jobPostingContent: "",
-    filteringRank: 20,
+    passingNumber: 20,
     image: null,
   });
 
@@ -138,7 +138,7 @@ const CreateJobPost = () => {
     return (
       formData.title &&
       formData.jobCategory &&
-      formData.career &&
+      Number(formData.career) >= -1 &&
       formData.teckStack.length > 0 &&
       formData.jobPostingSteps &&
       formData.jobPostingSteps.length > 1 &&
@@ -148,7 +148,8 @@ const CreateJobPost = () => {
       formData.salary &&
       (freeHour || (formData.startHour && formData.endHour)) &&
       formData.startDate &&
-      formData.endDate
+      formData.endDate &&
+      formData.passingNumber
     );
   };
 
@@ -186,13 +187,14 @@ const CreateJobPost = () => {
         workLocation: formData.workLocation,
         education: formData.education,
         employmentType: formData.employmentType,
-        salary: formData.salary,
+        salary: +formData.salary,
         workTime: freeHour
           ? "자율출근제"
           : getStringWorkingHour(formData.startHour, formData.endHour),
         startDate: formData.startDate,
         endDate: formData.endDate,
         jobPostingContent: formData.jobPostingContent,
+        passingNumber: +formData.passingNumber,
       };
 
       const data = new FormData();
@@ -265,11 +267,11 @@ const CreateJobPost = () => {
                     onChange={event => {
                       setFormData({
                         ...formData,
-                        career: Number(event.target.value),
+                        career: event.target.value,
                       });
-                      inputMemory.current.career = Number(event.target.value);
+                      inputMemory.current.career = event.target.value;
                     }}
-                    disabled={formData.career == -1}
+                    disabled={formData.career == "-1"}
                   />
                   <AdditionExplanation>년 이상</AdditionExplanation>
                   <Checkbox
@@ -278,7 +280,7 @@ const CreateJobPost = () => {
                     onChange={event => {
                       setFormData({
                         ...formData,
-                        career: event.target.checked ? -1 : inputMemory.current.career,
+                        career: event.target.checked ? "-1" : inputMemory.current.career,
                       });
                     }}
                   />
@@ -376,11 +378,11 @@ const CreateJobPost = () => {
                   onChange={event => {
                     setFormData({
                       ...formData,
-                      salary: Number(event.target.value),
+                      salary: event.target.value,
                     });
-                    inputMemory.current.salary = Number(event.target.value);
+                    inputMemory.current.salary = event.target.value;
                   }}
-                  disabled={formData.salary == -1}
+                  disabled={+formData.salary == -1}
                 />
                 <AdditionExplanation>만원</AdditionExplanation>
                 <Checkbox
@@ -389,7 +391,7 @@ const CreateJobPost = () => {
                   onChange={event => {
                     setFormData({
                       ...formData,
-                      salary: event.target.checked ? -1 : inputMemory.current.salary,
+                      salary: event.target.checked ? "-1" : inputMemory.current.salary,
                     });
                   }}
                 />
@@ -507,15 +509,15 @@ const CreateJobPost = () => {
             <InputContents>
               <InputShortText
                 type="number"
-                value={formData.filteringRank}
+                value={formData.passingNumber}
                 onChange={event =>
-                  setFormData({ ...formData, filteringRank: Number(event.target.value) })
+                  setFormData({ ...formData, passingNumber: Number(event.target.value) })
                 }
               />
               <AdditionExplanation>명</AdditionExplanation>
             </InputContents>
             <ErrorMessage>
-              {formData.filteringRank ? "" : "필터링 인원을 입력해주세요."}
+              {formData.passingNumber ? "" : "필터링 인원을 입력해주세요."}
             </ErrorMessage>
           </InputContainer>
 

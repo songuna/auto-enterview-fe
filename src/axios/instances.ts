@@ -1,4 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { tokenState } from "../recoil/atoms/userAtom";
 
 export const axiosInstance = axios.create({
   baseURL: "http://43.203.249.116:8080",
@@ -18,7 +20,7 @@ axiosInstance.interceptors.response.use(
   response => {
     // 인증 토큰이 있다면 로컬스토리지에 저장
     if (response.headers["authorization"]) {
-      localStorage.setItem("token", `${response.headers["authorization"]}`);
+      localStorage.setItem("token", response.headers["authorization"]);
     }
 
     return response.data;
@@ -32,8 +34,10 @@ axiosInstance.interceptors.response.use(
 axiosInstance.interceptors.request.use(
   //auth있으면 헤더에 넣기
   config => {
+    // const token = useRecoilValue(tokenState);
     const token = localStorage.getItem("token");
     if (token) {
+      console.log("토큰이 담겨있습니다");
       config.headers.Authorization = `${token}`;
     }
 

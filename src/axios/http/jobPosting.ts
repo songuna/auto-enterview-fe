@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
-import { CompanyInfo, PostedJobPoting } from "../../type/company";
-import { JobInfo, JobPosting, JobPostingList } from "../../type/jobPosting";
+import { PostedJobPoting } from "../../type/company";
+import { JobInfo, JobPosting } from "../../type/jobPosting";
 import { http } from "../instances";
 
 // 전체 공고 조회
@@ -22,17 +22,13 @@ export const postCompaniesJobPosting = (
 };
 
 export const putCompaniesJobPosting = (companyKey: string, data: JobPosting) => {
-  return http.put<JobPosting>(`companies/${companyKey}/job-posting`, data);
+  return http.put<JobPosting>(`companies/${companyKey}/job-postings`, data);
 };
 
 export const postJobPostingApply = (jobPostingKey: string) => {
-  return http.post(`candidate/job-posting/${jobPostingKey}/apply`);
+  return http.post(`candidate/job-postings/${jobPostingKey}/apply`);
 };
 
 export const getJobPosting = (jobPostingKey: string) => {
   return http.get<JobPosting>(`common/job-postings/${jobPostingKey}`);
-};
-
-export const getCompanyInfomation = (companyKey: string) => {
-  return http.get<CompanyInfo>(`companies/${companyKey}/information`);
 };
