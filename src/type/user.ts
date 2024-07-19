@@ -4,6 +4,11 @@ export interface IUser {
   name: string;
   email: string;
   role: "ROLE_COMPANY" | "ROLE_CANDIDATE";
+  expires: number;
+}
+
+export interface IUserRecoil extends IUser {
+  expires: number;
 }
 
 export interface IUserAuth {

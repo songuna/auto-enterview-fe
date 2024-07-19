@@ -6,9 +6,16 @@ import { FaKey } from "react-icons/fa6";
 import { useRecoilState } from "recoil";
 import { authUserState } from "../../recoil/store";
 import { IoIosLock } from "react-icons/io";
+import { useEffect } from "react";
 
 const Header = () => {
   const [authUser, setAuthUser] = useRecoilState(authUserState);
+
+  const token = localStorage.getItem("token");
+  useEffect(() => {
+    if (!token) setAuthUser(null);
+  }, [token]);
+
   const navigate = useNavigate();
 
   const logOut = async () => {
@@ -34,7 +41,7 @@ const Header = () => {
           </Link>
         </Logo>
         <Buttons>
-          {authUser ? (
+          {token && authUser ? (
             <>
               <Logout className="log-out" onClick={logOut}>
                 <HiArrowLeftOnRectangle />
