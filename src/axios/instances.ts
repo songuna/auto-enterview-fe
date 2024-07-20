@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import { ONE_HOUR } from "../constants/Time";
 
 export const axiosInstance = axios.create({
   baseURL: "http://43.203.249.116:8080",
@@ -18,7 +19,10 @@ axiosInstance.interceptors.response.use(
   response => {
     // 인증 토큰이 있다면 로컬스토리지에 저장
     if (response.headers["authorization"]) {
-      localStorage.setItem("token", `${response.headers["authorization"]}`);
+      // 만료시간을 함께저장
+      const now = new Date();
+      const token = { value: response.headers["authorization"], expires: now.getTime() + ONE_HOUR };
+      localStorage.setItem("token", JSON.stringify(token));
     }
 
     return response.data;
@@ -34,7 +38,17 @@ axiosInstance.interceptors.request.use(
   config => {
     const token = localStorage.getItem("token");
     if (token) {
-      config.headers.Authorization = `${token}`;
+      // 토큰의 만료시간보다 지났으면 토큰 삭제
+
+      config.headers.Authorization = `${JSON.parse(token).value}`;
+      // const now = new Date();
+
+      // if (+JSON.parse(token).expires < +now.getTime()) {
+      //   localStorage.removeItem("token");
+      // } else {
+      //   console.log("토큰이 담겨있습니다");
+      //   config.headers.Authorization = `${JSON.parse(token).value}`;
+      // }
     }
 
     return config;

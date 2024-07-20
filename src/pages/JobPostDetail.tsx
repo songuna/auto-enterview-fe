@@ -2,13 +2,14 @@ import styled from "styled-components";
 import { Container, Inner, Wrapper } from "../assets/style/Common";
 import { CiEdit } from "react-icons/ci";
 import { IconButton } from "../assets/style/ReactIconButton";
-import { getCompanyInfomation, getJobPosting, postJobPostingApply } from "../axios/http/jobPosting";
+import { getJobPosting, postJobPostingApply } from "../axios/http/jobPosting";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { JobPosting } from "../type/jobPosting";
-import { getDateFormat } from "../utils/Format";
+import { getDateFormat, getDday } from "../utils/Format";
 import { CompanyInfo } from "../type/company";
 import { Helmet } from "react-helmet-async";
+import { getCompanyInfo } from "../axios/http/company";
 
 const JobPostDetail = () => {
   const { jobPostingKey } = useParams();
@@ -25,8 +26,8 @@ const JobPostDetail = () => {
     employmentType: "정규직",
     salary: 3000,
     workTime: "10:00 ~ 19:00",
-    startDate: new Date(),
-    endDate: new Date(),
+    startDate: "2024-07-18",
+    endDate: "2024-07-18",
     jobPostingContent:
       "설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명",
     image: "",
@@ -34,7 +35,7 @@ const JobPostDetail = () => {
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({
     companyInfoKey: "(주)안드로메다",
     employees: 1315,
-    companyAge: new Date(),
+    companyAge: "2024-07-18",
     companyUrl: "https://www.naver.com",
     boss: "데애표",
     address: "부산광역시 강서구 녹산산단382로14번가길 10~29번지(송정동)",
@@ -56,7 +57,9 @@ const JobPostDetail = () => {
         // 파일 해결되면 TODO: url 추출
 
         // 회사정보
-        const companyResponse = await getCompanyInfomation(response.companyKey);
+        const companyResponse = await getCompanyInfo(response.companyKey);
+        console.log(companyResponse);
+
         setCompanyInfo(companyResponse);
       }
     })();
@@ -87,12 +90,11 @@ const JobPostDetail = () => {
       </Helmet>
       <Wrapper className="text">
         <Inner className="inner-1200">
-          <InfoMessage>서류 필터링에 걸리면 지원 불가 안내</InfoMessage>
           <Container>
             <Top>
               <DeadLineContainer>
-                <p>마감일자</p>
-                <Dday>(D-1)</Dday>
+                <div>공고마감일자 | {getDateFormat(new Date(jobPostingInfo.endDate))}</div>
+                <Dday>({getDday(jobPostingInfo.endDate)})</Dday>
               </DeadLineContainer>
               <h1>{}</h1>
               <EditButton className="edit" onClick={goEdit}>
@@ -119,7 +121,11 @@ const JobPostDetail = () => {
               <Info>
                 <InfoTitle>필요경력</InfoTitle>
                 <InfoDesc>
-                  {jobPostingInfo?.career == -1 ? "경력무관" : `${jobPostingInfo?.career}년`}
+                  {jobPostingInfo?.career == -1
+                    ? "경력무관"
+                    : jobPostingInfo?.career == 0
+                      ? "신입"
+                      : `${jobPostingInfo?.career}년`}
                 </InfoDesc>
               </Info>
               <Info>
@@ -177,7 +183,9 @@ const JobPostDetail = () => {
               </Info>
               <Info>
                 <InfoTitle>사원수</InfoTitle>
-                <InfoDesc>{companyInfo.employees}명</InfoDesc>
+                <InfoDesc>
+                  {companyInfo.employees == 0 ? "" : `${companyInfo.employees}명`}
+                </InfoDesc>
               </Info>
               <Info>
                 <InfoTitle>회사 홈페이지</InfoTitle>
@@ -187,7 +195,9 @@ const JobPostDetail = () => {
               </Info>
               <Info>
                 <InfoTitle>설립년도</InfoTitle>
-                <InfoDesc>{new Date(companyInfo.companyAge).getFullYear()}년</InfoDesc>
+                <InfoDesc>
+                  {companyInfo.companyAge && `${new Date(companyInfo.companyAge).getFullYear()}년`}
+                </InfoDesc>
               </Info>
               <LongInfo>
                 <InfoTitle>주소</InfoTitle>
