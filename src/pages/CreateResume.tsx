@@ -52,7 +52,7 @@ const CreateResume = () => {
     'Rxswift', 'SwiftUI', 'Xcode',
   ];
 
-  const { control, formState: { errors } } = useForm();
+  const { control, handleSubmit, formState: { errors } } = useForm();
 
   const [imgURL, setImgURL] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -425,7 +425,7 @@ const CreateResume = () => {
 
         <Container className="resumeBtn">
           <ViewLink to="/view-resume/:candidateKey">
-            <Button>이력서 등록</Button>
+            <Button onSubmit={handleSubmit(onSubmit)}>이력서 등록</Button>
           </ViewLink>
         </Container>
       </Wrapper>
