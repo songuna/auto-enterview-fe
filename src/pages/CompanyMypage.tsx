@@ -82,7 +82,7 @@ const CompanyMypage = () => {
     const fetchJobPosting = async () => {
       try {
         const response = await getPostedJobPostings(authUser.key);
-
+        console.log(response);
         setJobPostingList(response);
       } catch (error) {
         alert("채용공고 목록을 불러오는데 문제가 생겼습니다.");
@@ -211,13 +211,18 @@ const CompanyMypage = () => {
           </Top>
           <RecruitLists>
             {jobPostingList?.map(jobPosting => (
-              <RecruitList to={`/jobpost-detail/${jobPosting.jobPostingKey}`}>
+              <RecruitList
+                to={`/jobpost-detail/${jobPosting.jobPostingKey}`}
+                key={jobPosting.jobPostingKey}
+              >
                 <LabelWrap>
                   <Label />
-                  <Dday>{getDday(jobPosting.endDateTime)}</Dday>
+                  <Dday>{getDday(jobPosting.endDate)}</Dday>
                 </LabelWrap>
                 <ListTitle>{jobPosting.title}</ListTitle>
-                <ListCareer>{jobPosting.career}</ListCareer>
+                <ListCareer>
+                  {jobPosting.career === 0 ? "신입" : jobPosting.career + "년 이상"}
+                </ListCareer>
                 <StepsButton to={`/recruit-board/${jobPosting.jobPostingKey}`}>
                   채용단계 관리
                 </StepsButton>

@@ -10,8 +10,8 @@ export interface CompanyInfo {
 export interface PostedJobPoting {
   jobPostingKey: string;
   title: string;
-  career: string;
-  endDateTime: string;
+  career: number;
+  endDate: string;
 }
 
 export interface InfoItem {

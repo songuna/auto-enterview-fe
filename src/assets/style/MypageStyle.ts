@@ -74,7 +74,9 @@ export const ListTitle = styled.h4`
 `;
 
 export const ListCareer = styled.p`
+  width: 6rem;
   font-weight: 500;
+  text-align: center;
 `;
 
 export const ListStep = styled.p`
