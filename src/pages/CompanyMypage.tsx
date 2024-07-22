@@ -82,7 +82,7 @@ const CompanyMypage = () => {
     const fetchJobPosting = async () => {
       try {
         const response = await getPostedJobPostings(authUser.key);
-        console.log(response);
+
         setJobPostingList(response);
       } catch (error) {
         alert("채용공고 목록을 불러오는데 문제가 생겼습니다.");
@@ -157,7 +157,7 @@ const CompanyMypage = () => {
   return (
     <Wrapper>
       <Inner className="inner-1200">
-        <UserName>{"(주)회사 이름"}</UserName>
+        <UserName>{authUser?.name}</UserName>
         <Container>
           <Top>
             <SubTitle>회사 정보</SubTitle>
@@ -223,7 +223,10 @@ const CompanyMypage = () => {
                 <ListCareer>
                   {jobPosting.career === 0 ? "신입" : jobPosting.career + "년 이상"}
                 </ListCareer>
-                <StepsButton to={`/recruit-board/${jobPosting.jobPostingKey}`}>
+                <StepsButton
+                  to={`/recruit-board/${jobPosting.jobPostingKey}`}
+                  state={{ title: jobPosting.title }}
+                >
                   채용단계 관리
                 </StepsButton>
               </RecruitList>

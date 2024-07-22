@@ -1,10 +1,13 @@
-export interface ICandidate {
-  candidateKey: string;
-  candidateName: string;
-  createdAt: string;
-}
-
-export interface IStep {
+export interface RecruitBoardData {
   stepId: number;
   stepName: string;
+  candidateTechStackInterviewInfoDtoList: CandidateInfo[];
+}
+
+export interface CandidateInfo {
+  candidateKey: string;
+  candidateName: string;
+  resumeKey: string;
+  techStack: string[];
+  scheduleDateTime: string | null;
 }
