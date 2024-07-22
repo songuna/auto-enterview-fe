@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Container, FullBtn, Inner, SubTitle, UserName, Wrapper } from "../assets/style/Common";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FaEnvelopeOpenText } from "react-icons/fa";
 import Modal from "./Modal";
 import { ModalType } from "../type/modal";
@@ -9,6 +9,8 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { deleteInterviewSchedule } from "../axios/http/interview";
 import { CandidateInfo, RecruitBoardData } from "../type/recruitBoard";
 import { getRecruitBoardData } from "../axios/http/recruitBoard";
+import { useRecoilValue } from "recoil";
+import { authUserState } from "../recoil/store";
 
 const RecruitBoard = () => {
   const { jobPostingKey } = useParams();
@@ -27,6 +29,8 @@ const RecruitBoard = () => {
   const [modalStep, setModalStep] = useState<number>(0);
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
+  const authUser = useRecoilValue(authUserState);
+  const location = useLocation();
 
   // 단계 및 지원자 목록, 일정 정보
   useEffect(() => {
@@ -93,6 +97,7 @@ const RecruitBoard = () => {
     setModalType(type);
     setModalStep(step);
     setModal(true);
+    navigate(`/recruit-board/${jobPostingKey}/assignment`);
   };
 
   // 이력서 보기
@@ -156,9 +161,9 @@ const RecruitBoard = () => {
   return (
     <Wrapper>
       <Inner className="inner-1200">
-        <UserName>{"(주)회사 이름"}</UserName>
+        <UserName>{authUser?.name}</UserName>
         <Container>
-          <SubTitle>{"[FE] 신입사원 채용"}</SubTitle>
+          <SubTitle>{location.state.title}</SubTitle>
           <Board
             ref={containerRef}
             onMouseDown={handleMouseDown}
@@ -217,8 +222,8 @@ const RecruitBoard = () => {
                 </Step>
               ))}
             </Steps>
-            {modal && (
-              <Modal type={modalType} key={`${jobPostingKey}`} step={modalStep} onClose={onClose} />
+            {jobPostingKey && modal && (
+              <Modal type={modalType} key={jobPostingKey} step={modalStep} onClose={onClose} />
             )}
           </Board>
         </Container>

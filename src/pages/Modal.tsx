@@ -10,6 +10,7 @@ import DatePickerOne from "../components/input/DatePickerOne";
 import TimePicker from "../components/input/TimePicker";
 
 const Modal = ({ type, key, step, onClose }: ModalProps) => {
+  console.log(key);
   const [emailText, setEmailText] = useState("");
   const [typeEmail, setTypeEmail] = useState(false);
   const [emailData, setEmailData] = useState({
@@ -19,7 +20,6 @@ const Modal = ({ type, key, step, onClose }: ModalProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate("/recruit-board/assignment");
     type === "email" && setTypeEmail(true);
   }, [navigate, type]);
 
@@ -65,13 +65,13 @@ const Modal = ({ type, key, step, onClose }: ModalProps) => {
             <SubTitle>일정 생성하기</SubTitle>
             <Tabs>
               <Tab
-                to="/recruit-board/assignment"
+                to={`/recruit-board/${key}/assignment`}
                 className={({ isActive }) => (isActive ? "active" : "")}
               >
                 과제
               </Tab>
               <Tab
-                to="/recruit-board/interview"
+                to={`/recruit-board/${key}/interview`}
                 className={({ isActive }) => (isActive ? "active" : "")}
               >
                 면접
