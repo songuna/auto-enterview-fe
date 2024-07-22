@@ -52,7 +52,17 @@ const CreateResume = () => {
     'Rxswift', 'SwiftUI', 'Xcode',
   ];
 
-  const { control, handleSubmit, formState: { errors } } = useForm();
+  const { control, handleSubmit, formState: { errors } } = useForm({
+  defaultValues: {
+    name: "",
+    birthDate: "",
+    email: "",
+    phoneNumber: "",
+    address: "",
+    schoolName: "",
+    teckStack: []
+  }
+});
 
   const [imgURL, setImgURL] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -108,7 +118,7 @@ const CreateResume = () => {
   const removeQualification = (index: number) => setQualifications(qualifications.filter((_, i) => i !== index));
 
   const onSubmit = async (data: any) => {
-    const forResumeData = {
+    const ResumeData = {
       title: "나의 이력서",
       jobWant: jobCategory || "",
       name: data.name || "",
@@ -139,7 +149,7 @@ const CreateResume = () => {
     };
 
     try {
-      const response = await postResume("candidate-key", forResumeData);
+      const response = await postResume("candidate-key", ResumeData);
       console.log(response);
     } catch (error) {
       console.error('Error posting resume:', error);
