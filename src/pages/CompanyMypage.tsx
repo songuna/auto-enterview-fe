@@ -82,7 +82,7 @@ const CompanyMypage = () => {
     const fetchJobPosting = async () => {
       try {
         const response = await getPostedJobPostings(authUser.key);
-        console.log(response);
+
         setJobPostingList(response);
       } catch (error) {
         alert("채용공고 목록을 불러오는데 문제가 생겼습니다.");

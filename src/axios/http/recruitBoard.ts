@@ -1,7 +1,7 @@
-import { IStep } from "../../type/recruitBoard";
+import { RecruitBoardData } from "../../type/recruitBoard";
 import { http } from "../instances";
 
-// todo: 정보 한번에 받아오는걸로 API 수정중
-export const getSteps = (jobPostingKey: string) => {
-  return http.get<IStep[]>(`/job-postings/{jobPostingKey}/steps`);
+// recruit-board 페이지 정보 한 번에 불러오기
+export const getRecruitBoardData = (jobPostingKey: string) => {
+  return http.get<RecruitBoardData[]>(`/job-postings/${jobPostingKey}/candidates-list`);
 };
