@@ -3,7 +3,7 @@ import { Container, FullBtn, Inner, SubTitle, UserName, Wrapper } from "../asset
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FaEnvelopeOpenText } from "react-icons/fa";
-import Modal from "./Modal";
+import Modal from "../components/Modal";
 import { ModalType } from "../type/modal";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { deleteInterviewSchedule } from "../axios/http/interview";

@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import { CreateButton, Field, Form, Label, Text } from "../assets/style/ScheduleFormStyle";
 import { IoMdClose } from "react-icons/io";
 import { ModalProps } from "../type/modal";
-import DatePickerOne from "../components/input/DatePickerOne";
-import TimePicker from "../components/input/TimePicker";
+import DatePickerOne from "./input/DatePickerOne";
+import TimePicker from "./input/TimePicker";
 import FormContent from "./FormContent";
 
 const Modal = ({ type, key, step, onClose }: ModalProps) => {

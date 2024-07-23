@@ -9,8 +9,8 @@ import {
   Settings,
   Text,
 } from "../assets/style/ScheduleFormStyle";
-import DatePickerOne from "../components/input/DatePickerOne";
-import TimePicker from "../components/input/TimePicker";
+import DatePickerOne from "./input/DatePickerOne";
+import TimePicker from "./input/TimePicker";
 import { InputDefault } from "../assets/style/input";
 import styled from "styled-components";
 import { getDateFormat, getTimeFormat } from "../utils/Format";
