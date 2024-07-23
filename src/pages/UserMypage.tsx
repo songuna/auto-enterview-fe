@@ -25,8 +25,22 @@ import { getDday } from "../utils/Format";
 
 const UserMypage = () => {
   const [isResume, setIsResume] = useState(true);
-  const [jobPostingList, setJobPostingList] =
-    useState<AppliedJobPostings["appliedJobPostingsList"]>();
+  const [jobPostingList, setJobPostingList] = useState<
+    AppliedJobPostings["appliedJobPostingsList"]
+  >([
+    // {
+    //   jobPostingKey: "string",
+    //   startDate: "2024-07-22",
+    //   stepName: "지원완료",
+    //   title: "공고제목sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
+    // },
+    // {
+    //   jobPostingKey: "string",
+    //   startDate: "2024-07-22",
+    //   stepName: "지원완료",
+    //   title: "공고제목",
+    // },
+  ]);
   const authUser = useRecoilValue(authUserState);
 
   useEffect(() => {
@@ -85,16 +99,15 @@ const UserMypage = () => {
           <SubTitle className="sub-title">내가 지원한 공고 목록</SubTitle>
           <RecruitLists>
             {jobPostingList?.map(jobPosting => (
-              <RecruitList>
+              <RecruitList key={jobPosting.jobPostingKey}>
                 <LabelWrap>
                   <Label />
                   <Dday>{getDday(jobPosting.startDate)}</Dday>
                 </LabelWrap>
-                <Time>{"14:00"}</Time>
-                <ListStep>{jobPosting.stepName}</ListStep>
                 <UserListTitle to={`/recruit-board/${jobPosting.jobPostingKey}`}>
                   {jobPosting.title}
                 </UserListTitle>
+                <ListStep>{jobPosting.stepName}</ListStep>
               </RecruitList>
             ))}
           </RecruitLists>
@@ -107,8 +120,6 @@ const UserMypage = () => {
 const UserTop = styled(Top)`
   justify-content: space-between;
 `;
-
-const Time = styled(Dday)``;
 
 const ReadResume = styled(Link)`
   padding: 16px 48px;
