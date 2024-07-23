@@ -3,7 +3,7 @@ import { CiEdit } from "react-icons/ci";
 import { GiSaveArrow } from "react-icons/gi";
 import { HiOutlinePlus } from "react-icons/hi2";
 import { IoMdClose } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Container, Inner, SubTitle, UserName, Wrapper } from "../assets/style/Common";
 import { IconButton } from "../assets/style/ReactIconButton";
@@ -44,6 +44,7 @@ const CompanyMypage = () => {
   const [employeesValue, setEmployeesValue] = useState("");
   const [urlValue, setUrlValue] = useState("");
   const authUser = useRecoilValue(authUserState);
+  const navigate = useNavigate();
   const values = [bossValue, ageValue, addressValue, employeesValue, urlValue];
 
   useEffect(() => {
@@ -154,6 +155,15 @@ const CompanyMypage = () => {
     }
   };
 
+  const goToRecruitBoard = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    jobPostingKey: string,
+    title: string,
+  ) => {
+    e.stopPropagation();
+    navigate(`/recruit-board/${jobPostingKey}?title=${encodeURIComponent(title)}`);
+  };
+
   return (
     <Wrapper>
       <Inner className="inner-1200">
@@ -211,21 +221,19 @@ const CompanyMypage = () => {
           </Top>
           <RecruitLists>
             {jobPostingList?.map(jobPosting => (
-              <RecruitList
-                to={`/jobpost-detail/${jobPosting.jobPostingKey}`}
-                key={jobPosting.jobPostingKey}
-              >
+              <RecruitList key={jobPosting.jobPostingKey}>
                 <LabelWrap>
                   <Label />
                   <Dday>{getDday(jobPosting.endDate)}</Dday>
                 </LabelWrap>
-                <ListTitle>{jobPosting.title}</ListTitle>
+                <ListTitle to={`/jobpost-detail/${jobPosting.jobPostingKey}`}>
+                  {jobPosting.title}
+                </ListTitle>
                 <ListCareer>
                   {jobPosting.career === 0 ? "신입" : jobPosting.career + "년 이상"}
                 </ListCareer>
                 <StepsButton
-                  to={`/recruit-board/${jobPosting.jobPostingKey}`}
-                  state={{ title: jobPosting.title }}
+                  onClick={e => goToRecruitBoard(e, jobPosting.jobPostingKey, jobPosting.title)}
                 >
                   채용단계 관리
                 </StepsButton>
@@ -275,7 +283,7 @@ const CreatePost = styled(Link)`
   color: #fff;
 `;
 
-const StepsButton = styled(Link)`
+const StepsButton = styled.button`
   padding: 16px 32px;
   border-radius: var(--button-radius);
   background-color: var(--primary-color);

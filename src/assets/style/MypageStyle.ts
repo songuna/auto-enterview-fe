@@ -38,7 +38,7 @@ export const RecruitLists = styled.div`
   border-radius: var(--box-radius);
 `;
 
-export const RecruitList = styled(Link)`
+export const RecruitList = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -65,10 +65,11 @@ export const Label = styled.span`
 
 export const Dday = styled.p``;
 
-export const ListTitle = styled.h4`
+export const ListTitle = styled(Link)`
   width: 100%;
   max-width: 350px;
   overflow: hidden;
+  font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;

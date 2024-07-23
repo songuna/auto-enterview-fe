@@ -92,24 +92,6 @@ const router = createBrowserRouter([
             <RecruitBoard />
           </ProtectedRoute>
         ),
-        children: [
-          {
-            path: "assignment",
-            element: (
-              <ProtectedRoute>
-                <FormAssignment />
-              </ProtectedRoute>
-            ),
-          },
-          {
-            path: "interview",
-            element: (
-              <ProtectedRoute>
-                <FormInterview />
-              </ProtectedRoute>
-            ),
-          },
-        ],
       },
       {
         path: "/jobpost-detail/:jobPostingKey",
