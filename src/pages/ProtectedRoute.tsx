@@ -1,14 +1,12 @@
-// import { Navigate } from "react-router";
+import { Navigate } from "react-router";
+import { useRecoilValue } from "recoil";
+import { authUserState } from "../recoil/store";
 
-export default function ProtectedRoute({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  /*  [todo] : user 인증 연동하면 구현하기 */
-  // const user = ;
-  // if (user === null) {
-  //   return <Navigate to="/login" />;
-  // }
+export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const authUser = useRecoilValue(authUserState);
+  if (authUser === null) {
+    alert("로그인이 필요한 페이지입니다.");
+    return <Navigate to="/login" />;
+  }
   return children;
 }
