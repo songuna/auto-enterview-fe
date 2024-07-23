@@ -15,7 +15,7 @@ export const optionEducation = [
   { value: "ASSOCIATE", label: "대학 2,3년제" },
   { value: "BACHELOR", label: "대학 4년제" },
   { value: "MASTER", label: "석사" },
-  { value: "DECTORATE", label: "박사" },
+  { value: "DOCTORATE", label: "박사" },
 ];
 
 // 근무 형태

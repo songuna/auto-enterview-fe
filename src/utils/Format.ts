@@ -49,3 +49,12 @@ export const getTimeFormat = (time: Date) => {
     hour12: false,
   });
 };
+
+/**
+ *
+ * @param date
+ * @returns '2024-07-13'
+ */
+export const toLocaleDate = (date: Date) => {
+  return date.toISOString().split("T")[0];
+};

@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import React, { useEffect, useRef, useState } from "react";
+import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { JobPosting } from "../type/jobPosting";
+import { PostJobPosting } from "../type/jobPosting";
 import { postCompaniesJobPosting, putCompaniesJobPosting } from "../axios/http/jobPosting";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getTwoDigit } from "../utils/Format";
+import { getTwoDigit, toLocaleDate } from "../utils/Format";
 import DatePickerDuration from "../components/input/DatePickerDuration";
 import SelectInput from "../components/input/SelectInput";
 import { InputDefault } from "../assets/style/input";
@@ -14,7 +14,28 @@ import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
 import { optionEducation, optionEmploymentType, optionJob, techStacks } from "../constants/options";
 
+interface JobPostingForm {
+  jobCategory: string;
+  title: string;
+  career: string;
+  techStack: string[];
+  workLocation: string;
+  education: string;
+  employmentType: string;
+  salary: string;
+  startHour: Date;
+  endHour: Date;
+  startDate: Date;
+  endDate: Date;
+  jobPostingSteps: string[];
+  jobPostingContent: string;
+  passingNumber: number;
+  image: File | null;
+}
+
 const CreateJobPost = () => {
+  const location = useLocation();
+
   //유저
   const authUser = useRecoilValue(authUserState);
 
@@ -22,11 +43,11 @@ const CreateJobPost = () => {
   const inputMemory = useRef({ career: "", salary: "" });
   const [freeHour, setFreeHour] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<JobPostingForm>({
     jobCategory: "",
     title: "",
     career: "",
-    teckStack: [],
+    techStack: [],
     workLocation: "",
     education: "",
     employmentType: "",
@@ -45,7 +66,10 @@ const CreateJobPost = () => {
   //추가
   const [addStepValue, setAddStepValue] = useState("");
   const addStep = (
-    event: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>,
+    event:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.KeyboardEvent<HTMLInputElement>
+      | React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>,
   ) => {
     event.preventDefault();
     if (addStepValue === "") return;
@@ -68,11 +92,9 @@ const CreateJobPost = () => {
 
   //파일업로드
   const uploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.split("\\");
-    const fileName = value[value.length - 1];
-    console.log(event.target.files[0]);
-    // data.append('image', event.target.files[0]);
-    setFormData({ ...formData, image: event.target.files[0] });
+    if (event.target.files) {
+      setFormData({ ...formData, image: event.target.files[0] });
+    }
   };
 
   const getStringWorkingHour = (startTime: Date, endTime: Date) => {
@@ -80,9 +102,9 @@ const CreateJobPost = () => {
   };
 
   // 수정하기
-  const location = useLocation();
   const editMode = location.state;
   const jobPostingInfo = location.state?.jobPostInfo;
+  const jobPostingKey = location.state?.jobPostingKey;
 
   // 수정하기 할땐, 정보를 미리 넣어놓기
   useEffect(() => {
@@ -90,11 +112,13 @@ const CreateJobPost = () => {
       inputMemory.current.salary = jobPostingInfo.salary;
       inputMemory.current.career = jobPostingInfo.career;
 
+      if (jobPostingInfo.workTime === "자유출근제") setFreeHour(true);
+
       setFormData({
-        jobCategory: jobPostingInfo.jobCategory,
         title: jobPostingInfo.title,
+        jobCategory: optionJob.find(job => job.label == jobPostingInfo.jobCategory)?.value || "",
         career: jobPostingInfo.career,
-        teckStack: jobPostingInfo.techStack,
+        techStack: jobPostingInfo.techStack,
         workLocation: jobPostingInfo.workLocation,
         education: jobPostingInfo.education,
         employmentType: jobPostingInfo.employmentType,
@@ -119,16 +143,12 @@ const CreateJobPost = () => {
                 +jobPostingInfo.workTime.slice(8, 10),
                 +jobPostingInfo.workTime.slice(11, 13),
               ),
-        startDate: jobPostingInfo.startDateTime,
-        endDate: jobPostingInfo.endDateTime,
-        jobPostingSteps: jobPostingInfo.jobPostingStep,
+        startDate: new Date(jobPostingInfo.startDate),
+        endDate: new Date(jobPostingInfo.endDate),
+        jobPostingSteps: jobPostingInfo.step,
         jobPostingContent: jobPostingInfo.jobPostingContent,
-        filteringRank: 20,
-        image: {
-          fileName: "",
-          file: null,
-        },
-        // image: formData.image
+        passingNumber: 20,
+        image: null,
       });
     }
   }, [jobPostingInfo]);
@@ -139,7 +159,7 @@ const CreateJobPost = () => {
       formData.title &&
       formData.jobCategory &&
       Number(formData.career) >= -1 &&
-      formData.teckStack.length > 0 &&
+      formData.techStack.length > 0 &&
       formData.jobPostingSteps &&
       formData.jobPostingSteps.length > 1 &&
       formData.workLocation &&
@@ -156,64 +176,59 @@ const CreateJobPost = () => {
   // 채용공고생성 api
   const navigate = useNavigate();
 
-  const onSubmit = async (event: React.FormEvent<HTMLInputElement>) => {
+  const onSubmit = async (event: SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
     event.preventDefault();
 
+    const requestData: PostJobPosting = {
+      title: formData.title,
+      jobCategory: formData.jobCategory,
+      career: +formData.career,
+      techStack: formData.techStack,
+      jobPostingStep: formData.jobPostingSteps,
+      workLocation: formData.workLocation,
+      education: formData.education,
+      employmentType: formData.employmentType,
+      salary: +formData.salary,
+      workTime: freeHour
+        ? "자율출근제"
+        : getStringWorkingHour(formData.startHour, formData.endHour),
+      startDate: toLocaleDate(formData.startDate),
+      endDate: toLocaleDate(formData.endDate),
+      jobPostingContent: formData.jobPostingContent,
+      passingNumber: +formData.passingNumber,
+    };
+
+    // 수정이면 필요학력만 enum으로 바꾸어줌
+    requestData.education =
+      optionEducation.find(edu => edu.label == jobPostingInfo.education)?.value || "";
+
+    // 최종 body
+    const resultBody = new FormData();
+    if (formData.image) {
+      resultBody.append("image", formData.image);
+    }
+
+    console.log(formData.image);
+
+    resultBody.append(
+      "jobPostingInfo",
+      new Blob([JSON.stringify(requestData)], { type: "application/json" }),
+    );
+
+    console.log(resultBody);
+
+    if (!authUser) {
+      console.log("유저정보없음 로그인해주세요.");
+      return;
+    }
+
     if (editMode) {
-      const requestData: JobPosting = {
-        title: formData.title,
-        jobPostingStep: formData.jobPostingSteps,
-        workLocation: formData.workLocation,
-        employmentType: formData.employmentType,
-        salary: formData.salary,
-        workTime: freeHour
-          ? "자율출근제"
-          : getStringWorkingHour(formData.startHour, formData.endHour),
-        startDateTime: formData.startDate,
-        endDateTime: formData.endDate,
-        jobPostingContent: formData.jobPostingContent,
-        // image: formData.image
-      };
-
-      await putCompaniesJobPosting(1, requestData);
-      navigate(`/jobpost-detail/${editMode.state.jobPostingid}`);
+      await putCompaniesJobPosting(jobPostingKey, resultBody, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      navigate(`/jobpost-detail/${jobPostingKey}`);
     } else {
-      const requestData: JobPosting = {
-        title: formData.title,
-        jobCategory: formData.jobCategory,
-        career: +formData.career,
-        techStack: formData.teckStack,
-        jobPostingStep: formData.jobPostingSteps,
-        workLocation: formData.workLocation,
-        education: formData.education,
-        employmentType: formData.employmentType,
-        salary: +formData.salary,
-        workTime: freeHour
-          ? "자율출근제"
-          : getStringWorkingHour(formData.startHour, formData.endHour),
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        jobPostingContent: formData.jobPostingContent,
-        passingNumber: +formData.passingNumber,
-      };
-
-      const data = new FormData();
-      data.append("image", formData.image);
-
-      console.log(formData.image);
-
-      data.append(
-        "jobPostingInfo",
-        new Blob([JSON.stringify(requestData)], { type: "application/json" }),
-      );
-
-      console.log(data);
-      if (!authUser) {
-        console.log("유저정보없음");
-        return;
-      }
-
-      await postCompaniesJobPosting(authUser?.key, data, {
+      await postCompaniesJobPosting(authUser?.key, resultBody, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       navigate("/company-mypage");
@@ -306,14 +321,14 @@ const CreateJobPost = () => {
                           onChange={event => {
                             if (event.target.checked) {
                               // 체크하면 추가
-                              const temp = formData.teckStack;
+                              const temp = formData.techStack;
                               temp.push(stack);
-                              setFormData({ ...formData, teckStack: temp });
+                              setFormData({ ...formData, techStack: temp });
                             } else {
                               //해제하면 빼기
-                              const temp = [...formData.teckStack];
+                              const temp = [...formData.techStack];
                               const result = temp.filter(el => el !== stack);
-                              setFormData({ ...formData, teckStack: result });
+                              setFormData({ ...formData, techStack: result });
                             }
                           }}
                         />
@@ -322,7 +337,7 @@ const CreateJobPost = () => {
                   })}
                 </StackInputContainer>
                 <ErrorMessage>
-                  {formData.teckStack.length > 0 ? "" : "테크스택을 1개이상 선택해주세요."}
+                  {formData.techStack.length > 0 ? "" : "테크스택을 1개이상 선택해주세요."}
                 </ErrorMessage>
               </>
             )}
@@ -408,7 +423,7 @@ const CreateJobPost = () => {
                 onChange={date => setFormData({ ...formData, startHour: date })}
                 disabled={freeHour}
               />
-              <p>~</p>
+              <BeteenString>~</BeteenString>
               <TimePicker
                 value={formData.endHour}
                 onChange={date => setFormData({ ...formData, endHour: date })}
@@ -492,7 +507,7 @@ const CreateJobPost = () => {
                       onChange={event => setAddStepValue(event.target.value)}
                       onKeyDown={event => event.key === "Enter" && addStep(event)}
                     />
-                    <Button type="button" className="text" onClick={addStep}>
+                    <Button type="button" className="text" onClick={e => addStep(e)}>
                       단계추가
                     </Button>
                   </StepInputContianer>
@@ -597,6 +612,11 @@ const InputContents = styled.div`
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
+`;
+
+const BeteenString = styled.div`
+  margin-left: 10px;
+  margin-right: 10px;
 `;
 
 const InputShortText = styled(InputDefault)`

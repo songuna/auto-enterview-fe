@@ -2,6 +2,7 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import { DataPickerInput, DatePickerContainer } from "../../assets/style/input";
 import { Placement } from "./DatePickerOne";
 import { ko } from "date-fns/locale";
+import styled from "styled-components";
 
 registerLocale("ko", ko);
 
@@ -45,7 +46,7 @@ const DatePickerDuration = ({
           yearDropdownItemNumber={100}
         />
       </DatePickerContainer>
-      {betweenString && <p>{betweenString}</p>}
+      {betweenString && <BetweenString>{betweenString}</BetweenString>}
       <DatePickerContainer>
         <DatePicker
           locale="ko"
@@ -64,5 +65,10 @@ const DatePickerDuration = ({
     </>
   );
 };
+
+const BetweenString = styled.div`
+  margin-left: 10px;
+  margin-right: 10px;
+`;
 
 export default DatePickerDuration;

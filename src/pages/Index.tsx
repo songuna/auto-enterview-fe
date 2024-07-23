@@ -4,71 +4,67 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
 import { getJobPostings, postJobPostingApply } from "../axios/http/jobPosting";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { JobInfo } from "../type/jobPosting";
 import { getDday } from "../utils/Format";
 
 const Index = () => {
   const authUser = useRecoilValue(authUserState);
-  const navigate = useNavigate();
-
   const [jobInfos, setJobInfos] = useState<JobInfo[]>([]);
-
   const [page, setpage] = useState(1);
+  const [loading, setLoaing] = useState(false);
+  const totalPage = useRef(0);
+
+  const navigate = useNavigate();
+  const observerTarget = useRef(null);
+  const observer = new IntersectionObserver(
+    () => {
+      if (!loading) {
+        setpage(page => {
+          if (page < totalPage.current) return page + 1;
+          else return page;
+        });
+      }
+    },
+    {
+      threshold: 0,
+    },
+  );
+
+  useEffect(() => {
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     (async () => {
-      // Mock 데이터
-      setJobInfos([
-        {
-          jobPostingKey: "keykeyeeaf",
-          companyName: "(주)회사이름",
-          title: "채용공고 제목",
-          techStack: ["React", "Java"],
-          endDate: "2024-07-16",
-        },
-        {
-          jobPostingKey: "keykeyeeaf",
-          companyName: "(주)아이비릭스",
-          title: "솔루션개발 및 구출 PL 경력",
-          techStack: ["Java"],
-          endDate: "2024-07-08",
-        },
-        {
-          jobPostingKey: "keykeydeaf",
-          companyName: "(주)안드로메다",
-          title: "채용공고가 정말정말 긴 경우 짤리는지 확인하기 위한 제목",
-          techStack: ["Java", "Springboot", "Mariadb", "C++", "Android"],
-          endDate: "2024-07-12",
-        },
-        {
-          jobPostingKey: "kykeyedeaf",
-          companyName: "(주)선어양원",
-          title: "사람구해요",
-          techStack: ["Springboot", "C++", "Android"],
-          endDate: "2024-07-19",
-        },
-        {
-          jobPostingKey: "kyeyedeaf",
-          companyName: "(주)벤치링크",
-          title: "모바일앱 React 프론트엔드 개발자 채용",
-          techStack: ["Android", "iOS", "Kotlin", "React"],
-          endDate: "2024-08-02",
-        },
-      ]);
-
+      setLoaing(true);
       const response = await getJobPostings(page);
-      setJobInfos(response.jobPostingsList);
+      totalPage.current = response.totalPages;
+
+      if (response.jobPostingsList.length > 0 && jobInfos.length <= page * 24) {
+        setJobInfos(jobInfos => [...jobInfos, ...response.jobPostingsList]);
+        console.log(jobInfos);
+      }
       console.log(response);
+      setLoaing(false);
     })();
-  }, []);
+  }, [page]);
 
   const goDetail = (jobPostingKey: string) => {
     navigate(`/jobpost-detail/${jobPostingKey}`);
   };
 
   const apply = async (jobPostingKey: string) => {
-    if (confirm("정말 지원하시겠습니까?")) {
+    if (!authUser) {
+      if (confirm("로그인이 하시겠습니까?")) navigate("/login");
+    } else if (confirm("정말 지원하시겠습니까?")) {
       await postJobPostingApply(jobPostingKey);
     }
   };
@@ -82,15 +78,15 @@ const Index = () => {
         </InfoMessage>
       )}
       <JobsContainer>
-        {jobInfos.map(jobInfo => {
+        {jobInfos.map((jobInfo, idx) => {
           return (
             <JobContainer
               onClick={() => goDetail(jobInfo.jobPostingKey)}
-              key={`${jobInfo.jobPostingKey} ${jobInfo.title}`}
+              key={`${jobInfo.jobPostingKey} ${idx}`}
             >
               <CompanyName>{jobInfo.companyName}</CompanyName>
               <JogTitle>{jobInfo.title}</JogTitle>
-              <TeckStack>{jobInfo.techStack.map(stack => `#${stack} `)}</TeckStack>
+              <TeckStack>{jobInfo.techStack.map(stack => `#${stack}`)}</TeckStack>
               <ApplyButton
                 onClick={event => {
                   event.stopPropagation();
@@ -104,6 +100,7 @@ const Index = () => {
           );
         })}
       </JobsContainer>
+      <Observer ref={observerTarget}></Observer>
     </Wrapper>
   );
 };
@@ -188,6 +185,10 @@ const ApplyButton = styled.button`
   &:active {
     transform: scale(99%);
   }
+`;
+
+const Observer = styled.div`
+  height: 10vh;
 `;
 
 export default Index;
