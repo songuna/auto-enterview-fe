@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { Container, FullBtn, Inner, SubTitle, UserName, Wrapper } from "../assets/style/Common";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FaEnvelopeOpenText } from "react-icons/fa";
-import Modal from "./Modal";
+import Modal from "../components/Modal";
 import { ModalType } from "../type/modal";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { deleteInterviewSchedule } from "../axios/http/interview";
@@ -31,6 +31,19 @@ const RecruitBoard = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const authUser = useRecoilValue(authUserState);
   const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const title = queryParams.get("title");
+
+  // 단계별 일정 추출하기
+  // const filterSchedules = useCallback((data: RecruitBoardData[]) => {
+  //   const candidates = data.map(step => {
+  //     return step.candidateTechStackInterviewInfoDtoList;
+  //   });
+  //   const scheduleDateTimes = candidates.forEach((candidate) => {
+  //     return candidate.scheduleDateTime
+  //   })
+  //   console.log(candidates);
+  // }, []);
 
   // 단계 및 지원자 목록, 일정 정보
   useEffect(() => {
@@ -38,9 +51,9 @@ const RecruitBoard = () => {
 
     const fetchCandidates = async () => {
       try {
-        const data = await getRecruitBoardData(jobPostingKey);
-        console.log(data);
+        const data: RecruitBoardData[] = await getRecruitBoardData(jobPostingKey);
         setDataList(data);
+        // filterSchedules(data);
       } catch (error) {
         alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
       }
@@ -97,7 +110,6 @@ const RecruitBoard = () => {
     setModalType(type);
     setModalStep(step);
     setModal(true);
-    navigate(`/recruit-board/${jobPostingKey}/assignment`);
   };
 
   // 이력서 보기
@@ -155,7 +167,6 @@ const RecruitBoard = () => {
   // 모달창 닫기
   const onClose = () => {
     setModal(false);
-    navigate(`/recruit-board/${jobPostingKey}`);
   };
 
   return (
@@ -163,7 +174,7 @@ const RecruitBoard = () => {
       <Inner className="inner-1200">
         <UserName>{authUser?.name}</UserName>
         <Container>
-          <SubTitle>{location.state.title}</SubTitle>
+          <SubTitle>{title}</SubTitle>
           <Board
             ref={containerRef}
             onMouseDown={handleMouseDown}
@@ -176,7 +187,8 @@ const RecruitBoard = () => {
                 <Step key={data.stepId}>
                   <StepHead>
                     <StepTitle className="sub-title">{data.stepName}</StepTitle>
-                    {data.stepName !== "서류전형" && schedule && (
+                    {data.stepName !== "서류전형" && (
+                      // dataList[idx].candidateTechStackInterviewInfoDtoList[0].scheduleDateTime !== null &&
                       <RemoveBtn onClick={() => handleRemoveSchedule(data.stepId)}>
                         <span>일정 삭제</span>
                         <RiDeleteBin6Line />

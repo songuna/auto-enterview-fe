@@ -1,7 +1,13 @@
 export interface RecruitBoardData {
   stepId: number;
   stepName: string;
-  candidateTechStackInterviewInfoDtoList: CandidateInfo[];
+  candidateTechStackInterviewInfoDtoList: {
+    candidateKey: string;
+    candidateName: string;
+    resumeKey: string;
+    techStack: string[];
+    scheduleDateTime: string | null;
+  }[];
 }
 
 export interface CandidateInfo {
