@@ -6,7 +6,7 @@ import DatePickerDuration from "../components/input/DatePickerDuration";
 import DatePickerOne from "../components/input/DatePickerOne";
 import SelectInput from "../components/input/SelectInput";
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { postResume, getResume, putResume } from "../axios/http/resume";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
@@ -55,7 +55,7 @@ const CreateResume = () => {
       phoneNumber: "",
       address: "",
       schoolName: "",
-      teckStack: [],
+      techStack: [],
     },
   });
 
@@ -79,7 +79,7 @@ const CreateResume = () => {
       const fetchResume = async () => {
         try {
           const response = await getResume(authUser?.key);
-          const resumeData = response.resumeData;
+          const resumeData = response;
 
           setTitle(resumeData.title || "");
           setGender(resumeData.gender || "");
@@ -93,25 +93,31 @@ const CreateResume = () => {
           setValue("phoneNumber", resumeData.phoneNumber || "");
           setValue("address", resumeData.address || "");
           setValue("schoolName", resumeData.schoolName || "");
-          setValue("teckStack", resumeData.techStack || []);
+          setValue("techStack", resumeData.techStack || []);
 
-          setCareerList(resumeData.career.map((career: any) => ({
-            companyName: career.companyName,
-            jobCategory: career.jobCategory || "",
-            startDate: career.startDate ? new Date(career.startDate) : null,
-            endDate: career.endDate ? new Date(career.endDate) : null,
-          })));
+          setCareerList(
+            resumeData.career.map((career: any) => ({
+              companyName: career.companyName,
+              jobCategory: career.jobCategory || "",
+              startDate: career.startDate ? new Date(career.startDate) : null,
+              endDate: career.endDate ? new Date(career.endDate) : null,
+            })),
+          );
 
-          setExperiences(resumeData.experience.map((exp: any) => ({
-            experienceName: exp.experienceName,
-            startDate: exp.startDate ? new Date(exp.startDate) : null,
-            endDate: exp.endDate ? new Date(exp.endDate) : null,
-          })));
+          setExperiences(
+            resumeData.experience.map((exp: any) => ({
+              experienceName: exp.experienceName,
+              startDate: exp.startDate ? new Date(exp.startDate) : null,
+              endDate: exp.endDate ? new Date(exp.endDate) : null,
+            })),
+          );
 
-          setQualifications(resumeData.certificates.map((cert: any) => ({
-            certificateName: cert.certificateName,
-            certificateDate: cert.certificateDate ? new Date(cert.certificateDate) : null,
-          })));
+          setQualifications(
+            resumeData.certificates.map((cert: any) => ({
+              certificateName: cert.certificateName,
+              certificateDate: cert.certificateDate ? new Date(cert.certificateDate) : null,
+            })),
+          );
 
           if (resumeData.imageUrl) {
             setImgURL(resumeData.imageUrl);
@@ -123,7 +129,7 @@ const CreateResume = () => {
 
       fetchResume();
     }
-  }, [authUser, authUser, setValue, resumeData]);
+  }, [authUser, setValue, resumeData]);
 
 
   //이미지
@@ -195,7 +201,7 @@ const CreateResume = () => {
   //이력서 생성 data
   const onSubmit = async (data: any) => {
     const ResumeData = {
-      title: title,
+      title:title,
       jobWant: jobCategory || null,
       name: data.name || "",
       gender: gender || "",
@@ -214,7 +220,7 @@ const CreateResume = () => {
           ? new Date(experiences.endDate).toISOString().split("T")[0]
           : "",
       })),
-      techStack: data.teckStack || [],
+      techStack: data.techStack || [],
       career: careerList.map(career => ({
         companyName: career.companyName,
         jobCategory: career.jobCategory || null,
@@ -227,7 +233,8 @@ const CreateResume = () => {
           ? new Date(qualification.certificateDate).toISOString().split("T")[0]
           : "",
       })),
-      portfolio: portfolio,
+      portfolio: portfolio || "",
+      imageUrl: imgURL || "",
     };
 
     // jobCategory가 빈 문자열인 경우 필드를 제거
@@ -245,24 +252,18 @@ const CreateResume = () => {
     );
 
     try {
-      if (!authUser) {
-        console.log("로그인되어있지 않음");
-        return;
-      }
-
-      if (authUser) {
+    if (resumeData) {
       // PUT 요청으로 이력서 업데이트
       const response = await putResume(authUser?.key, resultData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      navigate(`/view-resume/${authUser?.key}`);
     } else {
       // POST 요청으로 새 이력서 작성
       const response = await postResume(authUser?.key, resultData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      navigate(`/view-resume/${authUser?.key}`);
     }
+    navigate(`/view-resume/${authUser?.key}`);
   } catch (error) {
     console.error("Error submitting resume:", error);
   }
@@ -377,7 +378,7 @@ const CreateResume = () => {
             <InputTitle>기술스택</InputTitle>
             <Controller
               control={control}
-              name="teckStack"
+              name="techStack"
               rules={{ required: "기술스택은 1개이상 선택해주세요." }}
               defaultValue={[]}
               render={({ field: { onChange, value } }) => (
@@ -408,7 +409,7 @@ const CreateResume = () => {
               )}
             />
             <ErrorMessage>
-              {errors.teckStack?.length == 0 && String(errors.teckStack?.message)}
+              {errors.techStack?.length == 0 && String(errors.techStack?.message)}
             </ErrorMessage>
           </InputContainerShortMargin>
         </InputContainer>
