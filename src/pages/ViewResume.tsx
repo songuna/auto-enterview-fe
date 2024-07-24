@@ -3,8 +3,8 @@ import styled from "styled-components";
 import { MdOutlineEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { getResume, deleteResume, putResume } from "../axios/http/resume";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { getResume, deleteResume } from "../axios/http/resume";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
 
@@ -42,11 +42,13 @@ interface ResumeData {
 
 
 const ViewResume: React.FC = () => {
-  const { candidateKey } = useParams();
+  const { candidateKey } = useParams<{ candidateKey: string }>();
   const authUser = useRecoilValue(authUserState);
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { resumeData: initialResumeData } = location.state || {};
 
   const handleDelete = async () => {
     if (deleteConfirm) {
@@ -55,7 +57,7 @@ const ViewResume: React.FC = () => {
     } else {
       if (window.confirm("정말 삭제하시겠습니까?")) {
         try {
-          await deleteResume("candidateKey");
+          await deleteResume(candidateKey!);
           alert("이력서가 삭제되었습니다!");
           setDeleteConfirm(true);
           navigate("/user-mypage");
@@ -66,6 +68,7 @@ const ViewResume: React.FC = () => {
       }
     }
   };
+
 
   useEffect(() => {
     const fetchResume = async () => {
@@ -83,7 +86,6 @@ const ViewResume: React.FC = () => {
   }, [candidateKey]);
 
   const handleEdit = () => {
-    console.log("resumeData:", resumeData);
     if (window.confirm("이력서를 수정하시겠습니까?")) {
       navigate(`/create-resume`, { state: { resumeData } });
     }

@@ -10,4 +10,4 @@ export const getResume = (candidateKey: string) => resumeEndpoint("get", candida
 export const postResume = (candidateKey: string, body: any, config?: any) =>
   resumeEndpoint("post", candidateKey, body, config);
 export const putResume = (candidateKey: string, body: any, config?: any) => resumeEndpoint("put", candidateKey, body, config);
-export const deleteResume = (candidateKey: string) => resumeEndpoint("delete", candidateKey);
+export const deleteResume = (candidateKey: string,) => resumeEndpoint("delete", candidateKey);
