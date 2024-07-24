@@ -197,7 +197,8 @@ const ViewResume: React.FC = () => {
           <InputContainer>
             <InputTitle> [포트폴리오] </InputTitle>
             <Container>
-              <H3 className="textBox">URL -{resumeData.portfolio}</H3>
+              <H3 className="textBox">URL -<a href={resumeData.portfolio} target="_blank" rel="noopener noreferrer">{resumeData.portfolio}</a>
+              </H3>
             </Container>
           </InputContainer>
         </All>
