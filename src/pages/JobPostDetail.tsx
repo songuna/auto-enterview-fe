@@ -99,7 +99,6 @@ const JobPostDetail = () => {
                 <div>공고마감일자 | {getDateFormat(new Date(jobPostingInfo.endDate))}</div>
                 <Dday>({getDday(jobPostingInfo.endDate)})</Dday>
               </DeadLineContainer>
-              <h1>{}</h1>
               {jobPostingInfo.companyKey == authUser?.key && (
                 <EditDeleteButtonContianer>
                   <IconButton className="delete" onClick={deleteJobPosting}>

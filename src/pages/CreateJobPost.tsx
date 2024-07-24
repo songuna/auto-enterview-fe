@@ -109,8 +109,8 @@ const CreateJobPost = () => {
   // 수정하기 할땐, 정보를 미리 넣어놓기
   useEffect(() => {
     if (jobPostingInfo) {
-      inputMemory.current.salary = jobPostingInfo.salary;
-      inputMemory.current.career = jobPostingInfo.career;
+      if (jobPostingInfo.career != -1) inputMemory.current.career = jobPostingInfo.career;
+      if (jobPostingInfo.salary != -1) inputMemory.current.salary = jobPostingInfo.salary;
 
       if (jobPostingInfo.workTime === "자유출근제") setFreeHour(true);
 
@@ -120,7 +120,7 @@ const CreateJobPost = () => {
         career: jobPostingInfo.career,
         techStack: jobPostingInfo.techStack,
         workLocation: jobPostingInfo.workLocation,
-        education: jobPostingInfo.education,
+        education: optionEducation.find(edu => edu.label == jobPostingInfo.education)?.value || "",
         employmentType: jobPostingInfo.employmentType,
         salary: jobPostingInfo.salary,
         startHour:
@@ -160,7 +160,6 @@ const CreateJobPost = () => {
       formData.jobCategory &&
       Number(formData.career) >= -1 &&
       formData.techStack.length > 0 &&
-      formData.jobPostingSteps &&
       formData.jobPostingSteps.length > 1 &&
       formData.workLocation &&
       formData.education &&
@@ -197,10 +196,6 @@ const CreateJobPost = () => {
       jobPostingContent: formData.jobPostingContent,
       passingNumber: +formData.passingNumber,
     };
-
-    // 수정이면 필요학력만 enum으로 바꾸어줌
-    requestData.education =
-      optionEducation.find(edu => edu.label == jobPostingInfo.education)?.value || "";
 
     // 최종 body
     const resultBody = new FormData();
@@ -270,7 +265,13 @@ const CreateJobPost = () => {
             <InputTitle>필요경력</InputTitle>
 
             {editMode ? (
-              <EditModeText>{jobPostingInfo.career}년</EditModeText>
+              <EditModeText>
+                {jobPostingInfo?.career == -1
+                  ? "경력무관"
+                  : jobPostingInfo?.career == 0
+                    ? "신입"
+                    : `${jobPostingInfo?.career}년`}
+              </EditModeText>
             ) : (
               <>
                 <InputContents>
@@ -278,7 +279,7 @@ const CreateJobPost = () => {
                     type="number"
                     placeholder="신입은 0"
                     className="text"
-                    value={formData.career}
+                    value={inputMemory.current.career}
                     onChange={event => {
                       setFormData({
                         ...formData,
@@ -357,7 +358,9 @@ const CreateJobPost = () => {
           <InputContainer>
             <InputTitle>필요학력</InputTitle>
             {editMode ? (
-              <EditModeText>학사</EditModeText>
+              <EditModeText>
+                {optionEducation.find(edu => edu.label == jobPostingInfo.education)?.label || ""}
+              </EditModeText>
             ) : (
               <>
                 <SelectInput
@@ -389,7 +392,7 @@ const CreateJobPost = () => {
                 <InputShortText
                   type="number"
                   placeholder="연봉"
-                  value={formData.salary}
+                  value={inputMemory.current.salary}
                   onChange={event => {
                     setFormData({
                       ...formData,
@@ -403,6 +406,7 @@ const CreateJobPost = () => {
                 <Checkbox
                   id="pay"
                   text="회사내규에 따름"
+                  checked={formData.salary == "-1"}
                   onChange={event => {
                     setFormData({
                       ...formData,

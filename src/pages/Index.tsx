@@ -48,7 +48,7 @@ const Index = () => {
       const response = await getJobPostings(page);
       totalPage.current = response.totalPages;
 
-      if (response.jobPostingsList.length > 0 && jobInfos.length <= page * 24) {
+      if (response.jobPostingsList.length > 0 && jobInfos.length <= (page - 1) * 24) {
         setJobInfos(jobInfos => [...jobInfos, ...response.jobPostingsList]);
         console.log(jobInfos);
       }
@@ -78,11 +78,11 @@ const Index = () => {
         </InfoMessage>
       )}
       <JobsContainer>
-        {jobInfos.map((jobInfo, idx) => {
+        {jobInfos.map(jobInfo => {
           return (
             <JobContainer
               onClick={() => goDetail(jobInfo.jobPostingKey)}
-              key={`${jobInfo.jobPostingKey} ${idx}`}
+              key={jobInfo.jobPostingKey}
             >
               <CompanyName>{jobInfo.companyName}</CompanyName>
               <JogTitle>{jobInfo.title}</JogTitle>
