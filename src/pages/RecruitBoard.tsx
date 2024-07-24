@@ -8,7 +8,7 @@ import { ModalType } from "../type/modal";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { deleteInterviewSchedule } from "../axios/http/interview";
 import { CandidateInfo, RecruitBoardData } from "../type/recruitBoard";
-import { getRecruitBoardData } from "../axios/http/recruitBoard";
+import { getRecruitBoardData, putNextStep } from "../axios/http/recruitBoard";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
 
@@ -18,6 +18,7 @@ const RecruitBoard = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [schedule, setSchedule] = useState<(string | null)[][]>([]);
   const [activeList, setActiveList] = useState<CandidateInfo[]>([]);
+  const [activeStep, setActiveStep] = useState<number>(1);
   const [modal, setModal] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("schedule");
   const [modalStep, setModalStep] = useState<number>(0);
@@ -41,6 +42,7 @@ const RecruitBoard = () => {
 
   // 단계 및 지원자 목록, 일정 정보
   useEffect(() => {
+    console.log(currentStep);
     if (!jobPostingKey) return;
     console.log(schedule[0]);
 
@@ -118,49 +120,63 @@ const RecruitBoard = () => {
   };
 
   // 지원자 선택하기
-  const handleClickList = (candidate: CandidateInfo) => {
-    setActiveList(prevActiveList => {
-      if (prevActiveList.length === 0) {
-        return [candidate];
+  const handleClickList = (candidate: CandidateInfo, step: number) => {
+    setActiveStep(prevStep => {
+      // 동일한 step의 지원자를 클릭했는지 체크
+      if (prevStep !== step) {
+        alert("현재 단계에서만 선택하실 수 있습니다.");
+        return prevStep;
+      } else {
+        // 같은 단계를 선택하면 activeList 업데이트
+        setActiveList(prevActiveList => {
+          if (prevActiveList.length === 0) {
+            return [candidate];
+          }
+
+          return prevActiveList.includes(candidate)
+            ? prevActiveList.filter(item => item !== candidate)
+            : [...prevActiveList, candidate];
+        });
       }
-
-      //todo: 동일한 step의 지원자를 클릭했는지 검사할지?
-      return prevActiveList.includes(candidate)
-        ? prevActiveList.filter(item => item !== candidate)
-        : [...prevActiveList, candidate];
-
-      // const ok = confirm(
-      //   "현재 다른 단계에서 선택중인 지원자가 있습니다. 클릭하신 단계의 지원자를 선택하시겠어요?",
-      // );
-
-      // if (ok) {
-      //   return [stepName];
-      // }
-      // return prevActiveList;
+      return step;
     });
   };
 
   // 다음 단계로 넘기기
-  const handleNexteStep = () => {
+  const handleNexteStep = async (stepId: number) => {
+    if (!jobPostingKey) return;
+
     if (currentStep < dataList.length) {
       const activeCandidates = activeList;
       const inactiveCandidates = dataList[
         currentStep - 1
       ].candidateTechStackInterviewInfoDtoList.filter(candidate => !activeList.includes(candidate));
+      const activeCandidateKeys = activeCandidates.map(candidate => candidate.candidateKey);
 
-      setDataList(prev => {
-        const newCandidateList = [...prev];
-        newCandidateList[currentStep - 1].candidateTechStackInterviewInfoDtoList =
-          inactiveCandidates;
-        newCandidateList[currentStep].candidateTechStackInterviewInfoDtoList = [
-          ...newCandidateList[currentStep].candidateTechStackInterviewInfoDtoList,
-          ...activeCandidates,
-        ];
-        return newCandidateList;
-      });
+      const nextStepBody = {
+        currentStepId: stepId,
+        candidateKeys: [...activeCandidateKeys],
+      };
 
-      setActiveList([]);
-      setCurrentStep(prev => prev + 1);
+      try {
+        await putNextStep(jobPostingKey, nextStepBody);
+
+        setDataList(prev => {
+          const newCandidateList = [...prev];
+          newCandidateList[currentStep - 1].candidateTechStackInterviewInfoDtoList =
+            inactiveCandidates;
+          newCandidateList[currentStep].candidateTechStackInterviewInfoDtoList = [
+            ...newCandidateList[currentStep].candidateTechStackInterviewInfoDtoList,
+            ...activeCandidates,
+          ];
+          return newCandidateList;
+        });
+
+        setActiveList([]);
+        setCurrentStep(prev => prev + 1);
+      } catch (error) {
+        alert("단계를 넘기는데 문제가 생겼습니다. 다시 시도해주세요.");
+      }
     }
   };
 
@@ -210,7 +226,7 @@ const RecruitBoard = () => {
                       <List
                         key={candidate.candidateKey}
                         $isActive={activeList.includes(candidate)}
-                        onClick={() => handleClickList(candidate)}
+                        onClick={() => handleClickList(candidate, idx + 1)}
                       >
                         <Name>{candidate.candidateName}</Name>
                         <Skills>
@@ -229,9 +245,14 @@ const RecruitBoard = () => {
                       </List>
                     ))}
                   </Lists>
-                  {idx + 1 === currentStep && activeList.length && idx + 1 !== dataList.length && (
-                    <PassBtn onClick={handleNexteStep}>다음 단계로 넘기기</PassBtn>
-                  )}
+                  {/* 현재 단계이고, 선택된 지원자가 있고, 마지막 단계가 아닐 경우 */}
+                  {idx + 1 === currentStep &&
+                    activeList.length > 0 &&
+                    idx + 1 !== dataList.length && (
+                      <PassBtn onClick={() => handleNexteStep(data.stepId)}>
+                        다음 단계로 넘기기
+                      </PassBtn>
+                    )}
                 </Step>
               ))}
             </Steps>
