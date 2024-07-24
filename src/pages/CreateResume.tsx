@@ -45,6 +45,7 @@ const CreateResume = () => {
     control,
     handleSubmit,
     register,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -66,56 +67,54 @@ const CreateResume = () => {
   const [jobCategory, setJobCategory] = useState<string | null>(null);
   const [education, setEducation] = useState<string | null>(null);
   const [portfolio, setPortfolio] = useState("");
-  const { setValue } = useForm();
 
   const inputRef = useRef<HTMLInputElement>(null);
  
   //수정하기
-  const { resumeId } = useParams();
   const location = useLocation();
   const { resumeData } = location.state || {};
   
   useEffect(() => {
-    if (resumeId) {
+    if (authUser) {
       const fetchResume = async () => {
         try {
-          const response = await getResume(authUser?.key, resumeId);
+          const response = await getResume(authUser?.key);
           const data = response.resumeData;
 
-          setTitle(data.title || "");
-          setGender(data.gender || "");
-          setJobCategory(data.jobWant || "");
-          setEducation(data.education || "");
-          setPortfolio(data.portfolio || "");
+          setTitle(resumeData.title || "");
+          setGender(resumeData.gender || "");
+          setJobCategory(resumeData.jobWant || "");
+          setEducation(resumeData.education || "");
+          setPortfolio(resumeData.portfolio || "");
 
-          setValue("name", data.name || "");
-          setValue("birthDate", data.birthDate || "");
-          setValue("email", data.email || "");
-          setValue("phoneNumber", data.phoneNumber || "");
-          setValue("address", data.address || "");
-          setValue("schoolName", data.schoolName || "");
-          setValue("teckStack", data.techStack || []);
+          setValue("name", resumeData.name || "");
+          setValue("birthDate", resumeData.birthDate || "");
+          setValue("email", resumeData.email || "");
+          setValue("phoneNumber", resumeData.phoneNumber || "");
+          setValue("address", resumeData.address || "");
+          setValue("schoolName", resumeData.schoolName || "");
+          setValue("teckStack", resumeData.techStack || []);
 
-          setCareerList(data.career.map((career: any) => ({
+          setCareerList(resumeData.career.map((career: any) => ({
             companyName: career.companyName,
             jobCategory: career.jobCategory || "",
             startDate: career.startDate ? new Date(career.startDate) : null,
             endDate: career.endDate ? new Date(career.endDate) : null,
           })));
 
-          setExperiences(data.experience.map((exp: any) => ({
+          setExperiences(resumeData.experience.map((exp: any) => ({
             experienceName: exp.experienceName,
             startDate: exp.startDate ? new Date(exp.startDate) : null,
             endDate: exp.endDate ? new Date(exp.endDate) : null,
           })));
 
-          setQualifications(data.certificates.map((cert: any) => ({
+          setQualifications(resumeData.certificates.map((cert: any) => ({
             certificateName: cert.certificateName,
             certificateDate: cert.certificateDate ? new Date(cert.certificateDate) : null,
           })));
 
-          if (data.imageUrl) {
-            setImgURL(data.imageUrl);
+          if (resumeData.imageUrl) {
+            setImgURL(resumeData.imageUrl);
           }
         } catch (error) {
           console.error("Error fetching resume:", error);
@@ -124,7 +123,7 @@ const CreateResume = () => {
 
       fetchResume();
     }
-  }, [resumeId, authUser, setValue, resumeData]);
+  }, [authUser, authUser, setValue, resumeData]);
 
 
   //이미지
@@ -251,7 +250,7 @@ const CreateResume = () => {
         return;
       }
 
-      if (resumeId) {
+      if (authUser) {
       // PUT 요청으로 이력서 업데이트
       const response = await putResume(authUser?.key, resultData, {
         headers: { "Content-Type": "multipart/form-data" },

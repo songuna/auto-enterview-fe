@@ -31,8 +31,11 @@ interface ResumeData {
     certificateName: string;
     certificateDate: string;
   }[];
-  experience: string[];
-  activities: string[];
+  experience: {
+    experienceName : string;
+    startDate: string;
+    endDate: string;
+  }[];
   qualifications: string[];
   portfolio: string;
 }
@@ -127,58 +130,74 @@ const ViewResume: React.FC = () => {
           </InputContainer>
 
           <InputContainer>
-            <InputTitle>희망 직무</InputTitle>
+            <InputTitle> [희망 직무] </InputTitle>
             <H3 className="input textBox">{resumeData.jobWant}</H3>
           </InputContainer>
 
           <InputContainer>
-            <InputTitle>기술 스택</InputTitle>
-            <H3 className="input textBox">{resumeData.techStack}</H3>
+            <InputTitle> [기술 스택] </InputTitle>
+            <H3 className="textBox">
+              {resumeData.techStack && resumeData.techStack.length > 0
+                ? resumeData.techStack.map((tech, index) => (
+                  <span key={index}>
+                    #{tech}
+                    {index < resumeData.techStack.length - 1 && ', '}
+                  </span>
+                ))
+              : 'No tech stack available'}
+            </H3>
           </InputContainer>
 
           <InputContainer className="school">
-            <InputTitle>최종 학력</InputTitle>
+            <InputTitle> [최종 학력] </InputTitle>
             <H3 className="input textBox">{resumeData.scholarship}</H3>
-            <InputTitle className="schoolName">학교명</InputTitle>
+            <InputTitle className="schoolName"> [학교명] </InputTitle>
             <H3 className="input textBox">{resumeData.schoolName}</H3>
           </InputContainer>
 
           <InputContainer>
-            <InputTitle>경력</InputTitle>
+            <InputTitle> [경력] </InputTitle>
             <Container>
               {resumeData.career.map((resumeData, index) => (
-                <div key={index}>
+                <Div key={index}>
                   <H3 className="textBox">회사명: {resumeData.companyName}</H3>
                   <H3 className="textBox">담당업무: {resumeData.jobCategory}</H3>
                   <H3 className="textBox">시작 날짜: {resumeData.startDate}</H3>
                   <H3 className="textBox">종료 날짜: {resumeData.endDate}</H3>
-                </div>
+                </Div>
               ))}
             </Container>
           </InputContainer>
 
           <InputContainer>
-            <InputTitle>경험/활동/교육</InputTitle>
+            <InputTitle> [경험/활동/교육] </InputTitle>
             <Container>
-              {resumeData.experience.map((activity, index) => (
-                <Input1 key={index} value={activity} readOnly />
+              {resumeData.experience.map((resumeData, index) => (
+                <Div key={index}>
+                  <H3 className="textBox">회사명: {resumeData.experienceName}</H3>
+                  <H3 className="textBox">시작 날짜: {resumeData.startDate}</H3>
+                  <H3 className="textBox">종료 날짜: {resumeData.endDate}</H3>
+                </Div>
               ))}
             </Container>
           </InputContainer>
 
           <InputContainer>
-            <InputTitle>자격/어학/수상</InputTitle>
+            <InputTitle> [자격/어학/수상] </InputTitle>
             <Container>
-              {resumeData.certificates.map((certificates, index) => (
-                <Input1 key={index} value={certificates} readOnly />
+              {resumeData.certificates.map((resumeData, index) => (
+                <Div key={index}>
+                  <H3 className="textBox">취득명: {resumeData.certificateName}</H3>
+                  <H3 className="textBox">취득일: {resumeData.certificateDate}</H3>
+                </Div>
               ))}
             </Container>
           </InputContainer>
 
           <InputContainer>
-            <InputTitle>포트폴리오</InputTitle>
+            <InputTitle> [포트폴리오] </InputTitle>
             <Container>
-              <H4>URL -{resumeData.portfolio}</H4>
+              <H3 className="textBox">URL -{resumeData.portfolio}</H3>
             </Container>
           </InputContainer>
         </All>
@@ -193,8 +212,15 @@ const Wrapper = styled.div`
   padding-bottom: 120px;
 `;
 
+const Div = styled.div`
+  width: 500px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+`
+
 const All = styled.div`
-  border: solid #b7b7b7 5px;
+  border: solid #000694 5px;
 `;
 
 const Title = styled.h2`
@@ -207,10 +233,12 @@ const Title = styled.h2`
 const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 30px;
+  
+  margin-top: 50px;
   margin-bottom: 20px;
   &.school {
     display: flex;
+
     flex-direction: row;
   }
   &.schoolName {
@@ -225,16 +253,17 @@ const AllContainer = styled.div`
 
 const FlexContainer = styled.div`
   flex-direction: column;
-  display: flex;
   justify-content: flex-end;
   width: 50%;
 `;
 
 const Image = styled.div`
-  width: 50%;
+  width: 200px;
+  height: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 80px 190px;
 `;
 
 const H2 = styled.h2`
@@ -243,7 +272,7 @@ const H2 = styled.h2`
   font-size: 30px;
   color: #222222;
   border: none;
-  border-bottom: solid #b7b7b7 1px;
+  border-bottom: solid #000694 2px;
   margin-top: 10px;
   margin-bottom: 15px;
   position: relative;
@@ -253,13 +282,16 @@ const H2 = styled.h2`
 const H3 = styled.h3`
   width: 70px;
   margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
   &.input {
     width: 100%;
     height: 40px;
     font-size: 20px;
     color: #222222;
     border: none;
-    border-bottom: solid #b7b7b7 1px;
+    border-bottom: solid #000694 1px;
     margin-bottom: 5px;
     padding-left: 10px;
     position: relative;
@@ -271,30 +303,25 @@ const H3 = styled.h3`
   }
 
   &.addressBox {
-    width: 550px;
+    width: 300px;
     font-size: 15px;
     margin-left: 10px;
   }
 
   &.emailBox {
-    width: 350px;
+    width: 300px;
     font-size: 15px;
     margin-left: 10px;
   }
 `;
 
-const H4 = styled.h4`
-  margin-left: 40px;
-`;
-
 const Line = styled.div`
-  border-top: 1px solid #b7b7b7;
+  border-top: 2px solid #000694;
   margin: 10px 0px;
 `;
 
 const InputTitle = styled.p`
   margin-left: 20px;
-  margin-bottom: 10px;
   font-size: 23px;
 `;
 
@@ -302,7 +329,7 @@ const Container = styled.div`
   margin-top: 8px;
   margin-bottom: 15px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
 `;
 
 const Input1 = styled.input`
