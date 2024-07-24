@@ -17,22 +17,33 @@ import { getDateFormat, getTimeFormat } from "../utils/Format";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { IconButton } from "../assets/style/ReactIconButton";
 import { IInterviewData } from "../type/interview";
-import { postInterviewParticipants, postInterviewSchedule } from "../axios/http/interview";
+import {
+  postAssignmentSchedule,
+  postInterviewParticipants,
+  postInterviewSchedule,
+} from "../axios/http/interview";
 
 interface FormContentProps {
   currentTab: string;
   jobPostingKey: string;
   stepId: number;
   setTypeEmail: React.Dispatch<React.SetStateAction<boolean>>;
+  setScheduleKey: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const FormContent = ({ currentTab, jobPostingKey, stepId, setTypeEmail }: FormContentProps) => {
+const FormContent = ({
+  currentTab,
+  jobPostingKey,
+  stepId,
+  setTypeEmail,
+  setScheduleKey,
+}: FormContentProps) => {
   const [assignmentFormData, setAssignmentFormData] = useState({
     endDate: new Date(),
-    endHour: new Date(2024, 7, 13, 18, 0),
+    endHour: new Date(2024, 7, 13, 23, 59),
   });
   const [interviewFormData, setInterviewFormData] = useState<IInterviewData>({
-    date: new Date(),
+    startDate: new Date(),
     startTime: new Date(2024, 7, 13, 18, 0),
     term: 0,
     times: 0,
@@ -42,13 +53,31 @@ const FormContent = ({ currentTab, jobPostingKey, stepId, setTypeEmail }: FormCo
   // 일정 저장하기 API
   const sendSchedule = async () => {
     const props = { jobPostingKey, stepId };
+    const assignmentBody = {
+      endDate: assignmentFormData.endDate.toISOString().split("T")[0],
+    };
+
+    const interviewBody = dataList.map(data => ({
+      startDate: data.startDate.toISOString().split("T")[0],
+      startTime: data.startTime.toISOString().split("T")[1].slice(0, 5),
+      term: data.term,
+      times: data.times,
+    }));
+
     try {
-      // 일정에 따른 지원자 분류
-      await postInterviewParticipants(props);
-      // 면접 일정 생성
-      await postInterviewSchedule(props);
+      if (currentTab === "assignment") {
+        // 과제 일정 생성
+        await postAssignmentSchedule(props, assignmentBody);
+      } else {
+        // 면접 일정 생성
+        const { interviewScheduleKey } = await postInterviewSchedule(props, interviewBody);
+        // 일정에 따른 지원자 분류
+        await postInterviewParticipants(props, interviewBody);
+        setScheduleKey(interviewScheduleKey);
+      }
       alert("일정이 성공적으로 저장되었습니다.");
     } catch (error) {
+      console.error(error);
       alert("일정 생성에 문제가 발생했습니다. 다시 시도해주세요.");
     }
   };
@@ -89,8 +118,9 @@ const FormContent = ({ currentTab, jobPostingKey, stepId, setTypeEmail }: FormCo
               <Label>
                 <Text>시간</Text>
                 <TimePicker
+                  disabled={true}
                   value={assignmentFormData.endHour}
-                  onChange={date => setAssignmentFormData({ ...assignmentFormData, endHour: date })}
+                  onChange={time => setAssignmentFormData({ ...assignmentFormData, endHour: time })}
                 />
               </Label>
             </>
@@ -99,15 +129,15 @@ const FormContent = ({ currentTab, jobPostingKey, stepId, setTypeEmail }: FormCo
               <Label>
                 <Text>면접 날짜</Text>
                 <DatePickerOne
-                  value={interviewFormData.date}
-                  onChange={date => setInterviewFormData({ ...interviewFormData, date: date })}
+                  value={interviewFormData.startDate}
+                  onChange={date => setInterviewFormData({ ...interviewFormData, startDate: date })}
                 />
               </Label>
               <Label>
                 <Text>시작 시간</Text>
                 <TimePicker
                   value={interviewFormData.startTime}
-                  onChange={date => setInterviewFormData({ ...interviewFormData, startTime: date })}
+                  onChange={time => setInterviewFormData({ ...interviewFormData, startTime: time })}
                 />
               </Label>
               <Label>
@@ -142,7 +172,7 @@ const FormContent = ({ currentTab, jobPostingKey, stepId, setTypeEmail }: FormCo
           <Schedules>
             {dataList.map((data, idx) => (
               <Schecule key={`schedule${idx}`}>
-                <DataText>{getDateFormat(data.date)}</DataText>
+                <DataText>{getDateFormat(data.startDate)}</DataText>
                 <DataText>{getTimeFormat(data.startTime)}</DataText>
                 <DataText>{data.term}분 간격</DataText>
                 <DataText>{data.times}회 반복</DataText>
