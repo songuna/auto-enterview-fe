@@ -12,7 +12,7 @@ const Index = () => {
   const authUser = useRecoilValue(authUserState);
   const [jobInfos, setJobInfos] = useState<JobInfo[]>([]);
   const [page, setpage] = useState(1);
-  const [loading, setLoaing] = useState(false);
+  const [loading, setLoading] = useState(false);
   const totalPage = useRef(0);
 
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ const Index = () => {
 
   useEffect(() => {
     (async () => {
-      setLoaing(true);
+      setLoading(true);
       const response = await getJobPostings(page);
       totalPage.current = response.totalPages;
 
@@ -53,7 +53,7 @@ const Index = () => {
         console.log(jobInfos);
       }
       console.log(response);
-      setLoaing(false);
+      setLoading(false);
     })();
   }, [page]);
 
