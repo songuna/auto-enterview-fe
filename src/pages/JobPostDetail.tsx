@@ -2,7 +2,11 @@ import styled from "styled-components";
 import { Container, Inner, Wrapper } from "../assets/style/Common";
 import { CiEdit } from "react-icons/ci";
 import { IconButton } from "../assets/style/ReactIconButton";
-import { getJobPosting, postJobPostingApply } from "../axios/http/jobPosting";
+import {
+  deleteCompaniesJobPosting,
+  getJobPosting,
+  postJobPostingApply,
+} from "../axios/http/jobPosting";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { JobPostingDetail } from "../type/jobPosting";
@@ -15,25 +19,25 @@ import { authUserState } from "../recoil/store";
 import { MdDeleteForever } from "react-icons/md";
 
 const JobPostDetail = () => {
+  const navigate = useNavigate();
   const authUser = useRecoilValue(authUserState);
   const { jobPostingKey } = useParams();
 
   const [jobPostingInfo, setJobPostingInfo] = useState<JobPostingDetail>({
-    companyKey: "asdf",
-    title: "공고제목이요",
-    jobCategory: "안드로이드 개발",
+    companyKey: "",
+    title: "공고제목",
+    jobCategory: "",
     career: 4,
-    techStack: ["Kotlin", "Spring Boot", "Java", "Node.js", "Python", "Dijango"],
+    techStack: [],
     step: ["서류전형", "1차면접", "2차면접"],
-    workLocation: "부산광역시 강서구 녹산산단382로14번가길 10~29번지(송정동)",
+    workLocation: "",
     education: "4년제",
     employmentType: "정규직",
     salary: 3000,
     workTime: "10:00 ~ 19:00",
     startDate: "2024-07-18",
     endDate: "2024-07-18",
-    jobPostingContent:
-      "설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명설명",
+    jobPostingContent: "",
     image: "",
   });
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({
@@ -50,17 +54,22 @@ const JobPostDetail = () => {
       if (!jobPostingKey) return; // url에 jobPostingKey가 없음
 
       // 공고내용
-      const response = await getJobPosting(jobPostingKey);
-      setJobPostingInfo(response);
-      console.log(jobPostingInfo);
+      try {
+        const response = await getJobPosting(jobPostingKey);
+        setJobPostingInfo(response);
 
-      // 회사정보
-      const companyResponse = await getCompanyInfo(response.companyKey);
-      setCompanyInfo(companyResponse);
+        // 회사정보
+        const companyResponse = await getCompanyInfo(response.companyKey);
+        setCompanyInfo(companyResponse);
+      } catch (e: any) {
+        if (e.response.status == "404") {
+          alert("마감 기한이 지난 공고 입니다.");
+          navigate(-1);
+        }
+      }
     })();
   }, [jobPostingKey]);
 
-  const navigate = useNavigate();
   // 수정하기
   const goEdit = () => {
     navigate("/create-jobpost", {
@@ -77,13 +86,31 @@ const JobPostDetail = () => {
       if (confirm("로그인이 하시겠습니까?")) navigate("/login");
     } else if (confirm("정말 지원하시겠습니까?")) {
       // 로그인한 사용자만
-      await postJobPostingApply(jobPostingKey);
+      try {
+        await postJobPostingApply(jobPostingKey);
+        alert("지원되었습니다.");
+      } catch (e: any) {
+        if (e.response.status == "403") {
+          alert("지원할 수 없습니다.");
+        } else {
+          alert(e.response.data.message);
+        }
+      }
     }
   };
 
   // 삭제하기
   const deleteJobPosting = async () => {
-    console.log("삭제 구현예정");
+    if (!jobPostingKey) return; // url에 jobPostingKey가 없음
+
+    if (confirm("정말 삭제하시겠습니까?")) {
+      try {
+        await deleteCompaniesJobPosting(jobPostingKey);
+        navigate("/company-mypage");
+      } catch (e: any) {
+        alert(e.response.data.message);
+      }
+    }
   };
 
   return (

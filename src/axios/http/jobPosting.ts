@@ -29,8 +29,12 @@ export const putCompaniesJobPosting = (
   return http.put<JobPostingResponse>(`job-postings/${jobPostingKey}`, data, config);
 };
 
+export const deleteCompaniesJobPosting = (jobPostingKey: string) => {
+  return http.delete(`job-postings/${jobPostingKey}`);
+};
+
 export const postJobPostingApply = (jobPostingKey: string) => {
-  return http.post(`candidate/job-postings/${jobPostingKey}/apply`);
+  return http.post(`job-postings/${jobPostingKey}/apply`);
 };
 
 export const getJobPosting = (jobPostingKey: string) => {
