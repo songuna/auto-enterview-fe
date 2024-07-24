@@ -4,7 +4,7 @@ import { MdOutlineEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getResume, deleteResume } from "../axios/http/resume";
+import { getResume, deleteResume, putResume } from "../axios/http/resume";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
 
@@ -19,21 +19,24 @@ interface ResumeData {
   jobWant: string;
   techStack: string;
   scholarship: string;
-  jobCategory : string; 
+  jobCategory: string;
   schoolName: string;
-  career: string[];
-  companyName: string;
-  startDate: string;
-  endDate: string;
-  education: { schoolName: string };
-  certificates: string[];
-  certificateName: string;
-  certificateDate: string;
+  career: {
+    companyName: string;
+    jobCategory: string;
+    startDate: string;
+    endDate: string;
+  }[];
+  certificates: {
+    certificateName: string;
+    certificateDate: string;
+  }[];
   experience: string[];
   activities: string[];
   qualifications: string[];
   portfolio: string;
 }
+
 
 const ViewResume: React.FC = () => {
   const { candidateKey } = useParams();
@@ -77,10 +80,12 @@ const ViewResume: React.FC = () => {
   }, [candidateKey]);
 
   const handleEdit = () => {
+    console.log("resumeData:", resumeData);
     if (window.confirm("이력서를 수정하시겠습니까?")) {
-      navigate(`/create-resume/${candidateKey}`);
+      navigate(`/create-resume`, { state: { resumeData } });
     }
   };
+
 
   // 로딩 중 상태 표시
   if (!resumeData) {

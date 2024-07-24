@@ -9,5 +9,5 @@ const resumeEndpoint = (method: Method, candidateKey: string, body?: any, config
 export const getResume = (candidateKey: string) => resumeEndpoint("get", candidateKey);
 export const postResume = (candidateKey: string, body: any, config?: any) =>
   resumeEndpoint("post", candidateKey, body, config);
-export const putResume = (candidateKey: string) => resumeEndpoint("put", candidateKey);
+export const putResume = (candidateKey: string, body: any, config?: any) => resumeEndpoint("put", candidateKey, body, config);
 export const deleteResume = (candidateKey: string) => resumeEndpoint("delete", candidateKey);

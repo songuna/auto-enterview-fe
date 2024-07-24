@@ -5,13 +5,16 @@ import { PiPlusThin, PiMinusThin } from "react-icons/pi";
 import DatePickerDuration from "../components/input/DatePickerDuration";
 import DatePickerOne from "../components/input/DatePickerOne";
 import SelectInput from "../components/input/SelectInput";
-import { useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { postResume } from "../axios/http/resume";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { postResume, getResume, putResume } from "../axios/http/resume";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
 import { optionEducation, optionJob, techStacks } from "../constants/options";
 import { InputDefault } from "../assets/style/input";
+import { useLocation } from 'react-router-dom';
+
+
 
 interface Career {
   companyName: string;
@@ -30,6 +33,7 @@ interface Qualification {
   certificateName: string;
   certificateDate: Date | null;
 }
+
 
 const CreateResume = () => {
   //유저
@@ -55,10 +59,75 @@ const CreateResume = () => {
   });
 
   const [title, setTitle] = useState("");
-
   const [imgURL, setImgURL] = useState("");
   const [imgFile, setImgFile] = useState<File | null>(null);
+  const [gender, setGender] = useState<string>("");
+  const [fileName, setFileName] = useState("");
+  const [jobCategory, setJobCategory] = useState<string | null>(null);
+  const [education, setEducation] = useState<string | null>(null);
+  const [portfolio, setPortfolio] = useState("");
+  const { setValue } = useForm();
+
   const inputRef = useRef<HTMLInputElement>(null);
+ 
+  //수정하기
+  const { resumeId } = useParams();
+  const location = useLocation();
+  const { resumeData } = location.state || {};
+  
+  useEffect(() => {
+    if (resumeId) {
+      const fetchResume = async () => {
+        try {
+          const response = await getResume(authUser?.key, resumeId);
+          const data = response.resumeData;
+
+          setTitle(data.title || "");
+          setGender(data.gender || "");
+          setJobCategory(data.jobWant || "");
+          setEducation(data.education || "");
+          setPortfolio(data.portfolio || "");
+
+          setValue("name", data.name || "");
+          setValue("birthDate", data.birthDate || "");
+          setValue("email", data.email || "");
+          setValue("phoneNumber", data.phoneNumber || "");
+          setValue("address", data.address || "");
+          setValue("schoolName", data.schoolName || "");
+          setValue("teckStack", data.techStack || []);
+
+          setCareerList(data.career.map((career: any) => ({
+            companyName: career.companyName,
+            jobCategory: career.jobCategory || "",
+            startDate: career.startDate ? new Date(career.startDate) : null,
+            endDate: career.endDate ? new Date(career.endDate) : null,
+          })));
+
+          setExperiences(data.experience.map((exp: any) => ({
+            experienceName: exp.experienceName,
+            startDate: exp.startDate ? new Date(exp.startDate) : null,
+            endDate: exp.endDate ? new Date(exp.endDate) : null,
+          })));
+
+          setQualifications(data.certificates.map((cert: any) => ({
+            certificateName: cert.certificateName,
+            certificateDate: cert.certificateDate ? new Date(cert.certificateDate) : null,
+          })));
+
+          if (data.imageUrl) {
+            setImgURL(data.imageUrl);
+          }
+        } catch (error) {
+          console.error("Error fetching resume:", error);
+        }
+      };
+
+      fetchResume();
+    }
+  }, [resumeId, authUser, setValue, resumeData]);
+
+
+  //이미지
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -68,10 +137,10 @@ const CreateResume = () => {
     }
   };
 
-  const [gender, setGender] = useState<string>("");
+  //성별
   const handleGenderSelect = (selectedGender: string) => setGender(selectedGender);
-
-  const [fileName, setFileName] = useState("");
+ 
+  // 포트폴리오
   const uploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       setFileName(event.target.files[0].name);
@@ -84,17 +153,17 @@ const CreateResume = () => {
     }
   };
 
-  const [jobCategory, setJobCategory] = useState<string | null>(null);
+
   const handleJobChange = (optionJob: string) => setJobCategory(optionJob || null);
 
-  const [education, setEducation] = useState<string | null>(null);
+  
   const handleEducationChange = (optionEducation: string) => setEducation(optionEducation || null);
 
+
+  // 경력
   const [careerList, setCareerList] = useState<Career[]>([
     { companyName: "", jobCategory: "", startDate: new Date(), endDate: new Date() },
   ]);
-
-  const [portfolio, setPortfolio] = useState("");
   const addCareer = () =>
     setCareerList([
       ...careerList,
@@ -102,6 +171,8 @@ const CreateResume = () => {
     ]);
   const removeCareer = (index: number) => setCareerList(careerList.filter((_, i) => i !== index));
 
+
+  // 교육/활동/경험
   const [experiences, setExperiences] = useState<Experience[]>([
     { experienceName: "", startDate: new Date(), endDate: new Date() },
   ]);
@@ -113,6 +184,7 @@ const CreateResume = () => {
   const removeExperience = (index: number) =>
     setExperiences(experiences.filter((_, i) => i !== index));
 
+  // 자격/어학/수상
   const [qualifications, setQualifications] = useState<Qualification[]>([
     { certificateName: "", certificateDate: new Date() },
   ]);
@@ -121,9 +193,8 @@ const CreateResume = () => {
   const removeQualification = (index: number) =>
     setQualifications(qualifications.filter((_, i) => i !== index));
 
+  //이력서 생성 data
   const onSubmit = async (data: any) => {
-    console.log(data);
-
     const ResumeData = {
       title: title,
       jobWant: jobCategory || null,
@@ -165,8 +236,6 @@ const CreateResume = () => {
     ResumeData.jobWant = jobCategory;
   }
 
-    console.log(imgFile);
-
     const resultData = new FormData();
     if (imgFile) {
       resultData.append("image", imgFile);
@@ -176,23 +245,32 @@ const CreateResume = () => {
       new Blob([JSON.stringify(ResumeData)], { type: "application/json" }),
     );
 
-    console.log(ResumeData);
-
     try {
       if (!authUser) {
         console.log("로그인되어있지 않음");
+        return;
       }
-      console.log("try");
 
+      if (resumeId) {
+      // PUT 요청으로 이력서 업데이트
+      const response = await putResume(authUser?.key, resultData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      navigate(`/view-resume/${authUser?.key}`);
+    } else {
+      // POST 요청으로 새 이력서 작성
       const response = await postResume(authUser?.key, resultData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       navigate(`/view-resume/${authUser?.key}`);
-      console.log(response);
-    } catch (error) {
-      console.error("Error posting resume:", error);
     }
-  };
+  } catch (error) {
+    console.error("Error submitting resume:", error);
+  }
+};
+
+
+  
 
   return (
     <>
