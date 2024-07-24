@@ -5,12 +5,19 @@ interface Props {
   text: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
+  checked?: boolean;
 }
 
-const Checkbox = ({ id, text, onChange, disabled }: Props) => {
+const Checkbox = ({ id, text, onChange, disabled, checked }: Props) => {
   return (
     <>
-      <InputCheckbox type="checkbox" id={id} onChange={onChange} disabled={disabled} />
+      <InputCheckbox
+        type="checkbox"
+        id={id}
+        onChange={onChange}
+        disabled={disabled}
+        checked={checked}
+      />
       <label htmlFor={id}>{text}</label>
     </>
   );

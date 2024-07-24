@@ -1,3 +1,9 @@
+export interface JobInfos {
+  jobPostingsList: JobInfo[];
+  totalElements: number;
+  totalPages: number;
+}
+
 export interface JobInfo {
   jobPostingKey: string;
   companyName: string;
@@ -6,8 +12,7 @@ export interface JobInfo {
   endDate: string;
 }
 
-export interface JobPosting {
-  companyKey: 1;
+export interface PostJobPosting {
   title: string;
   jobCategory: string;
   career: number;
@@ -18,11 +23,33 @@ export interface JobPosting {
   employmentType: string;
   salary: number;
   workTime: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   jobPostingContent: string;
-  image: File;
   passingNumber: number;
+}
+
+export interface JobPostingResponse {
+  jobPostingKey: string;
+  imageUrl: string;
+}
+
+export interface JobPostingDetail {
+  companyKey: string;
+  title: string;
+  jobCategory: string;
+  career: number;
+  techStack: string[];
+  step: string[];
+  workLocation: string;
+  education: string;
+  employmentType: string;
+  salary: number;
+  workTime: string;
+  startDate: string;
+  endDate: string;
+  jobPostingContent: string;
+  image: string;
 }
 
 export interface JobPostingForCompany {

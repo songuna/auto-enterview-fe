@@ -11,6 +11,10 @@ export const InputDefault = styled.input`
   &:disabled {
     color: var(--bg-light-gray);
     background-color: #f8f8f8;
+
+    &::placeholder {
+      color: var(--bg-light-gray);
+    }
   }
 `;
 

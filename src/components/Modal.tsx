@@ -1,15 +1,16 @@
 import styled from "styled-components";
 import { Container, SubTitle } from "../assets/style/Common";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CreateButton, Field, Form, Label, Text } from "../assets/style/ScheduleFormStyle";
 import { IoMdClose } from "react-icons/io";
-import { postInterviewParticipants, postInterviewSchedule } from "../axios/http/interview";
 import { ModalProps } from "../type/modal";
-import DatePickerOne from "../components/input/DatePickerOne";
-import TimePicker from "../components/input/TimePicker";
+import DatePickerOne from "./input/DatePickerOne";
+import TimePicker from "./input/TimePicker";
+import FormContent from "./FormContent";
 
 const Modal = ({ type, key, step, onClose }: ModalProps) => {
+  const [currentTab, setCurrentTab] = useState("assignment");
   const [emailText, setEmailText] = useState("");
   const [typeEmail, setTypeEmail] = useState(false);
   const [emailData, setEmailData] = useState({
@@ -19,34 +20,15 @@ const Modal = ({ type, key, step, onClose }: ModalProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate("/recruit-board/assignment");
     type === "email" && setTypeEmail(true);
   }, [navigate, type]);
 
+  const handleTabChange = (tab: string) => {
+    setCurrentTab(tab);
+  };
+
   const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEmailText(e.target.value);
-  };
-
-  // 일정 저장하기 API
-  const sendSchedule = async () => {
-    const props = { jobPostingKey: key, stepId: step };
-    try {
-      // 일정에 따른 지원자 분류
-      await postInterviewParticipants(props);
-      // 면접 일정 생성
-      await postInterviewSchedule(props);
-      alert("일정이 성공적으로 저장되었습니다.");
-    } catch (error) {
-      alert("일정 생성에 문제가 발생했습니다. 다시 시도해주세요.");
-    }
-  };
-
-  // 일정 생성 후, '다음' 클릭
-  const clickNext = () => {
-    const response = confirm("예약 메일로 넘어갑니다. 일정 생성을 완료하셨나요?");
-    if (response) {
-      setTypeEmail(true);
-    }
   };
 
   // 메일 예약하기
@@ -65,20 +47,25 @@ const Modal = ({ type, key, step, onClose }: ModalProps) => {
             <SubTitle>일정 생성하기</SubTitle>
             <Tabs>
               <Tab
-                to="/recruit-board/assignment"
-                className={({ isActive }) => (isActive ? "active" : "")}
+                className={currentTab === "assignment" ? "active" : ""}
+                onClick={() => handleTabChange("assignment")}
               >
                 과제
               </Tab>
               <Tab
-                to="/recruit-board/interview"
-                className={({ isActive }) => (isActive ? "active" : "")}
+                className={currentTab === "interview" ? "active" : ""}
+                onClick={() => handleTabChange("interview")}
               >
                 면접
               </Tab>
             </Tabs>
             <FormArea>
-              <Outlet context={{ sendSchedule, clickNext }} />
+              <FormContent
+                currentTab={currentTab}
+                jobPostingKey={key}
+                stepId={step}
+                setTypeEmail={setTypeEmail}
+              />
             </FormArea>
           </ModalContainer>
           <ModalContainer>
@@ -184,7 +171,7 @@ const Tabs = styled.div`
   gap: 8px;
 `;
 
-const Tab = styled(NavLink)`
+const Tab = styled.button`
   padding: 16px 32px;
   border-radius: var(--button-radius);
   background-color: #fff;

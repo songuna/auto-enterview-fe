@@ -13,8 +13,6 @@ import ViewResume from "../pages/ViewResume";
 import RecruitBoard from "../pages/RecruitBoard";
 import ProtectedRoute from "../pages/ProtectedRoute";
 import Layout from "../pages/Layout";
-import FormAssignment from "../pages/FormAssignment";
-import FormInterview from "../pages/FormInterview";
 
 const router = createBrowserRouter([
   {
@@ -86,32 +84,12 @@ const router = createBrowserRouter([
         ),
       },
       {
-        // path: "/recruit-board/:recruitId",
-        path: "/recruit-board",
+        path: "/recruit-board/:jobPostingKey",
         element: (
           <ProtectedRoute>
             <RecruitBoard />
           </ProtectedRoute>
         ),
-        children: [
-          {
-            index: true,
-            path: "/recruit-board/assignment",
-            element: (
-              <ProtectedRoute>
-                <FormAssignment />
-              </ProtectedRoute>
-            ),
-          },
-          {
-            path: "/recruit-board/interview",
-            element: (
-              <ProtectedRoute>
-                <FormInterview />
-              </ProtectedRoute>
-            ),
-          },
-        ],
       },
       {
         path: "/jobpost-detail/:jobPostingKey",
