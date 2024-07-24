@@ -6,7 +6,7 @@ import DatePickerDuration from "../components/input/DatePickerDuration";
 import DatePickerOne from "../components/input/DatePickerOne";
 import SelectInput from "../components/input/SelectInput";
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { postResume, getResume, putResume } from "../axios/http/resume";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
@@ -102,10 +102,10 @@ const CreateResume = () => {
             endDate: career.endDate ? new Date(career.endDate) : null,
           })));
 
-          setExperiences(resumeData.experience.map((exp: any) => ({
-            experienceName: exp.experienceName,
-            startDate: exp.startDate ? new Date(exp.startDate) : null,
-            endDate: exp.endDate ? new Date(exp.endDate) : null,
+          setExperiences(resumeData.experience.map((experience: any) => ({
+            experienceName: experience.experienceName,
+            startDate: experience.startDate ? new Date(experience.startDate) : null,
+            endDate: experience.endDate ? new Date(experience.endDate) : null,
           })));
 
           setQualifications(resumeData.certificates.map((cert: any) => ({
