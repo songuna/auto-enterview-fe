@@ -124,14 +124,7 @@ const RecruitBoard = () => {
     setActiveStep(prevStep => {
       // 동일한 step의 지원자를 클릭했는지 체크
       if (prevStep !== step) {
-        const ok = confirm(
-          "현재 다른 단계에서 선택중인 지원자가 있습니다. 클릭하신 단계의 지원자를 선택하시겠어요?",
-        );
-        // 다른 단계를 선택하면 activeList 초기화
-        if (ok) {
-          setActiveList([candidate]);
-          return step;
-        }
+        alert("현재 단계에서만 선택하실 수 있습니다.");
         return prevStep;
       } else {
         // 같은 단계를 선택하면 activeList 업데이트
@@ -161,7 +154,7 @@ const RecruitBoard = () => {
       const activeCandidateKeys = activeCandidates.map(candidate => candidate.candidateKey);
 
       const nextStepBody = {
-        currentStepId: currentStep,
+        currentStepId: stepId,
         candidateKeys: [...activeCandidateKeys],
       };
 
