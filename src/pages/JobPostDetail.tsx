@@ -5,17 +5,21 @@ import { IconButton } from "../assets/style/ReactIconButton";
 import { getJobPosting, postJobPostingApply } from "../axios/http/jobPosting";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { JobPosting } from "../type/jobPosting";
+import { JobPostingDetail } from "../type/jobPosting";
 import { getDateFormat, getDday } from "../utils/Format";
 import { CompanyInfo } from "../type/company";
 import { Helmet } from "react-helmet-async";
 import { getCompanyInfo } from "../axios/http/company";
+import { useRecoilValue } from "recoil";
+import { authUserState } from "../recoil/store";
+import { MdDeleteForever } from "react-icons/md";
 
 const JobPostDetail = () => {
+  const authUser = useRecoilValue(authUserState);
   const { jobPostingKey } = useParams();
 
-  const [jobPostingInfo, setJobPostingInfo] = useState<JobPosting>({
-    companyKey: 1,
+  const [jobPostingInfo, setJobPostingInfo] = useState<JobPostingDetail>({
+    companyKey: "asdf",
     title: "공고제목이요",
     jobCategory: "안드로이드 개발",
     career: 4,
@@ -33,7 +37,7 @@ const JobPostDetail = () => {
     image: "",
   });
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({
-    companyInfoKey: "(주)안드로메다",
+    companyName: "(주)안드로메다",
     employees: 1315,
     companyAge: "2024-07-18",
     companyUrl: "https://www.naver.com",
@@ -43,25 +47,16 @@ const JobPostDetail = () => {
 
   useEffect(() => {
     (async () => {
+      if (!jobPostingKey) return; // url에 jobPostingKey가 없음
+
       // 공고내용
-      if (jobPostingKey) {
-        console.log(jobPostingKey);
+      const response = await getJobPosting(jobPostingKey);
+      setJobPostingInfo(response);
+      console.log(jobPostingInfo);
 
-        const response = await getJobPosting(jobPostingKey);
-        console.log(response);
-
-        setJobPostingInfo(response);
-
-        console.log(response);
-
-        // 파일 해결되면 TODO: url 추출
-
-        // 회사정보
-        const companyResponse = await getCompanyInfo(response.companyKey);
-        console.log(companyResponse);
-
-        setCompanyInfo(companyResponse);
-      }
+      // 회사정보
+      const companyResponse = await getCompanyInfo(response.companyKey);
+      setCompanyInfo(companyResponse);
     })();
   }, [jobPostingKey]);
 
@@ -69,7 +64,7 @@ const JobPostDetail = () => {
   // 수정하기
   const goEdit = () => {
     navigate("/create-jobpost", {
-      state: { jobPostInfo: jobPostingInfo, jobPostingid: jobPostingInfo.companyKey },
+      state: { jobPostInfo: jobPostingInfo, jobPostingKey: jobPostingKey },
     });
   };
 
@@ -77,10 +72,18 @@ const JobPostDetail = () => {
   const Apply = async () => {
     if (!jobPostingKey) return; // url에 jobPostingKey가 없음
 
-    // TODO: 로그인하지 않았다면 로그인으로 보내기 alert
+    if (!authUser) {
+      //로그인하지 않았다면 로그인으로 보내기 alert
+      if (confirm("로그인이 하시겠습니까?")) navigate("/login");
+    } else if (confirm("정말 지원하시겠습니까?")) {
+      // 로그인한 사용자만
+      await postJobPostingApply(jobPostingKey);
+    }
+  };
 
-    // 로그인한 사용자만
-    await postJobPostingApply(jobPostingKey);
+  // 삭제하기
+  const deleteJobPosting = async () => {
+    console.log("삭제 구현예정");
   };
 
   return (
@@ -96,11 +99,20 @@ const JobPostDetail = () => {
                 <div>공고마감일자 | {getDateFormat(new Date(jobPostingInfo.endDate))}</div>
                 <Dday>({getDday(jobPostingInfo.endDate)})</Dday>
               </DeadLineContainer>
-              <h1>{}</h1>
-              <EditButton className="edit" onClick={goEdit}>
-                <CiEdit />
-              </EditButton>
+              {jobPostingInfo.companyKey == authUser?.key && (
+                <EditDeleteButtonContianer>
+                  <IconButton className="delete" onClick={deleteJobPosting}>
+                    <MdDeleteForever />
+                  </IconButton>
+                  <IconButton className="edit" onClick={goEdit}>
+                    <CiEdit />
+                  </IconButton>
+                </EditDeleteButtonContianer>
+              )}
             </Top>
+            <Title>
+              <InfoDesc>{jobPostingInfo?.title}</InfoDesc>
+            </Title>
             <InfoContainer>
               <Info>
                 <InfoTitle>채용직무</InfoTitle>
@@ -176,7 +188,7 @@ const JobPostDetail = () => {
           <Container>
             <h2>회사정보</h2>
             <InfoContainer>
-              <CompanyName>{companyInfo.companyInfoKey}</CompanyName>
+              <CompanyName>{companyInfo.companyName}</CompanyName>
               <Info>
                 <InfoTitle>대표자</InfoTitle>
                 <InfoDesc>{companyInfo.boss}</InfoDesc>
@@ -212,11 +224,6 @@ const JobPostDetail = () => {
   );
 };
 
-const InfoMessage = styled.p`
-  text-align: center;
-  color: var(--color-red);
-`;
-
 const Top = styled.div`
   position: relative;
   display: flex;
@@ -232,6 +239,8 @@ const DeadLineContainer = styled.div`
 const Dday = styled.div`
   color: var(--color-red);
 `;
+
+const Title = styled.h2``;
 
 const InfoContainer = styled.div`
   display: grid;
@@ -358,7 +367,9 @@ const ApplyButton = styled.button`
   }
 `;
 
-const EditButton = styled(IconButton)`
+const EditDeleteButtonContianer = styled.div`
+  display: flex;
+  gap: 10px;
   position: absolute;
   top: 0;
   right: 0;

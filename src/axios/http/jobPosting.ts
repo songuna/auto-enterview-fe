@@ -1,11 +1,11 @@
 import { AxiosRequestConfig } from "axios";
 import { PostedJobPoting } from "../../type/company";
-import { JobInfo, JobPosting } from "../../type/jobPosting";
+import { JobInfos, JobPostingDetail, JobPostingResponse } from "../../type/jobPosting";
 import { http } from "../instances";
 
 // 전체 공고 조회
 export const getJobPostings = (page: number) => {
-  return http.get<JobInfo[]>(`common/job-postings?page=${page}`);
+  return http.get<JobInfos>(`common/job-postings?page=${page}`);
 };
 
 // 회사 마이페이지 공고 조회
@@ -15,14 +15,18 @@ export const getPostedJobPostings = (companyKey: string) => {
 
 export const postCompaniesJobPosting = (
   companyKey: string,
-  data: JobPosting,
+  data: FormData,
   config?: AxiosRequestConfig,
 ) => {
-  return http.post<JobPosting>(`companies/${companyKey}/job-postings`, data, config);
+  return http.post<JobPostingResponse>(`companies/${companyKey}/job-postings`, data, config);
 };
 
-export const putCompaniesJobPosting = (companyKey: string, data: JobPosting) => {
-  return http.put<JobPosting>(`companies/${companyKey}/job-postings`, data);
+export const putCompaniesJobPosting = (
+  jobPostingKey: string,
+  data: FormData,
+  config?: AxiosRequestConfig,
+) => {
+  return http.put<JobPostingResponse>(`job-postings/${jobPostingKey}`, data, config);
 };
 
 export const postJobPostingApply = (jobPostingKey: string) => {
@@ -30,5 +34,5 @@ export const postJobPostingApply = (jobPostingKey: string) => {
 };
 
 export const getJobPosting = (jobPostingKey: string) => {
-  return http.get<JobPosting>(`common/job-postings/${jobPostingKey}`);
+  return http.get<JobPostingDetail>(`common/job-postings/${jobPostingKey}`);
 };

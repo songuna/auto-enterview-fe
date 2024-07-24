@@ -13,8 +13,6 @@ import ViewResume from "../pages/ViewResume";
 import RecruitBoard from "../pages/RecruitBoard";
 import ProtectedRoute from "../pages/ProtectedRoute";
 import Layout from "../pages/Layout";
-import FormAssignment from "../pages/FormAssignment";
-import FormInterview from "../pages/FormInterview";
 
 const router = createBrowserRouter([
   {
