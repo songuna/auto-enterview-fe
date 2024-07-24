@@ -18,7 +18,7 @@ interface ResumeData {
   address: string;
   jobWant: string;
   techStack: string;
-  scholarship: string;
+  education: string;
   jobCategory: string;
   schoolName: string;
   career: {
@@ -122,7 +122,7 @@ const ViewResume: React.FC = () => {
                 <H3 className="input textBox">{resumeData.gender}</H3>
                 <H3 className="input textBox">{resumeData.birthDate}</H3>
                 <H3 className="input textBox">{resumeData.phoneNumber}</H3>
-                <H3 className="input emailBox">{resumeData.email}</H3>
+                <H3 className="input textBox">{resumeData.email}</H3>
                 <H3 className="input addressBox">{resumeData.address}</H3>
               </FlexContainer>
             </AllContainer>
@@ -149,10 +149,14 @@ const ViewResume: React.FC = () => {
           </InputContainer>
 
           <InputContainer className="school">
+          <SchoolName>
             <InputTitle> [최종 학력] </InputTitle>
-            <H3 className="input textBox">{resumeData.scholarship}</H3>
+            <H3 className="input textBox">{resumeData.education}</H3>
+          </SchoolName>
+          <SchoolName>
             <InputTitle className="schoolName"> [학교명] </InputTitle>
             <H3 className="input textBox">{resumeData.schoolName}</H3>
+          </SchoolName>
           </InputContainer>
 
           <InputContainer>
@@ -197,7 +201,8 @@ const ViewResume: React.FC = () => {
           <InputContainer>
             <InputTitle> [포트폴리오] </InputTitle>
             <Container>
-              <H3 className="textBox">URL -<a href={resumeData.portfolio} target="_blank" rel="noopener noreferrer">{resumeData.portfolio}</a>
+              <H3 className="textBox">
+                <a href={resumeData.portfolio} target="_blank" rel="noopener noreferrer"> {resumeData.portfolio} </a>
               </H3>
             </Container>
           </InputContainer>
@@ -214,10 +219,14 @@ const Wrapper = styled.div`
 `;
 
 const Div = styled.div`
-  width: 500px;
+  width: 100%;
   display: flex;
   justify-content: flex-start;
   align-items: center;
+`
+ 
+const SchoolName = styled.div`
+  margin-right: 50px;
 `
 
 const All = styled.div`
@@ -282,13 +291,13 @@ const H2 = styled.h2`
 
 const H3 = styled.h3`
   width: 70px;
-  margin-top: 20px;
+  margin-top: 30px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   &.input {
     width: 100%;
-    height: 40px;
+    height: 30px;
     font-size: 20px;
     color: #222222;
     border: none;
@@ -298,18 +307,12 @@ const H3 = styled.h3`
     position: relative;
   }
   &.textBox {
-    width: 300px;
+    width: 200px;
     font-size: 15px;
     margin-left: 10px;
   }
 
   &.addressBox {
-    width: 300px;
-    font-size: 15px;
-    margin-left: 10px;
-  }
-
-  &.emailBox {
     width: 300px;
     font-size: 15px;
     margin-left: 10px;
@@ -331,16 +334,6 @@ const Container = styled.div`
   margin-bottom: 15px;
   display: flex;
   flex-direction: column;
-`;
-
-const Input1 = styled.input`
-  width: 200px;
-  display: flex;
-  align-items: center;
-  padding: 10px 15px;
-  margin-left: 40px;
-  border: 1px solid #b7b7b7;
-  border-radius: 8px;
 `;
 
 const Icon = styled.div`
