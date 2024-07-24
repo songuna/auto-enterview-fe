@@ -19,12 +19,13 @@ interface ResumeData {
   jobWant: string;
   techStack: string;
   scholarship: string;
+  jobCategory : string; 
   schoolName: string;
   career: string[];
   companyName: string;
   startDate: string;
   endDate: string;
-  education: { degree: string; schoolName: string };
+  education: { schoolName: string };
   certificates: string[];
   certificateName: string;
   certificateDate: string;
@@ -105,7 +106,7 @@ const ViewResume: React.FC = () => {
         </Title>
         <All>
           <InputContainer>
-            <H2 className="inputBox">" 한줄 소개 "</H2>
+            <H2 className="inputBox">" {resumeData.title} "</H2>
             <AllContainer>
               <Image></Image>
               <FlexContainer>
@@ -140,8 +141,13 @@ const ViewResume: React.FC = () => {
           <InputContainer>
             <InputTitle>경력</InputTitle>
             <Container>
-              {resumeData.career.map((exp, index) => (
-                <Input1 key={index} value={exp} readOnly />
+              {resumeData.career.map((resumeData, index) => (
+                <div key={index}>
+                  <H3 className="textBox">회사명: {resumeData.companyName}</H3>
+                  <H3 className="textBox">담당업무: {resumeData.jobCategory}</H3>
+                  <H3 className="textBox">시작 날짜: {resumeData.startDate}</H3>
+                  <H3 className="textBox">종료 날짜: {resumeData.endDate}</H3>
+                </div>
               ))}
             </Container>
           </InputContainer>
@@ -167,7 +173,7 @@ const ViewResume: React.FC = () => {
           <InputContainer>
             <InputTitle>포트폴리오</InputTitle>
             <Container>
-              <H4>URL - {resumeData.portfolio}</H4>
+              <H4>URL -{resumeData.portfolio}</H4>
             </Container>
           </InputContainer>
         </All>
