@@ -17,7 +17,7 @@ interface ResumeData {
   email: string;
   address: string;
   jobWant: string;
-  techStack: string;
+  techStack: string[];
   education: string;
   jobCategory: string;
   schoolName: string;
@@ -38,6 +38,7 @@ interface ResumeData {
   }[];
   qualifications: string[];
   portfolio: string;
+  image: string;
 }
 
 
@@ -118,7 +119,7 @@ const ViewResume: React.FC = () => {
           <InputContainer>
             <H2 className="inputBox">" {resumeData.title} "</H2>
             <AllContainer>
-              <Image></Image>
+              <Image>{resumeData.image}</Image>
               <FlexContainer>
                 <H3 className="input textBox">{resumeData.name}</H3>
                 <H3 className="input textBox">{resumeData.gender}</H3>
