@@ -24,7 +24,7 @@ import { AppliedJobPostings } from "../type/candidate";
 import { getDday } from "../utils/Format";
 
 const UserMypage = () => {
-  const [isResume, setIsResume] = useState(true);
+  const [isResume, setIsResume] = useState(false);
   const [jobPostingList, setJobPostingList] = useState<
     AppliedJobPostings["appliedJobPostingsList"]
   >([
