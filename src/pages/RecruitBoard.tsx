@@ -245,15 +245,15 @@ const RecruitBoard = () => {
                   <StepHead>
                     <StepTitle className="sub-title">{data.stepName}</StepTitle>
                     {data.stepName !== "서류전형" &&
-                    data.candidateTechStackInterviewInfoDtoList.length ? (
-                      <RemoveBtn onClick={() => handleRemoveSchedule(data.stepId)}>
-                        <span>일정 삭제</span>
-                        <RiDeleteBin6Line />
-                      </RemoveBtn>
-                    ) : null}
+                      !!data.candidateTechStackInterviewInfoDtoList.length && (
+                        <RemoveBtn onClick={() => handleRemoveSchedule(data.stepId)}>
+                          <span>일정 삭제</span>
+                          <RiDeleteBin6Line />
+                        </RemoveBtn>
+                      )}
                   </StepHead>
                   {data.stepName === "서류전형" ? null : data.candidateTechStackInterviewInfoDtoList
-                      .length ? (
+                      .length > 0 ? (
                     <EmailBtn onClick={() => openModal("email", idx + 1)}>
                       예약 메일 발송하기
                     </EmailBtn>
