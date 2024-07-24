@@ -14,64 +14,7 @@ import { authUserState } from "../recoil/store";
 
 const RecruitBoard = () => {
   const { jobPostingKey } = useParams();
-  const [dataList, setDataList] = useState<RecruitBoardData[]>([
-    {
-      stepId: 1,
-      stepName: "서류전형",
-      candidateTechStackInterviewInfoDtoList: [
-        {
-          candidateKey: "string1",
-          candidateName: "옥예원",
-          resumeKey: "string1",
-          techStack: ["React", "Typescript", "JavaScript"],
-          scheduleDateTime: null,
-        },
-        {
-          candidateKey: "string2",
-          candidateName: "옥예원",
-          resumeKey: "string2",
-          techStack: ["React", "Typescript", "JavaScript"],
-          scheduleDateTime: null,
-        },
-        {
-          candidateKey: "string3",
-          candidateName: "옥예원",
-          resumeKey: "string3",
-          techStack: ["React", "Typescript", "JavaScript"],
-          scheduleDateTime: null,
-        },
-        {
-          candidateKey: "string4",
-          candidateName: "옥예원",
-          resumeKey: "string4",
-          techStack: ["React", "Typescript", "JavaScript"],
-          scheduleDateTime: null,
-        },
-        {
-          candidateKey: "string5",
-          candidateName: "옥예원",
-          resumeKey: "string5",
-          techStack: ["React", "Typescript", "JavaScript"],
-          scheduleDateTime: null,
-        },
-      ],
-    },
-    {
-      stepId: 2,
-      stepName: "과제전형",
-      candidateTechStackInterviewInfoDtoList: [],
-    },
-    {
-      stepId: 3,
-      stepName: "1차 면접",
-      candidateTechStackInterviewInfoDtoList: [],
-    },
-    {
-      stepId: 4,
-      stepName: "2차 면접",
-      candidateTechStackInterviewInfoDtoList: [],
-    },
-  ]);
+  const [dataList, setDataList] = useState<RecruitBoardData[]>([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [schedule, setSchedule] = useState<(string | null)[][]>([]);
   const [activeList, setActiveList] = useState<CandidateInfo[]>([]);
@@ -103,8 +46,8 @@ const RecruitBoard = () => {
 
     const fetchCandidates = async () => {
       try {
-        // const data: RecruitBoardData[] = await getRecruitBoardData(jobPostingKey);
-        // setDataList(data);
+        const data: RecruitBoardData[] = await getRecruitBoardData(jobPostingKey);
+        setDataList(data);
         filterSchedules(dataList);
         console.log(schedule);
       } catch (error) {
