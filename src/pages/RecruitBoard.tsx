@@ -18,11 +18,62 @@ const RecruitBoard = () => {
     {
       stepId: 1,
       stepName: "서류전형",
+      candidateTechStackInterviewInfoDtoList: [
+        {
+          candidateKey: "string1",
+          candidateName: "옥예원",
+          resumeKey: "string1",
+          techStack: ["React", "Typescript", "JavaScript"],
+          scheduleDateTime: null,
+        },
+        {
+          candidateKey: "string2",
+          candidateName: "옥예원",
+          resumeKey: "string2",
+          techStack: ["React", "Typescript", "JavaScript"],
+          scheduleDateTime: null,
+        },
+        {
+          candidateKey: "string3",
+          candidateName: "옥예원",
+          resumeKey: "string3",
+          techStack: ["React", "Typescript", "JavaScript"],
+          scheduleDateTime: null,
+        },
+        {
+          candidateKey: "string4",
+          candidateName: "옥예원",
+          resumeKey: "string4",
+          techStack: ["React", "Typescript", "JavaScript"],
+          scheduleDateTime: null,
+        },
+        {
+          candidateKey: "string5",
+          candidateName: "옥예원",
+          resumeKey: "string5",
+          techStack: ["React", "Typescript", "JavaScript"],
+          scheduleDateTime: null,
+        },
+      ],
+    },
+    {
+      stepId: 2,
+      stepName: "과제전형",
+      candidateTechStackInterviewInfoDtoList: [],
+    },
+    {
+      stepId: 3,
+      stepName: "1차 면접",
+      candidateTechStackInterviewInfoDtoList: [],
+    },
+    {
+      stepId: 4,
+      stepName: "2차 면접",
       candidateTechStackInterviewInfoDtoList: [],
     },
   ]);
   const [currentStep, setCurrentStep] = useState(1);
-  const [schedule, setSchedule] = useState<string[]>([]);
+  const [schedule, setSchedule] = useState<(string | null)[][]>([]);
   const [activeList, setActiveList] = useState<CandidateInfo[]>([]);
   const [modal, setModal] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("schedule");
@@ -35,25 +86,27 @@ const RecruitBoard = () => {
   const title = queryParams.get("title");
 
   // 단계별 일정 추출하기
-  // const filterSchedules = useCallback((data: RecruitBoardData[]) => {
-  //   const candidates = data.map(step => {
-  //     return step.candidateTechStackInterviewInfoDtoList;
-  //   });
-  //   const scheduleDateTimes = candidates.forEach((candidate) => {
-  //     return candidate.scheduleDateTime
-  //   })
-  //   console.log(candidates);
-  // }, []);
+  const filterSchedules = useCallback((data: RecruitBoardData[]) => {
+    const candidatesList = data.map(step => {
+      return step.candidateTechStackInterviewInfoDtoList;
+    });
+    const scheduleDateTimes = candidatesList.map(candidates => {
+      return candidates.map(candidate => candidate.scheduleDateTime);
+    });
+    setSchedule(scheduleDateTimes);
+  }, []);
 
   // 단계 및 지원자 목록, 일정 정보
   useEffect(() => {
     if (!jobPostingKey) return;
+    console.log(schedule[0]);
 
     const fetchCandidates = async () => {
       try {
-        const data: RecruitBoardData[] = await getRecruitBoardData(jobPostingKey);
-        setDataList(data);
-        // filterSchedules(data);
+        // const data: RecruitBoardData[] = await getRecruitBoardData(jobPostingKey);
+        // setDataList(data);
+        filterSchedules(dataList);
+        console.log(schedule);
       } catch (error) {
         alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
       }
@@ -97,10 +150,14 @@ const RecruitBoard = () => {
     const response = confirm("일정이 초기화 됩니다. 전체 삭제를 진행하시겠어요?");
     if (response) {
       try {
-        await deleteInterviewSchedule({ jobPostingKey: jobPostingKey, stepId });
+        await deleteInterviewSchedule({ jobPostingKey: jobPostingKey, stepId: stepId });
         alert("일정이 성공적으로 삭제되었습니다.");
       } catch (error) {
-        alert("일정을 삭제하는데 문제가 발생했습니다.");
+        if (error.message.split(" ").at(-1) === "404") {
+          alert("일정이 존재하지 않습니다.");
+        } else {
+          alert("일정을 삭제하는데 문제가 발생했습니다.");
+        }
       }
     }
   };
@@ -187,15 +244,16 @@ const RecruitBoard = () => {
                 <Step key={data.stepId}>
                   <StepHead>
                     <StepTitle className="sub-title">{data.stepName}</StepTitle>
-                    {data.stepName !== "서류전형" && (
-                      // dataList[idx].candidateTechStackInterviewInfoDtoList[0].scheduleDateTime !== null &&
-                      <RemoveBtn onClick={() => handleRemoveSchedule(data.stepId)}>
-                        <span>일정 삭제</span>
-                        <RiDeleteBin6Line />
-                      </RemoveBtn>
-                    )}
+                    {data.stepName !== "서류전형" &&
+                      data.candidateTechStackInterviewInfoDtoList.length && (
+                        <RemoveBtn onClick={() => handleRemoveSchedule(data.stepId)}>
+                          <span>일정 삭제</span>
+                          <RiDeleteBin6Line />
+                        </RemoveBtn>
+                      )}
                   </StepHead>
-                  {data.stepName === "서류전형" ? null : schedule.length ? (
+                  {data.stepName === "서류전형" ? null : data.candidateTechStackInterviewInfoDtoList
+                      .length ? (
                     <EmailBtn onClick={() => openModal("email", idx + 1)}>
                       예약 메일 발송하기
                     </EmailBtn>
@@ -213,9 +271,9 @@ const RecruitBoard = () => {
                       >
                         <Name>{candidate.candidateName}</Name>
                         <Skills>
-                          <Skill>{"Java"}</Skill>
-                          <Skill>{"React"}</Skill>
-                          <Skill>{"Typescript"}</Skill>
+                          {candidate.techStack.map(teck => (
+                            <Skill key={`${candidate.candidateKey}${teck}`}>{teck}</Skill>
+                          ))}
                         </Skills>
                         <View
                           onClick={e => {
@@ -235,7 +293,7 @@ const RecruitBoard = () => {
               ))}
             </Steps>
             {jobPostingKey && modal && (
-              <Modal type={modalType} key={jobPostingKey} step={modalStep} onClose={onClose} />
+              <Modal type={modalType} step={modalStep} onClose={onClose} />
             )}
           </Board>
         </Container>
