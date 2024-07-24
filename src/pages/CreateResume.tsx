@@ -79,7 +79,7 @@ const CreateResume = () => {
       const fetchResume = async () => {
         try {
           const response = await getResume(authUser?.key);
-          const data = response.resumeData;
+          const resumeData = response.resumeData;
 
           setTitle(resumeData.title || "");
           setGender(resumeData.gender || "");
@@ -333,7 +333,7 @@ const CreateResume = () => {
               <Input
                 className="textBox"
                 type="text"
-                placeholder="YYYY.MM.DD"
+                placeholder="YYYY-MM-DD"
                 {...register("birthDate")}
               ></Input>
               <Label1>전화번호</Label1>
