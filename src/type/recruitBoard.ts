@@ -17,3 +17,8 @@ export interface CandidateInfo {
   techStack: string[];
   scheduleDateTime: string | null;
 }
+
+export interface NextStepBody {
+  currentStepId: number;
+  candidateKeys: string[];
+}
