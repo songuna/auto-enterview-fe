@@ -245,12 +245,12 @@ const RecruitBoard = () => {
                   <StepHead>
                     <StepTitle className="sub-title">{data.stepName}</StepTitle>
                     {data.stepName !== "서류전형" &&
-                      data.candidateTechStackInterviewInfoDtoList.length && (
-                        <RemoveBtn onClick={() => handleRemoveSchedule(data.stepId)}>
-                          <span>일정 삭제</span>
-                          <RiDeleteBin6Line />
-                        </RemoveBtn>
-                      )}
+                    data.candidateTechStackInterviewInfoDtoList.length ? (
+                      <RemoveBtn onClick={() => handleRemoveSchedule(data.stepId)}>
+                        <span>일정 삭제</span>
+                        <RiDeleteBin6Line />
+                      </RemoveBtn>
+                    ) : null}
                   </StepHead>
                   {data.stepName === "서류전형" ? null : data.candidateTechStackInterviewInfoDtoList
                       .length ? (
