@@ -56,9 +56,10 @@ export const DataPickerInput = styled.input`
   font-size: 1rem;
 
   &:disabled {
-    border: 1px solid var(--bg-light-gray);
-    color: var(--bg-light-gray);
+    border: 1px solid var(--border-gray-100);
+    color: var(--border-gray-100);
     background-color: #f8f8f8;
+    cursor: auto;
   }
 `;
 

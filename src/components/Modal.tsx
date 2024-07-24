@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Container, SubTitle } from "../assets/style/Common";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CreateButton, Field, Form, Label, Text } from "../assets/style/ScheduleFormStyle";
 import { IoMdClose } from "react-icons/io";
@@ -9,7 +9,8 @@ import DatePickerOne from "./input/DatePickerOne";
 import TimePicker from "./input/TimePicker";
 import FormContent from "./FormContent";
 
-const Modal = ({ type, key, step, onClose }: ModalProps) => {
+const Modal = ({ type, step, onClose }: ModalProps) => {
+  const { jobPostingKey } = useParams();
   const [currentTab, setCurrentTab] = useState("assignment");
   const [emailText, setEmailText] = useState("");
   const [typeEmail, setTypeEmail] = useState(false);
@@ -17,6 +18,7 @@ const Modal = ({ type, key, step, onClose }: ModalProps) => {
     endDate: new Date(),
     endHour: new Date(2024, 7, 13, 18, 0),
   });
+  const [scheduleKey, setScheduleKey] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,12 +62,15 @@ const Modal = ({ type, key, step, onClose }: ModalProps) => {
               </Tab>
             </Tabs>
             <FormArea>
-              <FormContent
-                currentTab={currentTab}
-                jobPostingKey={key}
-                stepId={step}
-                setTypeEmail={setTypeEmail}
-              />
+              {jobPostingKey && (
+                <FormContent
+                  currentTab={currentTab}
+                  jobPostingKey={jobPostingKey}
+                  stepId={step}
+                  setTypeEmail={setTypeEmail}
+                  setScheduleKey={setScheduleKey}
+                />
+              )}
             </FormArea>
           </ModalContainer>
           <ModalContainer>
