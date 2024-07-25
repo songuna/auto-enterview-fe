@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { ONE_HOUR } from "../constants/Time";
 
 export const axiosInstance = axios.create({
-  baseURL: "http://43.203.249.116:8080",
+  baseURL: "http://43.203.218.49:8080",
   //timeout: 5000,
 });
 

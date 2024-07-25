@@ -41,23 +41,22 @@ const RecruitBoard = () => {
   }, []);
 
   // 단계 및 지원자 목록, 일정 정보
-  useEffect(() => {
-    console.log(currentStep);
+  const fetchCandidates = useCallback(async () => {
     if (!jobPostingKey) return;
-    console.log(schedule[0]);
 
-    const fetchCandidates = async () => {
-      try {
-        const data: RecruitBoardData[] = await getRecruitBoardData(jobPostingKey);
-        setDataList(data);
-        filterSchedules(dataList);
-        console.log(schedule);
-      } catch (error) {
-        alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
-      }
-    };
+    try {
+      const data: RecruitBoardData[] = await getRecruitBoardData(jobPostingKey);
+      setDataList(data);
+      filterSchedules(data);
+    } catch (error) {
+      alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
+    }
+  }, [filterSchedules, jobPostingKey]);
+
+  useEffect(() => {
+    // console.log(schedule[0]);
     fetchCandidates();
-  }, [jobPostingKey]);
+  }, [fetchCandidates, jobPostingKey]);
 
   // 칸반보드 1200px 넘어가면 양쪽으로 드래그
   let isDragging = false;
@@ -129,13 +128,17 @@ const RecruitBoard = () => {
       } else {
         // 같은 단계를 선택하면 activeList 업데이트
         setActiveList(prevActiveList => {
-          if (prevActiveList.length === 0) {
-            return [candidate];
-          }
+          const isAlreadyActive = prevActiveList.some(
+            item => item.candidateKey === candidate.candidateKey,
+          );
 
-          return prevActiveList.includes(candidate)
-            ? prevActiveList.filter(item => item !== candidate)
-            : [...prevActiveList, candidate];
+          if (isAlreadyActive) {
+            // 이미 활성화된 지원자는 제거
+            return prevActiveList.filter(item => item.candidateKey !== candidate.candidateKey);
+          } else {
+            // 새로운 지원자를 활성화 목록에 추가
+            return [...prevActiveList, candidate];
+          }
         });
       }
       return step;
@@ -204,7 +207,10 @@ const RecruitBoard = () => {
                   <StepHead>
                     <StepTitle className="sub-title">{data.stepName}</StepTitle>
                     {data.stepName !== "서류전형" &&
-                      !!data.candidateTechStackInterviewInfoDtoList.length && (
+                      !!data.candidateTechStackInterviewInfoDtoList.length &&
+                      data.candidateTechStackInterviewInfoDtoList.some(
+                        candidate => candidate.scheduleDateTime !== null,
+                      ) && (
                         <RemoveBtn onClick={() => handleRemoveSchedule(data.stepId)}>
                           <span>일정 삭제</span>
                           <RiDeleteBin6Line />
@@ -212,7 +218,10 @@ const RecruitBoard = () => {
                       )}
                   </StepHead>
                   {data.stepName === "서류전형" ? null : data.candidateTechStackInterviewInfoDtoList
-                      .length > 0 ? (
+                      .length > 0 &&
+                    data.candidateTechStackInterviewInfoDtoList.some(
+                      candidate => candidate.scheduleDateTime !== null,
+                    ) ? (
                     <EmailBtn onClick={() => openModal("email", idx + 1)}>
                       예약 메일 발송하기
                     </EmailBtn>
@@ -225,7 +234,9 @@ const RecruitBoard = () => {
                     {data.candidateTechStackInterviewInfoDtoList.map(candidate => (
                       <List
                         key={candidate.candidateKey}
-                        $isActive={activeList.includes(candidate)}
+                        $isActive={activeList.some(
+                          active => active.candidateKey === candidate.candidateKey,
+                        )}
                         onClick={() => handleClickList(candidate, idx + 1)}
                       >
                         <Name>{candidate.candidateName}</Name>
