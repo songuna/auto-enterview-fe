@@ -94,7 +94,7 @@ const CreateResume = () => {
           setValue("address", resumeData.address || "");
           setValue("schoolName", resumeData.schoolName || "");
 
-          
+
           resumeData.career.length > 0
           ? setCareerList(
             resumeData.career.map((career: any) => ({
@@ -157,22 +157,12 @@ const CreateResume = () => {
 
 
   //이미지
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      try {
-        const image = URL.createObjectURL(file);
-        setImgURL(image);
-        setImgFile(file);
-
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await postResume(authUser?.key, formData, resumeData); // 이미지 업로드 호출
-        setImgURL(response.data.url); // 서버에서 반환된 이미지 URL로 업데이트
-      } catch (error) {
-        console.error('Failed to upload image:', error);
-      }
+      const imageURL = URL.createObjectURL(file);
+      setImgURL(imageURL);
+      setImgFile(file);
     }
   };
 
@@ -262,7 +252,6 @@ const CreateResume = () => {
       certificateDate: qualification.certificateDate ? new Date(qualification.certificateDate).toISOString().split("T")[0] : "",
     })),
     portfolio: portfolio || "",
-    resumeImageUrl: imgURL || "",
   };
 
   const resultData = new FormData();
