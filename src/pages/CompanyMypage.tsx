@@ -24,7 +24,7 @@ import {
 import { getPostedJobPostings } from "../axios/http/jobPosting";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
-import { getDday } from "../utils/Format";
+import { getDday, getDdayNumber } from "../utils/Format";
 import { InfoItem, PostedJobPoting } from "../type/company";
 import { getCompanyInfo, postCompanyInfo, putCompanyInfo } from "../axios/http/company";
 
@@ -83,6 +83,7 @@ const CompanyMypage = () => {
     const fetchJobPosting = async () => {
       try {
         const response = await getPostedJobPostings(authUser.key);
+        console.log(response);
 
         setJobPostingList(response);
       } catch (error) {
@@ -223,14 +224,18 @@ const CompanyMypage = () => {
             {jobPostingList?.map(jobPosting => (
               <RecruitList key={jobPosting.jobPostingKey}>
                 <LabelWrap>
-                  <Label />
+                  <Label dday={getDdayNumber(jobPosting.endDate)} />
                   <Dday>{getDday(jobPosting.endDate)}</Dday>
                 </LabelWrap>
                 <ListTitle to={`/jobpost-detail/${jobPosting.jobPostingKey}`}>
                   {jobPosting.title}
                 </ListTitle>
                 <ListCareer>
-                  {jobPosting.career === 0 ? "신입" : jobPosting.career + "년 이상"}
+                  {jobPosting.career === 0
+                    ? "신입"
+                    : jobPosting.career == -1
+                      ? "경력무관"
+                      : jobPosting.career + "년 이상"}
                 </ListCareer>
                 <StepsButton
                   onClick={e => goToRecruitBoard(e, jobPosting.jobPostingKey, jobPosting.title)}
