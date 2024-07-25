@@ -244,17 +244,17 @@ const CreateResume = () => {
           : "",
       })),
       portfolio: portfolio || "",
-      resumeImageUrl: imgFile,
+      resumeImageUrl: File,
     };
 
     // jobCategory가 빈 문자열인 경우 필드를 제거
     if (jobCategory) {
     ResumeData.jobWant = jobCategory;
   }
-
+  
     const resultData = new FormData();
     if (imgFile) {
-      resultData.append("image", imgFile);
+      resultData.append("image", resumeData.resumeImageUrl);
     }
     resultData.append(
       "resumeInfo",

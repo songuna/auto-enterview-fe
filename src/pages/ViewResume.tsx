@@ -38,7 +38,7 @@ interface ResumeData {
   }[];
   qualifications: string[];
   portfolio: string;
-  resumeImageUrl: null;
+  resumeImageUrl: File;
 }
 
 
@@ -119,7 +119,11 @@ const ViewResume: React.FC = () => {
           <InputContainer>
             <H2 className="inputBox">" {resumeData.title} "</H2>
             <AllContainer>
-              <Image>{resumeData.resumeImageUrl}</Image>
+              {resumeData.resumeImageUrl ? (
+                <Image src={resumeData.resumeImageUrl} alt="Resume Image" />
+              ) : (
+                <Image>이미지가 없습니다</Image>
+              )}
               <FlexContainer>
                 <H3 className="input textBox">{resumeData.name}</H3>
                 <H3 className="input textBox">{resumeData.gender}</H3>
