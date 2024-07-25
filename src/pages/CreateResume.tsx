@@ -119,8 +119,8 @@ const CreateResume = () => {
             })),
           );
 
-          if (resumeData.imageUrl) {
-            setImgURL(resumeData.imageUrl);
+          if (resumeData.resumeImageUrl) {
+            setImgURL(resumeData.resumeImageUrl);
           }
         } catch (error) {
           console.error("Error fetching resume:", error);
@@ -133,12 +133,22 @@ const CreateResume = () => {
 
 
   //이미지
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const imageURL = URL.createObjectURL(file);
-      setImgURL(imageURL);
-      setImgFile(file);
+      try {
+        const image = URL.createObjectURL(file);
+        setImgURL(image);
+        setImgFile(file);
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await postResume(authUser?.key, formData, resumeData); // 이미지 업로드 호출
+        setImgURL(response.data.url); // 서버에서 반환된 이미지 URL로 업데이트
+      } catch (error) {
+        console.error('Failed to upload image:', error);
+      }
     }
   };
 
@@ -234,7 +244,7 @@ const CreateResume = () => {
           : "",
       })),
       portfolio: portfolio || "",
-      imageUrl: imgURL || "",
+      resumeImageUrl: imgFile,
     };
 
     // jobCategory가 빈 문자열인 경우 필드를 제거
@@ -614,6 +624,7 @@ const Image = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  object-fit: cover;
 `;
 
 const ImgInput = styled.input`
@@ -621,6 +632,7 @@ const ImgInput = styled.input`
   width: 0;
   height: 0;
   overflow: hidden;
+  object-fit: cover;
 `;
 
 const LabelName = styled.label`
