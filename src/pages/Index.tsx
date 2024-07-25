@@ -7,6 +7,8 @@ import { getJobPostings, postJobPostingApply } from "../axios/http/jobPosting";
 import { useEffect, useRef, useState } from "react";
 import { JobInfo } from "../type/jobPosting";
 import { getDday } from "../utils/Format";
+import { getResume } from "../axios/http/resume";
+import { getCompanyInfo } from "../axios/http/company";
 
 const Index = () => {
   const authUser = useRecoilValue(authUserState);
@@ -14,6 +16,7 @@ const Index = () => {
   const [page, setpage] = useState(1);
   const [loading, setLoading] = useState(false);
   const totalPage = useRef(0);
+  const [isInfoMessage, setIsInfoMessage] = useState(false);
 
   const navigate = useNavigate();
   const observerTarget = useRef(null);
@@ -57,24 +60,54 @@ const Index = () => {
     })();
   }, [page]);
 
+  useEffect(() => {
+    (async () => {
+      if (!authUser) return;
+
+      if (authUser.role == "ROLE_CANDIDATE") {
+        const response = await getResume(authUser?.key);
+        if (response.title == null) setIsInfoMessage(true);
+      } else if (authUser.role === "ROLE_COMPANY") {
+        const response = await getCompanyInfo(authUser?.key);
+        if (!response.boss) setIsInfoMessage(true);
+      }
+    })();
+  }, []);
+
   const goDetail = (jobPostingKey: string) => {
     navigate(`/jobpost-detail/${jobPostingKey}`);
   };
 
   const apply = async (jobPostingKey: string) => {
+    if (!jobPostingKey) return; // url에 jobPostingKey가 없음
+
     if (!authUser) {
+      //로그인하지 않았다면 로그인으로 보내기 alert
       if (confirm("로그인이 하시겠습니까?")) navigate("/login");
     } else if (confirm("정말 지원하시겠습니까?")) {
-      await postJobPostingApply(jobPostingKey);
+      // 로그인한 사용자만
+      try {
+        await postJobPostingApply(jobPostingKey);
+        alert("지원되었습니다.");
+      } catch (e: any) {
+        if (e.response.status == "403") {
+          alert("지원할 수 없습니다.");
+        } else {
+          alert(e.response.data.message);
+        }
+      }
     }
   };
 
   return (
     <Wrapper className="inner-1200">
-      {!authUser && (
+      {isInfoMessage && (
         <InfoMessage>
-          아직 이력서를 작성하지 않았습니다. 아직 회사정보를 작성하지 않았습니다. 마이페이지에서
-          작성해주세요.
+          {authUser?.role == "ROLE_CANDIDATE"
+            ? "아직 이력서를 작성하지 않았습니다."
+            : "아직 회사정보를 작성하지 않았습니다."}
+          <br></br>
+          마이페이지에서 작성해주세요.
         </InfoMessage>
       )}
       <JobsContainer>
@@ -109,6 +142,7 @@ const InfoMessage = styled.p`
   margin-bottom: 100px;
   text-align: center;
   color: var(--color-red);
+  line-height: 120%;
 `;
 
 const JobsContainer = styled.div`
