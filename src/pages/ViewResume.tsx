@@ -38,7 +38,7 @@ interface ResumeData {
   }[];
   qualifications: string[];
   portfolio: string;
-  resumeImageUrl: File;
+  resumeImageUrl: null;
 }
 
 
@@ -119,11 +119,9 @@ const ViewResume: React.FC = () => {
           <InputContainer>
             <H2 className="inputBox">" {resumeData.title} "</H2>
             <AllContainer>
-              {resumeData.resumeImageUrl ? (
-                <Image src={resumeData.resumeImageUrl} alt="Resume Image" />
-              ) : (
-                <Image>이미지가 없습니다</Image>
-              )}
+              <Image>
+                <img className="img" src={resumeData.resumeImageUrl} alt="Resume Image" style={{ width: "200px", height: "250px" }} />
+              </Image>
               <FlexContainer>
                 <H3 className="input textBox">{resumeData.name}</H3>
                 <H3 className="input textBox">{resumeData.gender}</H3>
@@ -146,10 +144,10 @@ const ViewResume: React.FC = () => {
             <H3 className="textBox">
               {resumeData.techStack && resumeData.techStack.length > 0
                 ? resumeData.techStack.map((tech, index) => (
-                  <span key={index}>
+                  <Span key={index}>
                     #{tech}
-                    {index < resumeData.techStack.length - 1 && ', '}
-                  </span>
+                    {index < resumeData.techStack.length - 1 && ''}
+                  </Span>
                 ))
               : 'No tech stack available'}
             </H3>
@@ -236,6 +234,11 @@ const SchoolName = styled.div`
   margin-right: 50px;
 `
 
+const Span = styled.span`
+  margin-right: 15px;
+  margin-left: 15px;
+`
+
 const All = styled.div`
   border: solid #000694 5px;
 `;
@@ -255,7 +258,6 @@ const InputContainer = styled.div`
   margin-bottom: 20px;
   &.school {
     display: flex;
-
     flex-direction: row;
   }
   &.schoolName {
@@ -302,6 +304,7 @@ const H3 = styled.h3`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  margin-left: 15px;
   &.input {
     width: 100%;
     height: 30px;
@@ -316,13 +319,11 @@ const H3 = styled.h3`
   &.textBox {
     width: 200px;
     font-size: 15px;
-    margin-left: 10px;
   }
 
   &.addressBox {
     width: 300px;
     font-size: 15px;
-    margin-left: 10px;
   }
 `;
 
@@ -337,8 +338,9 @@ const InputTitle = styled.p`
 `;
 
 const Container = styled.div`
-  margin-top: 8px;
+  margin-top: 5px;
   margin-bottom: 15px;
+  margin-left: 15px;
   display: flex;
   flex-direction: column;
 `;
