@@ -51,8 +51,6 @@ const UserMypage = () => {
     const fetchApplied = async () => {
       try {
         const { appliedJobPostingsList } = await getAppliedJobPostings(authUser.key);
-        console.log(appliedJobPostingsList);
-
         setJobPostingList(appliedJobPostingsList);
       } catch (error) {
         alert("지원한 공고를 불러오는데 문제가 생겼습니다.");
