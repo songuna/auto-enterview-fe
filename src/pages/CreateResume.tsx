@@ -251,9 +251,9 @@ const CreateResume = () => {
     if (jobCategory) {
     ResumeData.jobWant = jobCategory;
   }
-  
+
     const resultData = new FormData();
-    if (imgFile) {
+    if (resumeData.resumeImageUrl) {
       resultData.append("image", resumeData.resumeImageUrl);
     }
     resultData.append(
