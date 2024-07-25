@@ -127,6 +127,7 @@ const CompanyMypage = () => {
       boss: bossValue,
       address: addressValue,
     };
+
     const bodyFill = Object.values(body).every(v => v.toString().trim());
 
     if (bodyFill) {
