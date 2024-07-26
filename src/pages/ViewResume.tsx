@@ -104,16 +104,18 @@ const ViewResume: React.FC = () => {
         <title>이력서</title>
       </Helmet>
       <Wrapper className="inner-1200">
-        <Title>
+         <Title>
           이력서
-          <Icon>
-            <Edit onClick={handleEdit}>
-              <MdOutlineEdit size={20} />
-            </Edit>
-            <Delet onClick={handleDelete}>
-              <RiDeleteBin6Line size={20} />
-            </Delet>
-          </Icon>
+          {candidateKey === authUser?.key && (
+            <Icon>
+              <Edit onClick={handleEdit}>
+                <MdOutlineEdit size={20} />
+              </Edit>
+              <Delete onClick={handleDelete}>
+                <RiDeleteBin6Line size={20} />
+              </Delete>
+            </Icon>
+          )}
         </Title>
         <All>
           <InputContainer>
@@ -357,7 +359,7 @@ const Edit = styled.div`
   cursor: pointer;
 `;
 
-const Delet = styled.div`
+const Delete = styled.div`
   color: #000694;
   cursor: pointer;
 `;
