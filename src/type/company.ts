@@ -1,5 +1,5 @@
 export interface CompanyInfo {
-  companyName: string;
+  companyName?: string;
   employees: number;
   companyAge: string;
   companyUrl: string;

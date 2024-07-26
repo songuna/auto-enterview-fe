@@ -21,26 +21,13 @@ import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
 import { getAppliedJobPostings } from "../axios/http/candidate";
 import { AppliedJobPostings } from "../type/candidate";
-import { getDday } from "../utils/Format";
+import { getDday, getDdayNumber } from "../utils/Format";
 
 const UserMypage = () => {
   const [isResume, setIsResume] = useState(false);
   const [jobPostingList, setJobPostingList] = useState<
     AppliedJobPostings["appliedJobPostingsList"]
-  >([
-    // {
-    //   jobPostingKey: "string",
-    //   startDate: "2024-07-22",
-    //   stepName: "지원완료",
-    //   title: "공고제목sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
-    // },
-    // {
-    //   jobPostingKey: "string",
-    //   startDate: "2024-07-22",
-    //   stepName: "지원완료",
-    //   title: "공고제목",
-    // },
-  ]);
+  >([]);
   const authUser = useRecoilValue(authUserState);
 
   useEffect(() => {
@@ -101,10 +88,10 @@ const UserMypage = () => {
             {jobPostingList?.map(jobPosting => (
               <RecruitList key={jobPosting.jobPostingKey}>
                 <LabelWrap>
-                  <Label />
-                  <Dday>{getDday(jobPosting.startDate)}</Dday>
+                  <Label dday={getDdayNumber(jobPosting.endDate)} />
+                  <Dday>{getDday(jobPosting.endDate)}</Dday>
                 </LabelWrap>
-                <UserListTitle to={`/recruit-board/${jobPosting.jobPostingKey}`}>
+                <UserListTitle to={`/jobpost-detail/${jobPosting.jobPostingKey}`}>
                   {jobPosting.title}
                 </UserListTitle>
                 <ListStep>{jobPosting.stepName}</ListStep>

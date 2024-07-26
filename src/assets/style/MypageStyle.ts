@@ -56,14 +56,21 @@ export const LabelWrap = styled.div`
   gap: 1rem;
 `;
 
-export const Label = styled.span`
+export const Label = styled.span<{ dday: number }>`
   display: inline-block;
   width: 0.5rem;
   height: 2rem;
-  background-color: #00cc21;
+  ${props =>
+    props.dday > 0
+      ? "background-color: #EEEEEE"
+      : props.dday >= -3
+        ? "background-color: #F00000"
+        : "background-color: #5690FB"};
 `;
 
-export const Dday = styled.p``;
+export const Dday = styled.p`
+  width: 50px;
+`;
 
 export const ListTitle = styled(Link)`
   width: 100%;
