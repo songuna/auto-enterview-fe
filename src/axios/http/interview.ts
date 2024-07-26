@@ -22,7 +22,7 @@ export const postAssignmentSchedule = (props: IInterviewProps, body: AssignmentS
   );
 };
 
-export const postInterviewSchedule = (props: IInterviewProps, body: InterviewScheduleBody) => {
+export const postInterviewSchedule = (props: IInterviewProps, body: InterviewScheduleBody[]) => {
   return http.post<InterviewScheduleKey>(
     `/job-postings/${props.jobPostingKey}/steps/${props.stepId}/interview-schedule`,
     body,
@@ -34,7 +34,10 @@ export const postInterviewSchedule = (props: IInterviewProps, body: InterviewSch
   );
 };
 
-export const postInterviewParticipants = (props: IInterviewProps, body: InterviewScheduleBody) => {
+export const postInterviewParticipants = (
+  props: IInterviewProps,
+  body: InterviewScheduleBody[],
+) => {
   return http.post(
     `/job-postings/${props.jobPostingKey}/steps/${props.stepId}/interview-schedule-participants`,
     body,

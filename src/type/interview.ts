@@ -13,7 +13,6 @@ export interface InterviewScheduleBody {
   term: number;
   times: number;
 }
-[];
 
 export interface InterviewScheduleKey {
   interviewScheduleKey: string;
