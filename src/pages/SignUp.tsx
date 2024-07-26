@@ -401,7 +401,8 @@ const OverlayPanel = styled.div`
 `;
 
 const Button = styled.button`
-  border-radius: 20px;
+  width: 100%;
+  border-radius: 8px;
   border: 1px solid #000694;
   background-color: #000694;
   margin-top: 10px;
