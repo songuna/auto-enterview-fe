@@ -27,6 +27,7 @@ import { authUserState } from "../recoil/store";
 import { getDday, getDdayNumber } from "../utils/Format";
 import { InfoItem, PostedJobPoting } from "../type/company";
 import { getCompanyInfo, postCompanyInfo, putCompanyInfo } from "../axios/http/company";
+import { Helmet } from "react-helmet-async";
 
 const CompanyMypage = () => {
   const [info, setInfo] = useState<InfoItem[]>([
@@ -165,49 +166,53 @@ const CompanyMypage = () => {
   };
 
   return (
-    <Wrapper>
-      <Inner className="inner-1200">
-        <UserName>{authUser?.name}</UserName>
-        <Container>
-          <Top>
-            <SubTitle>회사 정보</SubTitle>
-            <Buttons>
-              {editMode ? (
-                <>
-                  <IconButton className="cancel" onClick={cancelEdit}>
-                    <IoMdClose />
-                  </IconButton>
-                  <IconButton className="save" onClick={saveInfo}>
-                    <GiSaveArrow />
-                  </IconButton>
-                </>
-              ) : (
-                <IconButton className="edit" onClick={editInfo}>
-                  <CiEdit />
-                </IconButton>
-              )}
-            </Buttons>
-          </Top>
-          <UserInfo>
-            {info.map(({ title, desc }, idx) => (
-              <Info className="text" key={title}>
-                <InfoTitle>{title}</InfoTitle>
+    <>
+      <Helmet>
+        <title>AutoEnterview 마이페이지</title>
+      </Helmet>
+      <Wrapper>
+        <Inner className="inner-1200">
+          <UserName>{authUser?.name}</UserName>
+          <Container>
+            <Top>
+              <SubTitle>회사 정보</SubTitle>
+              <Buttons>
                 {editMode ? (
-                  <InfoInput
-                    type={title === "설립년도" ? "date" : title === "사원수" ? "number" : "text"}
-                    name={title}
-                    value={values[idx]}
-                    min={typeof values[idx] === "number" ? 0 : undefined}
-                    onChange={e => {
-                      const newValue = e.target.value;
-                      onChange(title, newValue);
-                    }}
-                  />
+                  <>
+                    <IconButton className="cancel" onClick={cancelEdit}>
+                      <IoMdClose />
+                    </IconButton>
+                    <IconButton className="save" onClick={saveInfo}>
+                      <GiSaveArrow />
+                    </IconButton>
+                  </>
                 ) : (
-                  <InfoDesc>
-                    {desc instanceof Date ? desc.toISOString().substring(0, 10) : desc}
-                  </InfoDesc>
+                  <IconButton className="edit" onClick={editInfo}>
+                    <CiEdit />
+                  </IconButton>
                 )}
+              </Buttons>
+            </Top>
+            <UserInfo>
+              {info.map(({ title, desc }, idx) => (
+                <Info className="text" key={title}>
+                  <InfoTitle>{title}</InfoTitle>
+                  {editMode ? (
+                    <InfoInput
+                      type={title === "설립년도" ? "date" : title === "사원수" ? "number" : "text"}
+                      name={title}
+                      value={values[idx]}
+                      min={typeof values[idx] === "number" ? 0 : undefined}
+                      onChange={e => {
+                        const newValue = e.target.value;
+                        onChange(title, newValue);
+                      }}
+                    />
+                  ) : (
+                    <InfoDesc>
+                      {desc instanceof Date ? desc.toISOString().substring(0, 10) : desc}
+                    </InfoDesc>
+                  )}           
               </Info>
             ))}
           </UserInfo>

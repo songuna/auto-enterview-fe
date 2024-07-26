@@ -2,6 +2,6 @@ export type ModalType = "email" | "schedule";
 
 export interface ModalProps {
   type: ModalType;
-  step: number;
+  stepId: number;
   onClose: () => void;
 }

@@ -11,7 +11,7 @@ export const getInterviewSchedule = (props: IInterviewProps) => {
 };
 
 export const postAssignmentSchedule = (props: IInterviewProps, body: AssignmentScheduleBody) => {
-  return http.post(
+  return http.post<InterviewScheduleKey>(
     `/job-postings/${props.jobPostingKey}/steps/${props.stepId}/task-schedule`,
     body,
     {

@@ -69,7 +69,7 @@ export const Label = styled.span<{ dday: number }>`
 `;
 
 export const Dday = styled.p`
-  width: 50px;
+  width: 6rem;
 `;
 
 export const ListTitle = styled(Link)`
