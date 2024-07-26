@@ -21,7 +21,6 @@ const Modal = ({ type, stepId, onClose }: ModalProps) => {
     endDate: new Date(),
     endHour: new Date(2024, 7, 13, 18, 0),
   });
-  const [scheduleKey, setScheduleKey] = useState("");
   const authUser = useRecoilValue(authUserState);
   const navigate = useNavigate();
 
@@ -87,7 +86,6 @@ const Modal = ({ type, stepId, onClose }: ModalProps) => {
                   jobPostingKey={jobPostingKey}
                   stepId={stepId}
                   setTypeEmail={setTypeEmail}
-                  setScheduleKey={setScheduleKey}
                 />
               )}
             </FormArea>
