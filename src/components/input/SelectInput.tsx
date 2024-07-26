@@ -1,10 +1,5 @@
 import Select, { GroupBase, OptionsOrGroups } from "react-select";
 
-interface OptionType {
-  value: string;
-  label: string;
-}
-
 interface Props {
   placeholder: string;
   options: OptionsOrGroups<any, GroupBase<any>> | undefined;

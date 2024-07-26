@@ -7,39 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getResume, deleteResume } from "../axios/http/resume";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
-
-interface ResumeData {
-  title: string;
-  name: string;
-  gender: string;
-  birthDate: string;
-  phoneNumber: string;
-  email: string;
-  address: string;
-  jobWant: string;
-  techStack: string[];
-  education: string;
-  jobCategory: string;
-  schoolName: string;
-  career: {
-    companyName: string;
-    jobCategory: string;
-    startDate: string;
-    endDate: string;
-  }[];
-  certificates: {
-    certificateName: string;
-    certificateDate: string;
-  }[];
-  experience: {
-    experienceName: string;
-    startDate: string;
-    endDate: string;
-  }[];
-  qualifications: string[];
-  portfolio: string;
-  resumeImageUrl: null;
-}
+import { ResumeData } from "../type/resume";
 
 const ViewResume: React.FC = () => {
   const { candidateKey } = useParams<{ candidateKey: string }>();
@@ -72,6 +40,8 @@ const ViewResume: React.FC = () => {
     const fetchResume = async () => {
       try {
         const data = await getResume(candidateKey);
+        console.log(data);
+
         setResumeData(data);
       } catch (error) {
         console.error("이력서 불러오기 실패:", error);
@@ -118,12 +88,14 @@ const ViewResume: React.FC = () => {
             <H2 className="inputBox">" {resumeData.title} "</H2>
             <AllContainer>
               <Image>
-                <img
-                  className="img"
-                  src={resumeData.resumeImageUrl}
-                  alt="Resume Image"
-                  style={{ width: "200px", height: "250px" }}
-                />
+                {resumeData.resumeImageUrl && (
+                  <img
+                    className="img"
+                    src={resumeData.resumeImageUrl}
+                    alt="Resume Image"
+                    style={{ width: "200px", height: "250px" }}
+                  />
+                )}
               </Image>
               <FlexContainer>
                 <H3 className="input textBox">{resumeData.name}</H3>

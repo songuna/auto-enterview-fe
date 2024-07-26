@@ -21,30 +21,25 @@ const Index = () => {
 
   const navigate = useNavigate();
   const observerTarget = useRef(null);
-  const observer = new IntersectionObserver(
-    () => {
-      if (!loading) {
-        setpage(page => {
-          if (page < totalPage.current) return page + 1;
-          else return page;
-        });
-      }
-    },
-    {
-      threshold: 0,
-    },
-  );
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      () => {
+        if (!loading) {
+          setpage(page => {
+            if (page < totalPage.current) return page + 1;
+            else return page;
+          });
+        }
+      },
+      {
+        threshold: 0,
+      },
+    );
     if (observerTarget.current) {
       observer.observe(observerTarget.current);
     }
-    return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
-      }
-    };
-  }, []);
+  }, [loading]);
 
   useEffect(() => {
     (async () => {
@@ -71,7 +66,7 @@ const Index = () => {
         if (!response.boss) setIsInfoMessage(true);
       }
     })();
-  }, []);
+  }, [authUser]);
 
   const goDetail = (jobPostingKey: string) => {
     navigate(`/jobpost-detail/${jobPostingKey}`);

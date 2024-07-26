@@ -66,7 +66,7 @@ const SignUp: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const fields = isRightPanelActive
+    const fields: (keyof typeof userData)[] = isRightPanelActive
       ? [
           "companyEmail",
           "companyEmailNumber",
