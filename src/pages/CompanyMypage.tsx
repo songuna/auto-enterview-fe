@@ -212,46 +212,47 @@ const CompanyMypage = () => {
                     <InfoDesc>
                       {desc instanceof Date ? desc.toISOString().substring(0, 10) : desc}
                     </InfoDesc>
-                  )}           
-              </Info>
-            ))}
-          </UserInfo>
-        </Container>
-        <Container>
-          <Top>
-            <SubTitle className="sub-title">등록한 채용 공고 목록</SubTitle>
-            <CreatePost to="/create-jobpost">
-              <HiOutlinePlus />
-            </CreatePost>
-          </Top>
-          <RecruitLists>
-            {jobPostingList?.map(jobPosting => (
-              <RecruitList key={jobPosting.jobPostingKey}>
-                <LabelWrap>
-                  <Label dday={getDdayNumber(jobPosting.endDate)} />
-                  <Dday>{getDday(jobPosting.endDate)}</Dday>
-                </LabelWrap>
-                <ListTitle to={`/jobpost-detail/${jobPosting.jobPostingKey}`}>
-                  {jobPosting.title}
-                </ListTitle>
-                <ListCareer>
-                  {jobPosting.career === 0
-                    ? "신입"
-                    : jobPosting.career == -1
-                      ? "경력무관"
-                      : jobPosting.career + "년 이상"}
-                </ListCareer>
-                <StepsButton
-                  onClick={e => goToRecruitBoard(e, jobPosting.jobPostingKey, jobPosting.title)}
-                >
-                  채용단계 관리
-                </StepsButton>
-              </RecruitList>
-            ))}
-          </RecruitLists>
-        </Container>
-      </Inner>
-    </Wrapper>
+                  )}
+                </Info>
+              ))}
+            </UserInfo>
+          </Container>
+          <Container>
+            <Top>
+              <SubTitle className="sub-title">등록한 채용 공고 목록</SubTitle>
+              <CreatePost to="/create-jobpost">
+                <HiOutlinePlus />
+              </CreatePost>
+            </Top>
+            <RecruitLists>
+              {jobPostingList?.map(jobPosting => (
+                <RecruitList key={jobPosting.jobPostingKey}>
+                  <LabelWrap>
+                    <Label dday={getDdayNumber(jobPosting.endDate)} />
+                    <Dday>{getDday(jobPosting.endDate)}</Dday>
+                  </LabelWrap>
+                  <ListTitle to={`/jobpost-detail/${jobPosting.jobPostingKey}`}>
+                    {jobPosting.title}
+                  </ListTitle>
+                  <ListCareer>
+                    {jobPosting.career === 0
+                      ? "신입"
+                      : jobPosting.career == -1
+                        ? "경력무관"
+                        : jobPosting.career + "년 이상"}
+                  </ListCareer>
+                  <StepsButton
+                    onClick={e => goToRecruitBoard(e, jobPosting.jobPostingKey, jobPosting.title)}
+                  >
+                    채용단계 관리
+                  </StepsButton>
+                </RecruitList>
+              ))}
+            </RecruitLists>
+          </Container>
+        </Inner>
+      </Wrapper>
+    </>
   );
 };
 
