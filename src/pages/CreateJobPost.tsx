@@ -203,17 +203,13 @@ const CreateJobPost = () => {
       resultBody.append("image", formData.image);
     }
 
-    console.log(formData.image);
-
     resultBody.append(
       "jobPostingInfo",
       new Blob([JSON.stringify(requestData)], { type: "application/json" }),
     );
 
-    console.log(resultBody);
-
     if (!authUser) {
-      console.log("유저정보없음 로그인해주세요.");
+      alert("유저정보없음 로그인해주세요.");
       return;
     }
 

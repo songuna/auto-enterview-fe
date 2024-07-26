@@ -4,8 +4,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { postSignup, postCompanySignup } from "../axios/http/user";
 import { postSendVerificationCode } from "../axios/http/user";
 import { http } from "../axios/instances";
-import { useNavigate } from "react-router-dom"; 
-
+import { useNavigate } from "react-router-dom";
 
 // 회원가입
 const SignUp: React.FC = () => {
@@ -52,7 +51,7 @@ const SignUp: React.FC = () => {
       return;
     }
     try {
-      const response = await checkEmailDuplication(email);
+      await checkEmailDuplication(email);
       try {
         await postSendVerificationCode(email);
         alert("인증번호가 발송되었습니다");

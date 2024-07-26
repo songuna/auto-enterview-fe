@@ -1,7 +1,8 @@
 export interface AppliedJobPostings {
   appliedJobPostingsList: {
     jobPostingKey: string;
-    startDate: string;
+    appliedDate: string;
+    endDate: string;
     stepName: string;
     title: string;
   }[];

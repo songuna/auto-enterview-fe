@@ -9,6 +9,7 @@ import { JobInfo } from "../type/jobPosting";
 import { getDday } from "../utils/Format";
 import { getResume } from "../axios/http/resume";
 import { getCompanyInfo } from "../axios/http/company";
+import axios from "axios";
 
 const Index = () => {
   const authUser = useRecoilValue(authUserState);
@@ -53,12 +54,10 @@ const Index = () => {
 
       if (response.jobPostingsList.length > 0 && jobInfos.length <= (page - 1) * 24) {
         setJobInfos(jobInfos => [...jobInfos, ...response.jobPostingsList]);
-        console.log(jobInfos);
       }
-      console.log(response);
       setLoading(false);
     })();
-  }, [page]);
+  }, [jobInfos.length, page]);
 
   useEffect(() => {
     (async () => {
@@ -89,11 +88,13 @@ const Index = () => {
       try {
         await postJobPostingApply(jobPostingKey);
         alert("지원되었습니다.");
-      } catch (e: any) {
-        if (e.response.status == "403") {
-          alert("지원할 수 없습니다.");
-        } else {
-          alert(e.response.data.message);
+      } catch (e) {
+        if (axios.isAxiosError(e)) {
+          if (e.response?.status == 403) {
+            alert("지원할 수 없습니다.");
+          } else {
+            alert(e.response?.data.message);
+          }
         }
       }
     }

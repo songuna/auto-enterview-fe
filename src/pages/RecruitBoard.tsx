@@ -291,10 +291,10 @@ const RecruitBoard = () => {
                   </Step>
                 ))}
               </Steps>
-              {jobPostingKey && modal && (
-                <Modal type={modalType} stepId={currentStepId} onClose={onClose} />
-              )}
             </Board>
+            {jobPostingKey && modal && (
+              <Modal type={modalType} stepId={currentStepId} onClose={onClose} />
+            )}
           </Container>
         </Inner>
       </Wrapper>
@@ -405,7 +405,6 @@ const List = styled.li<{ $isActive: boolean }>`
   justify-content: space-between;
   align-items: flex-start;
   gap: 8px;
-  height: 120px;
   padding: 1rem;
   border-radius: var(--box-radius);
   border: 1px solid ${props => (props.$isActive ? "#000694" : "transparent")};
@@ -446,6 +445,7 @@ const Skills = styled.div`
 `;
 
 const Skill = styled.p`
+  align-self: self-start;
   padding: 4px 8px;
   background-color: rgba(197, 255, 197, 0.5);
   border-radius: var(--button-radius);

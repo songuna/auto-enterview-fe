@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { MdOutlineEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useState, useEffect } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getResume, deleteResume } from "../axios/http/resume";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
@@ -32,7 +32,7 @@ interface ResumeData {
     certificateDate: string;
   }[];
   experience: {
-    experienceName : string;
+    experienceName: string;
     startDate: string;
     endDate: string;
   }[];
@@ -41,15 +41,12 @@ interface ResumeData {
   resumeImageUrl: null;
 }
 
-
 const ViewResume: React.FC = () => {
   const { candidateKey } = useParams<{ candidateKey: string }>();
   const authUser = useRecoilValue(authUserState);
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  const { resumeData: initialResumeData } = location.state || {};
 
   const handleDelete = async () => {
     if (deleteConfirm) {
@@ -70,8 +67,8 @@ const ViewResume: React.FC = () => {
     }
   };
 
-
   useEffect(() => {
+    if (!candidateKey) return;
     const fetchResume = async () => {
       try {
         const data = await getResume(candidateKey);
@@ -92,10 +89,9 @@ const ViewResume: React.FC = () => {
     }
   };
 
-
   // 로딩 중 상태 표시
   if (!resumeData) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
@@ -104,7 +100,7 @@ const ViewResume: React.FC = () => {
         <title>이력서</title>
       </Helmet>
       <Wrapper className="inner-1200">
-         <Title>
+        <Title>
           이력서
           {candidateKey === authUser?.key && (
             <Icon>
@@ -122,7 +118,12 @@ const ViewResume: React.FC = () => {
             <H2 className="inputBox">" {resumeData.title} "</H2>
             <AllContainer>
               <Image>
-                <img className="img" src={resumeData.resumeImageUrl} alt="Resume Image" style={{ width: "200px", height: "250px" }} />
+                <img
+                  className="img"
+                  src={resumeData.resumeImageUrl}
+                  alt="Resume Image"
+                  style={{ width: "200px", height: "250px" }}
+                />
               </Image>
               <FlexContainer>
                 <H3 className="input textBox">{resumeData.name}</H3>
@@ -146,24 +147,24 @@ const ViewResume: React.FC = () => {
             <H3 className="textBox">
               {resumeData.techStack && resumeData.techStack.length > 0
                 ? resumeData.techStack.map((tech, index) => (
-                  <Span key={index}>
-                    #{tech}
-                    {index < resumeData.techStack.length - 1 && ''}
-                  </Span>
-                ))
-              : 'No tech stack available'}
+                    <Span key={index}>
+                      #{tech}
+                      {index < resumeData.techStack.length - 1 && ""}
+                    </Span>
+                  ))
+                : "No tech stack available"}
             </H3>
           </InputContainer>
 
           <InputContainer className="school">
-          <SchoolName>
-            <InputTitle> [최종 학력] </InputTitle>
-            <H3 className="input textBox">{resumeData.education}</H3>
-          </SchoolName>
-          <SchoolName>
-            <InputTitle className="schoolName"> [학교명] </InputTitle>
-            <H3 className="input textBox">{resumeData.schoolName}</H3>
-          </SchoolName>
+            <SchoolName>
+              <InputTitle> [최종 학력] </InputTitle>
+              <H3 className="input textBox">{resumeData.education}</H3>
+            </SchoolName>
+            <SchoolName>
+              <InputTitle className="schoolName"> [학교명] </InputTitle>
+              <H3 className="input textBox">{resumeData.schoolName}</H3>
+            </SchoolName>
           </InputContainer>
 
           <InputContainer>
@@ -209,7 +210,10 @@ const ViewResume: React.FC = () => {
             <InputTitle> [포트폴리오] </InputTitle>
             <Container>
               <H3 className="textBox">
-                <a href={resumeData.portfolio} target="_blank" rel="noopener noreferrer"> {resumeData.portfolio} </a>
+                <a href={resumeData.portfolio} target="_blank" rel="noopener noreferrer">
+                  {" "}
+                  {resumeData.portfolio}{" "}
+                </a>
               </H3>
             </Container>
           </InputContainer>
@@ -230,16 +234,16 @@ const Div = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-`
- 
+`;
+
 const SchoolName = styled.div`
   margin-right: 50px;
-`
+`;
 
 const Span = styled.span`
   margin-right: 15px;
   margin-left: 15px;
-`
+`;
 
 const All = styled.div`
   border: solid #000694 5px;
@@ -255,7 +259,7 @@ const Title = styled.h2`
 const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
-  
+
   margin-top: 50px;
   margin-bottom: 20px;
   &.school {
