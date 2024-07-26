@@ -28,16 +28,9 @@ interface FormContentProps {
   jobPostingKey: string;
   stepId: number;
   setTypeEmail: React.Dispatch<React.SetStateAction<boolean>>;
-  setScheduleKey: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const FormContent = ({
-  currentTab,
-  jobPostingKey,
-  stepId,
-  setTypeEmail,
-  setScheduleKey,
-}: FormContentProps) => {
+const FormContent = ({ currentTab, jobPostingKey, stepId, setTypeEmail }: FormContentProps) => {
   const [assignmentFormData, setAssignmentFormData] = useState({
     endDate: new Date(),
     endHour: new Date(2024, 7, 13, 23, 59),
@@ -67,19 +60,20 @@ const FormContent = ({
     try {
       if (currentTab === "assignment") {
         // 과제 일정 생성
-        const { interviewScheduleKey } = await postAssignmentSchedule(props, assignmentBody);
-        setScheduleKey(interviewScheduleKey);
+        await postAssignmentSchedule(props, assignmentBody);
       } else {
         // 면접 일정 생성
-        const { interviewScheduleKey } = await postInterviewSchedule(props, interviewBody);
+        await postInterviewSchedule(props, interviewBody);
         // 일정에 따른 지원자 분류
         await postInterviewParticipants(props, interviewBody);
-        setScheduleKey(interviewScheduleKey);
       }
       alert("일정이 성공적으로 저장되었습니다.");
     } catch (error) {
-      console.error(error);
-      alert("일정 생성에 문제가 발생했습니다. 다시 시도해주세요.");
+      if (error instanceof Error) {
+        alert("일정 생성에 문제가 발생했습니다.");
+      } else {
+        alert("알 수 없는 에러가 발생했습니다.");
+      }
     }
   };
 

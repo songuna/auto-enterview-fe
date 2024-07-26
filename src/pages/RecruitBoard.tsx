@@ -14,7 +14,7 @@ import { authUserState } from "../recoil/store";
 import React from "react";
 import { Helmet } from "react-helmet-async";
 import { fetchCandidates } from "../axios/fetch/recruitBoard";
-import { QueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const RecruitBoard = () => {
   const { jobPostingKey } = useParams();
@@ -31,9 +31,11 @@ const RecruitBoard = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const title = queryParams.get("title");
-  const queryClient = new QueryClient();
+
+  // 전체 지원자 정보 fetch
   const {
     data: candidateList,
+    refetch,
     isPending,
     isError,
   } = useQuery({
@@ -41,10 +43,7 @@ const RecruitBoard = () => {
     queryFn: () => fetchCandidates(jobPostingKey),
   });
 
-  if (isError) {
-    alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
-  }
-
+  // useQuery로 받아온 지원자 데이터 정제
   const setCandidates = useCallback(() => {
     if (isPending || !candidateList) return;
     setDataList(candidateList);
@@ -58,6 +57,14 @@ const RecruitBoard = () => {
   useEffect(() => {
     setCandidates();
   }, [setCandidates]);
+
+  if (isPending) {
+    return;
+  }
+
+  if (isError) {
+    alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
+  }
 
   // 칸반보드 1200px 넘어가면 양쪽으로 드래그
   let isDragging = false;
@@ -91,18 +98,23 @@ const RecruitBoard = () => {
   // 일정 삭제
   const handleRemoveSchedule = async (stepId: number) => {
     if (!jobPostingKey) return;
-    console.log(stepId);
 
     const response = confirm("일정이 초기화 됩니다. 전체 삭제를 진행하시겠어요?");
     if (response) {
       try {
         await deleteInterviewSchedule({ jobPostingKey: jobPostingKey, stepId: stepId });
         alert("일정이 성공적으로 삭제되었습니다.");
-      } catch (error) {
-        if (error.message.split(" ").at(-1) === "404") {
-          alert("일정이 존재하지 않습니다.");
+        // 지원자 정보 업데이트
+        refetch();
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          if (error.message.split(" ")[error.message.length - 1] === "404") {
+            alert("일정이 존재하지 않습니다.");
+          } else {
+            alert("일정을 삭제하는데 문제가 발생했습니다.");
+          }
         } else {
-          alert("일정을 삭제하는데 문제가 발생했습니다.");
+          alert("알 수 없는 에러가 발생했습니다.");
         }
       }
     }
@@ -153,11 +165,6 @@ const RecruitBoard = () => {
 
     if (currentStep < dataList.length) {
       const activeCandidates = activeList;
-      const inactiveCandidates = dataList[
-        currentStep - 1
-      ].candidateTechStackInterviewInfoDtoList.filter(
-        candidate => !activeList.some(active => active.candidateKey === candidate.candidateKey),
-      );
       const activeCandidateKeys = activeCandidates.map(candidate => candidate.candidateKey);
 
       const nextStepBody = {
@@ -167,27 +174,8 @@ const RecruitBoard = () => {
 
       try {
         await putNextStep(jobPostingKey, nextStepBody);
-
-        setDataList(prev => {
-          const newCandidateList = prev.map((step, idx) => {
-            if (idx === currentStep - 1) {
-              return {
-                ...step,
-                candidateTechStackInterviewInfoDtoList: inactiveCandidates,
-              };
-            } else if (idx === currentStep) {
-              return {
-                ...step,
-                candidateTechStackInterviewInfoDtoList: [
-                  ...step.candidateTechStackInterviewInfoDtoList,
-                  ...activeCandidates,
-                ],
-              };
-            }
-            return step;
-          });
-          return newCandidateList;
-        });
+        // 지원자 정보 업데이트
+        refetch();
 
         setActiveList([]);
         setCurrentStep(prev => prev + 1);
@@ -201,8 +189,8 @@ const RecruitBoard = () => {
   // 모달창 닫기
   const onClose = () => {
     setModal(false);
-
-    queryClient.invalidateQueries({ queryKey: ["candidate-list"] });
+    // 지원자 정보 업데이트
+    refetch();
   };
 
   return (
