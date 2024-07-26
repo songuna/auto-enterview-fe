@@ -6,34 +6,31 @@ import DatePickerDuration from "../components/input/DatePickerDuration";
 import DatePickerOne from "../components/input/DatePickerOne";
 import SelectInput from "../components/input/SelectInput";
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { postResume, getResume, putResume } from "../axios/http/resume";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
 import { optionEducation, optionJob, techStacks } from "../constants/options";
 import { InputDefault } from "../assets/style/input";
-import { useLocation } from 'react-router-dom';
-
-
+import { useLocation } from "react-router-dom";
 
 interface Career {
-  companyName: string;
-  jobCategory: string;
+  companyName: string | null;
+  jobCategory: string | null;
   startDate: Date | null;
   endDate: Date | null;
 }
 
 interface Experience {
-  experienceName: string;
+  experienceName: string | null;
   startDate: Date | null;
   endDate: Date | null;
 }
 
 interface Qualification {
-  certificateName: string;
+  certificateName: string | null;
   certificateDate: Date | null;
 }
-
 
 const CreateResume = () => {
   //유저
@@ -63,17 +60,16 @@ const CreateResume = () => {
   const [imgURL, setImgURL] = useState("");
   const [imgFile, setImgFile] = useState<File | null>(null);
   const [gender, setGender] = useState<string>("");
-  const [fileName, setFileName] = useState("");
   const [jobCategory, setJobCategory] = useState<string | null>(null);
   const [education, setEducation] = useState<string | null>(null);
   const [portfolio, setPortfolio] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
- 
+
   //수정하기
   const location = useLocation();
   const { resumeData } = location.state || {};
-  
+
   useEffect(() => {
     if (authUser) {
       const fetchResume = async () => {
@@ -94,54 +90,53 @@ const CreateResume = () => {
           setValue("address", resumeData.address || "");
           setValue("schoolName", resumeData.schoolName || "");
 
-
           resumeData.career.length > 0
-          ? setCareerList(
-            resumeData.career.map((career: any) => ({
-              companyName: career.companyName,
-              jobCategory: career.jobCategory || "",
-              startDate: career.startDate ? new Date(career.startDate) : null,
-              endDate: career.endDate ? new Date(career.endDate) : null,
-            })),
-          )
-          : setCareerList([
-            {
-              companyName: null,
-              jobCategory: null,
-              startDate: new Date,
-              endDate:new Date,
-            },
-          ]);
+            ? setCareerList(
+                resumeData.career.map((career: any) => ({
+                  companyName: career.companyName,
+                  jobCategory: career.jobCategory || "",
+                  startDate: career.startDate ? new Date(career.startDate) : null,
+                  endDate: career.endDate ? new Date(career.endDate) : null,
+                })),
+              )
+            : setCareerList([
+                {
+                  companyName: null,
+                  jobCategory: null,
+                  startDate: new Date(),
+                  endDate: new Date(),
+                },
+              ]);
 
           resumeData.experience.length > 0
-          ? setExperiences(
-            resumeData.experience.map((exp: any) => ({
-              experienceName: exp.experienceName,
-              startDate: exp.startDate ? new Date(exp.startDate) : null,
-              endDate: exp.endDate ? new Date(exp.endDate) : null,
-            })),
-          )
-          : setExperiences([
-            {
-              experienceName: null,
-              startDate: new Date,
-              endDate:new Date,
-            },
-          ]);
+            ? setExperiences(
+                resumeData.experience.map((exp: any) => ({
+                  experienceName: exp.experienceName,
+                  startDate: exp.startDate ? new Date(exp.startDate) : null,
+                  endDate: exp.endDate ? new Date(exp.endDate) : null,
+                })),
+              )
+            : setExperiences([
+                {
+                  experienceName: null,
+                  startDate: new Date(),
+                  endDate: new Date(),
+                },
+              ]);
 
           resumeData.certificates.length > 0
-          ? setQualifications(
-            resumeData.certificates.map((cert: any) => ({
-              certificateName: cert.certificateName,
-              certificateDate: cert.certificateDate ? new Date(cert.certificateDate) : null,
-            })),
-          )
-          : setQualifications([
-            {
-              certificateName: null,
-              certificateDate: new Date,
-            },
-          ]);
+            ? setQualifications(
+                resumeData.certificates.map((cert: any) => ({
+                  certificateName: cert.certificateName,
+                  certificateDate: cert.certificateDate ? new Date(cert.certificateDate) : null,
+                })),
+              )
+            : setQualifications([
+                {
+                  certificateName: null,
+                  certificateDate: new Date(),
+                },
+              ]);
 
           if (resumeData.resumeImageUrl) {
             setImgURL(resumeData.resumeImageUrl);
@@ -155,7 +150,6 @@ const CreateResume = () => {
     }
   }, [authUser, setValue, resumeData]);
 
-
   //이미지
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -168,26 +162,10 @@ const CreateResume = () => {
 
   //성별
   const handleGenderSelect = (selectedGender: string) => setGender(selectedGender);
- 
-  // 포트폴리오
-  const uploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setFileName(event.target.files[0].name);
-    }
-  };
-  const handleFileRemove = () => {
-    setFileName("");
-    if (inputRef.current) {
-      inputRef.current.value = "";
-    }
-  };
-
 
   const handleJobChange = (optionJob: string) => setJobCategory(optionJob || null);
 
-  
   const handleEducationChange = (optionEducation: string) => setEducation(optionEducation || null);
-
 
   // 경력
   const [careerList, setCareerList] = useState<Career[]>([
@@ -199,7 +177,6 @@ const CreateResume = () => {
       { companyName: "", jobCategory: "", startDate: new Date(), endDate: new Date() },
     ]);
   const removeCareer = (index: number) => setCareerList(careerList.filter((_, i) => i !== index));
-
 
   // 교육/활동/경험
   const [experiences, setExperiences] = useState<Experience[]>([
@@ -224,62 +201,68 @@ const CreateResume = () => {
 
   //이력서 생성 data
   const onSubmit = async (data: any) => {
-  const ResumeData = {
-    title: title,
-    jobWant: jobCategory || null,
-    name: data.name || "",
-    gender: gender || "",
-    birthDate: data.birthDate ? new Date(data.birthDate).toISOString().split("T")[0] : "",
-    email: data.email || "",
-    phoneNumber: data.phoneNumber || "",
-    address: data.address || "",
-    education: education || "",
-    schoolName: data.schoolName || "",
-    experience: experiences.map(experience => ({
-      experienceName: experience.experienceName,
-      startDate: experience.startDate ? new Date(experience.startDate).toISOString().split("T")[0] : "",
-      endDate: experience.endDate ? new Date(experience.endDate).toISOString().split("T")[0] : "",
-    })),
-    techStack: data.techStack || [],
-    career: careerList.map(career => ({
-      companyName: career.companyName,
-      jobCategory: career.jobCategory || null,
-      startDate: career.startDate ? new Date(career.startDate).toISOString().split("T")[0] : "",
-      endDate: career.endDate ? new Date(career.endDate).toISOString().split("T")[0] : "",
-    })),
-    certificates: qualifications.map(qualification => ({
-      certificateName: qualification.certificateName,
-      certificateDate: qualification.certificateDate ? new Date(qualification.certificateDate).toISOString().split("T")[0] : "",
-    })),
-    portfolio: portfolio || "",
-  };
+    if (!authUser) return; // 로그인 안되있다면 리턴
 
-  const resultData = new FormData();
-  if (imgFile) {
-    resultData.append("image", imgFile);
-  }
-  resultData.append("resumeInfo", new Blob([JSON.stringify(ResumeData)], { type: "application/json" }));
+    const ResumeData = {
+      title: title,
+      jobWant: jobCategory || null,
+      name: data.name || "",
+      gender: gender || "",
+      birthDate: data.birthDate ? new Date(data.birthDate).toISOString().split("T")[0] : "",
+      email: data.email || "",
+      phoneNumber: data.phoneNumber || "",
+      address: data.address || "",
+      education: education || "",
+      schoolName: data.schoolName || "",
+      experience: experiences.map(experience => ({
+        experienceName: experience.experienceName,
+        startDate: experience.startDate
+          ? new Date(experience.startDate).toISOString().split("T")[0]
+          : "",
+        endDate: experience.endDate ? new Date(experience.endDate).toISOString().split("T")[0] : "",
+      })),
+      techStack: data.techStack || [],
+      career: careerList.map(career => ({
+        companyName: career.companyName,
+        jobCategory: career.jobCategory || null,
+        startDate: career.startDate ? new Date(career.startDate).toISOString().split("T")[0] : "",
+        endDate: career.endDate ? new Date(career.endDate).toISOString().split("T")[0] : "",
+      })),
+      certificates: qualifications.map(qualification => ({
+        certificateName: qualification.certificateName,
+        certificateDate: qualification.certificateDate
+          ? new Date(qualification.certificateDate).toISOString().split("T")[0]
+          : "",
+      })),
+      portfolio: portfolio || "",
+    };
 
-  try {
-    if (resumeData) {
-      // PUT 요청으로 이력서 업데이트
-      await putResume(authUser?.key, resultData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-    } else {
-      // POST 요청으로 새 이력서 작성
-      await postResume(authUser?.key, resultData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+    const resultData = new FormData();
+    if (imgFile) {
+      resultData.append("image", imgFile);
     }
-    navigate(`/view-resume/${authUser?.key}`);
-  } catch (error) {
-    console.error("Error submitting resume:", error);
-  }
-};
+    resultData.append(
+      "resumeInfo",
+      new Blob([JSON.stringify(ResumeData)], { type: "application/json" }),
+    );
 
-
-  
+    try {
+      if (resumeData) {
+        // PUT 요청으로 이력서 업데이트
+        await putResume(authUser?.key, resultData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        // POST 요청으로 새 이력서 작성
+        await postResume(authUser?.key, resultData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
+      navigate(`/view-resume/${authUser?.key}`);
+    } catch (error) {
+      console.error("Error submitting resume:", error);
+    }
+  };
 
   return (
     <>
@@ -404,9 +387,7 @@ const CreateResume = () => {
                               onChange([...value, stack]);
                             } else {
                               //해제하면 빼기
-                              const temp = value;
-                              temp.splice(stack, 1);
-                              onChange(temp);
+                              onChange(value.filter(el => el !== stack));
                             }
                           }}
                         />
@@ -441,7 +422,7 @@ const CreateResume = () => {
             <Input1
               type="text"
               placeholder="회사명"
-              value={career.companyName}
+              value={career.companyName || ""}
               onChange={e => {
                 const newCareerList = [...careerList];
                 newCareerList[index].companyName = e.target.value;
@@ -496,7 +477,7 @@ const CreateResume = () => {
             <Input1
               type="text"
               placeholder="경험/활동/교육"
-              value={experience.experienceName}
+              value={experience.experienceName || ""}
               onChange={e => {
                 const newExperienceList = [...experiences];
                 newExperienceList[index].experienceName = e.target.value;
@@ -537,7 +518,7 @@ const CreateResume = () => {
             <Input1
               type="text"
               placeholder="자격/어학/수상"
-              value={qualification.certificateName}
+              value={qualification.certificateName || ""}
               onChange={e => {
                 const newQualificationList = [...qualifications];
                 newQualificationList[index].certificateName = e.target.value;
@@ -812,39 +793,6 @@ const FileContainer = styled.div`
   gap: 16px;
 `;
 
-const FileName = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 16px;
-  line-height: 1rem;
-  color: #707070;
-  border: 1px solid var(--border-gray-100);
-  border-radius: var(--button-radius);
-`;
-
-const FileInput = styled.input`
-  display: none;
-
-  & + label {
-    display: inline-block;
-    color: #ffffff;
-    padding: 16px;
-    background-color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-    border-radius: var(--button-radius);
-    word-break: keep-all;
-    transition: all 0.1s;
-    cursor: pointer;
-    user-select: none;
-
-    &:active {
-      transform: scale(99%);
-    }
-  }
-`;
-
 const Label2 = styled.div`
   margin-right: 20px;
   margin-top: 80px;
@@ -864,42 +812,6 @@ const Button = styled.button`
   color: #ffffff;
   font-size: 15px;
   padding: 12px 45px;
-`;
-
-const RemoveButton = styled.button`
-  color: #e74c3c;
-  padding: 16px;
-  background-color: #ffffff;
-  border: 1px solid #e74c3c;
-  border-radius: var(--button-radius);
-  word-break: keep-all;
-  transition: all 0.1s;
-  cursor: pointer;
-  user-select: none;
-
-  &:active {
-    transform: scale(99%);
-  }
-`;
-
-const AddButton = styled.button`
-  color: #ffffff;
-  padding: 16px;
-  background-color: #3498db;
-  border: 1px solid #3498db;
-  border-radius: var(--button-radius);
-  word-break: keep-all;
-  transition: all 0.1s;
-  cursor: pointer;
-  user-select: none;
-
-  &:active {
-    transform: scale(99%);
-  }
-`;
-
-const ViewLink = styled(Link)`
-  width: 100%;
 `;
 
 export default CreateResume;

@@ -9,12 +9,12 @@ export interface Resume {
   address: string;
   education: string;
   schoolName: string;
+  techStack: string[];
   experience: {
     experienceName: string;
     startDate: string;
     endDate: string;
   }[];
-  techStack: string[];
   career: {
     companyName: string;
     jobCategory: string;
@@ -27,6 +27,11 @@ export interface Resume {
   }[];
   portfolio: string;
   resumeImageUrl: string;
+}
+
+export interface ResumeData extends Resume {
+  jobCategory: string;
+  qualifications: string[];
 }
 
 export interface ResumeKeyUrl {

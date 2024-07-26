@@ -6,11 +6,7 @@ import { postWithdrawCandidate } from "../axios/http/user";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/atoms/userAtom";
 
-interface AccountProps {
-  role: string;
-}
-
-const Account: React.FC<AccountProps> = () => {
+const Account = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

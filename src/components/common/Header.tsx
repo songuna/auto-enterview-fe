@@ -21,7 +21,7 @@ const Header = () => {
   }
   useEffect(() => {
     if (!token) setAuthUser(null);
-  }, [token]);
+  }, [setAuthUser, token]);
 
   const navigate = useNavigate();
 
