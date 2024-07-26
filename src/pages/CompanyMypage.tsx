@@ -24,7 +24,7 @@ import {
 import { getPostedJobPostings } from "../axios/http/jobPosting";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
-import { getDday } from "../utils/Format";
+import { getDday, getDdayNumber } from "../utils/Format";
 import { InfoItem, PostedJobPoting } from "../type/company";
 import { getCompanyInfo, postCompanyInfo, putCompanyInfo } from "../axios/http/company";
 import { Helmet } from "react-helmet-async";
@@ -84,7 +84,6 @@ const CompanyMypage = () => {
     const fetchJobPosting = async () => {
       try {
         const response = await getPostedJobPostings(authUser.key);
-
         setJobPostingList(response);
       } catch (error) {
         alert("채용공고 목록을 불러오는데 문제가 생겼습니다.");
@@ -129,6 +128,7 @@ const CompanyMypage = () => {
       boss: bossValue,
       address: addressValue,
     };
+
     const bodyFill = Object.values(body).every(v => v.toString().trim());
 
     if (bodyFill) {
@@ -212,43 +212,46 @@ const CompanyMypage = () => {
                     <InfoDesc>
                       {desc instanceof Date ? desc.toISOString().substring(0, 10) : desc}
                     </InfoDesc>
-                  )}
-                </Info>
-              ))}
-            </UserInfo>
-          </Container>
-          <Container>
-            <Top>
-              <SubTitle className="sub-title">등록한 채용 공고 목록</SubTitle>
-              <CreatePost to="/create-jobpost">
-                <HiOutlinePlus />
-              </CreatePost>
-            </Top>
-            <RecruitLists>
-              {jobPostingList?.map(jobPosting => (
-                <RecruitList key={jobPosting.jobPostingKey}>
-                  <LabelWrap>
-                    <Label />
-                    <Dday>{getDday(jobPosting.endDate)}</Dday>
-                  </LabelWrap>
-                  <ListTitle to={`/jobpost-detail/${jobPosting.jobPostingKey}`}>
-                    {jobPosting.title}
-                  </ListTitle>
-                  <ListCareer>
-                    {jobPosting.career === 0 ? "신입" : jobPosting.career + "년 이상"}
-                  </ListCareer>
-                  <StepsButton
-                    onClick={e => goToRecruitBoard(e, jobPosting.jobPostingKey, jobPosting.title)}
-                  >
-                    채용단계 관리
-                  </StepsButton>
-                </RecruitList>
-              ))}
-            </RecruitLists>
-          </Container>
-        </Inner>
-      </Wrapper>
-    </>
+                  )}           
+              </Info>
+            ))}
+          </UserInfo>
+        </Container>
+        <Container>
+          <Top>
+            <SubTitle className="sub-title">등록한 채용 공고 목록</SubTitle>
+            <CreatePost to="/create-jobpost">
+              <HiOutlinePlus />
+            </CreatePost>
+          </Top>
+          <RecruitLists>
+            {jobPostingList?.map(jobPosting => (
+              <RecruitList key={jobPosting.jobPostingKey}>
+                <LabelWrap>
+                  <Label dday={getDdayNumber(jobPosting.endDate)} />
+                  <Dday>{getDday(jobPosting.endDate)}</Dday>
+                </LabelWrap>
+                <ListTitle to={`/jobpost-detail/${jobPosting.jobPostingKey}`}>
+                  {jobPosting.title}
+                </ListTitle>
+                <ListCareer>
+                  {jobPosting.career === 0
+                    ? "신입"
+                    : jobPosting.career == -1
+                      ? "경력무관"
+                      : jobPosting.career + "년 이상"}
+                </ListCareer>
+                <StepsButton
+                  onClick={e => goToRecruitBoard(e, jobPosting.jobPostingKey, jobPosting.title)}
+                >
+                  채용단계 관리
+                </StepsButton>
+              </RecruitList>
+            ))}
+          </RecruitLists>
+        </Container>
+      </Inner>
+    </Wrapper>
   );
 };
 

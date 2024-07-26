@@ -39,16 +39,7 @@ axiosInstance.interceptors.request.use(
     const token = localStorage.getItem("token");
     if (token) {
       // 토큰의 만료시간보다 지났으면 토큰 삭제
-
       config.headers.Authorization = `${JSON.parse(token).value}`;
-      // const now = new Date();
-
-      // if (+JSON.parse(token).expires < +now.getTime()) {
-      //   localStorage.removeItem("token");
-      // } else {
-      //   console.log("토큰이 담겨있습니다");
-      //   config.headers.Authorization = `${JSON.parse(token).value}`;
-      // }
     }
 
     return config;

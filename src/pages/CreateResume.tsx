@@ -93,34 +93,58 @@ const CreateResume = () => {
           setValue("phoneNumber", resumeData.phoneNumber || "");
           setValue("address", resumeData.address || "");
           setValue("schoolName", resumeData.schoolName || "");
-          setValue("techStack", resumeData.techStack || []);
 
-          setCareerList(
+
+          resumeData.career.length > 0
+          ? setCareerList(
             resumeData.career.map((career: any) => ({
               companyName: career.companyName,
               jobCategory: career.jobCategory || "",
               startDate: career.startDate ? new Date(career.startDate) : null,
               endDate: career.endDate ? new Date(career.endDate) : null,
             })),
-          );
+          )
+          : setCareerList([
+            {
+              companyName: null,
+              jobCategory: null,
+              startDate: new Date,
+              endDate:new Date,
+            },
+          ]);
 
-          setExperiences(
+          resumeData.experience.length > 0
+          ? setExperiences(
             resumeData.experience.map((exp: any) => ({
               experienceName: exp.experienceName,
               startDate: exp.startDate ? new Date(exp.startDate) : null,
               endDate: exp.endDate ? new Date(exp.endDate) : null,
             })),
-          );
+          )
+          : setExperiences([
+            {
+              experienceName: null,
+              startDate: new Date,
+              endDate:new Date,
+            },
+          ]);
 
-          setQualifications(
+          resumeData.certificates.length > 0
+          ? setQualifications(
             resumeData.certificates.map((cert: any) => ({
               certificateName: cert.certificateName,
               certificateDate: cert.certificateDate ? new Date(cert.certificateDate) : null,
             })),
-          );
+          )
+          : setQualifications([
+            {
+              certificateName: null,
+              certificateDate: new Date,
+            },
+          ]);
 
-          if (resumeData.imageUrl) {
-            setImgURL(resumeData.imageUrl);
+          if (resumeData.resumeImageUrl) {
+            setImgURL(resumeData.resumeImageUrl);
           }
         } catch (error) {
           console.error("Error fetching resume:", error);
@@ -200,66 +224,51 @@ const CreateResume = () => {
 
   //이력서 생성 data
   const onSubmit = async (data: any) => {
-    const ResumeData = {
-      title:title,
-      jobWant: jobCategory || null,
-      name: data.name || "",
-      gender: gender || "",
-      birthDate: data.birthDate ? new Date(data.birthDate).toISOString().split("T")[0] : "",
-      email: data.email || "",
-      phoneNumber: data.phoneNumber || "",
-      address: data.address || "",
-      education: education || "",
-      schoolName: data.schoolName || "",
-      experience: experiences.map(experiences => ({
-        experienceName: experiences.experienceName,
-        startDate: experiences.startDate
-          ? new Date(experiences.startDate).toISOString().split("T")[0]
-          : "",
-        endDate: experiences.endDate
-          ? new Date(experiences.endDate).toISOString().split("T")[0]
-          : "",
-      })),
-      techStack: data.techStack || [],
-      career: careerList.map(career => ({
-        companyName: career.companyName,
-        jobCategory: career.jobCategory || null,
-        startDate: career.startDate ? new Date(career.startDate).toISOString().split("T")[0] : "",
-        endDate: career.endDate ? new Date(career.endDate).toISOString().split("T")[0] : "",
-      })),
-      certificates: qualifications.map(qualification => ({
-        certificateName: qualification.certificateName,
-        certificateDate: qualification.certificateDate
-          ? new Date(qualification.certificateDate).toISOString().split("T")[0]
-          : "",
-      })),
-      portfolio: portfolio || "",
-      imageUrl: imgURL || "",
-    };
+  const ResumeData = {
+    title: title,
+    jobWant: jobCategory || null,
+    name: data.name || "",
+    gender: gender || "",
+    birthDate: data.birthDate ? new Date(data.birthDate).toISOString().split("T")[0] : "",
+    email: data.email || "",
+    phoneNumber: data.phoneNumber || "",
+    address: data.address || "",
+    education: education || "",
+    schoolName: data.schoolName || "",
+    experience: experiences.map(experience => ({
+      experienceName: experience.experienceName,
+      startDate: experience.startDate ? new Date(experience.startDate).toISOString().split("T")[0] : "",
+      endDate: experience.endDate ? new Date(experience.endDate).toISOString().split("T")[0] : "",
+    })),
+    techStack: data.techStack || [],
+    career: careerList.map(career => ({
+      companyName: career.companyName,
+      jobCategory: career.jobCategory || null,
+      startDate: career.startDate ? new Date(career.startDate).toISOString().split("T")[0] : "",
+      endDate: career.endDate ? new Date(career.endDate).toISOString().split("T")[0] : "",
+    })),
+    certificates: qualifications.map(qualification => ({
+      certificateName: qualification.certificateName,
+      certificateDate: qualification.certificateDate ? new Date(qualification.certificateDate).toISOString().split("T")[0] : "",
+    })),
+    portfolio: portfolio || "",
+  };
 
-    // jobCategory가 빈 문자열인 경우 필드를 제거
-    if (jobCategory) {
-    ResumeData.jobWant = jobCategory;
+  const resultData = new FormData();
+  if (imgFile) {
+    resultData.append("image", imgFile);
   }
+  resultData.append("resumeInfo", new Blob([JSON.stringify(ResumeData)], { type: "application/json" }));
 
-    const resultData = new FormData();
-    if (imgFile) {
-      resultData.append("image", imgFile);
-    }
-    resultData.append(
-      "resumeInfo",
-      new Blob([JSON.stringify(ResumeData)], { type: "application/json" }),
-    );
-
-    try {
+  try {
     if (resumeData) {
       // PUT 요청으로 이력서 업데이트
-      const response = await putResume(authUser?.key, resultData, {
+      await putResume(authUser?.key, resultData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
     } else {
       // POST 요청으로 새 이력서 작성
-      const response = await postResume(authUser?.key, resultData, {
+      await postResume(authUser?.key, resultData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
     }
@@ -614,6 +623,7 @@ const Image = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  object-fit: cover;
 `;
 
 const ImgInput = styled.input`
@@ -621,6 +631,7 @@ const ImgInput = styled.input`
   width: 0;
   height: 0;
   overflow: hidden;
+  object-fit: cover;
 `;
 
 const LabelName = styled.label`

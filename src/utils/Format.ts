@@ -39,6 +39,19 @@ export const getDday = (endDate: string): string => {
 
 /**
  *
+ * @param endDate
+ * @returns -3
+ */
+export const getDdayNumber = (endDate: string) => {
+  const date = new Date(endDate);
+  const today = new Date();
+  const remain = Number(today) - Number(date);
+  const remainDate = Math.floor(remain / 1000 / 60 / 60 / 24);
+  return remainDate;
+};
+
+/**
+ *
  * @param time
  * @returns `18:00`
  */
