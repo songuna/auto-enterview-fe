@@ -8,11 +8,13 @@ import { ModalType } from "../type/modal";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { deleteInterviewSchedule } from "../axios/http/interview";
 import { CandidateInfo, RecruitBoardData } from "../type/recruitBoard";
-import { getRecruitBoardData, putNextStep } from "../axios/http/recruitBoard";
+import { putNextStep } from "../axios/http/recruitBoard";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
 import React from "react";
 import { Helmet } from "react-helmet-async";
+import { fetchCandidates } from "../axios/fetch/recruitBoard";
+import { QueryClient, useQuery } from "@tanstack/react-query";
 
 const RecruitBoard = () => {
   const { jobPostingKey } = useParams();
@@ -29,27 +31,33 @@ const RecruitBoard = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const title = queryParams.get("title");
+  const queryClient = new QueryClient();
+  const {
+    data: candidateList,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["candidate-list"],
+    queryFn: () => fetchCandidates(jobPostingKey),
+  });
 
-  // 단계 및 지원자 목록, 일정 정보
-  const fetchCandidates = useCallback(async () => {
-    if (!jobPostingKey) return;
+  if (isError) {
+    alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
+  }
 
-    try {
-      const data: RecruitBoardData[] = await getRecruitBoardData(jobPostingKey);
-      setDataList(data);
-      const stepData = data.filter(
-        step => step.candidateTechStackInterviewInfoDtoList.length !== 0,
-      );
-      const lastStep = stepData[stepData.length - 1];
-      setActiveStep(lastStep ? lastStep.stepId : data[0].stepId);
-    } catch (error) {
-      alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
-    }
-  }, [jobPostingKey]);
+  const setCandidates = useCallback(() => {
+    if (isPending || !candidateList) return;
+    setDataList(candidateList);
+    const stepData = candidateList.filter(
+      step => step.candidateTechStackInterviewInfoDtoList.length !== 0,
+    );
+    const lastStep = stepData[stepData.length - 1];
+    setActiveStep(lastStep ? lastStep.stepId : candidateList[0].stepId);
+  }, [candidateList, isPending]);
 
   useEffect(() => {
-    fetchCandidates();
-  }, [fetchCandidates, jobPostingKey]);
+    setCandidates();
+  }, [setCandidates]);
 
   // 칸반보드 1200px 넘어가면 양쪽으로 드래그
   let isDragging = false;
@@ -194,22 +202,7 @@ const RecruitBoard = () => {
   const onClose = () => {
     setModal(false);
 
-    const fetchCandidates = async () => {
-      if (!jobPostingKey) return;
-
-      try {
-        const data: RecruitBoardData[] = await getRecruitBoardData(jobPostingKey);
-        setDataList(data);
-        const stepData = data.filter(
-          step => step.candidateTechStackInterviewInfoDtoList.length !== 0,
-        );
-        const lastStep = stepData[stepData.length - 1];
-        setActiveStep(lastStep ? lastStep.stepId : data[0].stepId);
-      } catch (error) {
-        alert("지원자 목록을 불러오는데 문제가 생겼습니다. 다시 시도해주세요.");
-      }
-    };
-    fetchCandidates();
+    queryClient.invalidateQueries({ queryKey: ["candidate-list"] });
   };
 
   return (
