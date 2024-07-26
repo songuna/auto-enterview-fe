@@ -2,8 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { ONE_HOUR } from "../constants/Time";
 
 export const axiosInstance = axios.create({
-  baseURL: "http://43.203.218.49:8080",
-  //timeout: 5000,
+  baseURL: import.meta.env.VITE_BASE_URL,
 });
 
 export interface HttpClient extends AxiosInstance {
