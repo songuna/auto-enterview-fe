@@ -1,5 +1,5 @@
 import { useState, FormEvent, ChangeEvent } from "react";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { postSignin } from "../axios/http/user";
@@ -43,8 +43,6 @@ const Login = () => {
       console.error("서버 요청 실패:", error);
       alert("로그인에 실패했습니다. 다시 시도해주세요.");
     }
-    // 로그인 로직 처리
-    console.log("로그인 시도:", { email, password });
   };
 
   // 비밀번호 유효성 검사 로직 추가
@@ -88,19 +86,6 @@ const Login = () => {
     </Wrapper>
   );
 };
-
-// 로그인 style
-const show = keyframes`
-  0%, 49.99% {
-    opacity: 0;
-    z-index: 1;
-  }
-
-  50%, 100% {
-    opacity: 1;
-    z-index: 5;
-  }
-`;
 
 const Wrapper = styled.div`
   display: flex;

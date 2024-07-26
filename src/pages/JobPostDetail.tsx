@@ -17,6 +17,7 @@ import { getCompanyInfo } from "../axios/http/company";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
 import { MdDeleteForever } from "react-icons/md";
+import axios from "axios";
 
 const JobPostDetail = () => {
   const navigate = useNavigate();
@@ -61,14 +62,16 @@ const JobPostDetail = () => {
         // 회사정보
         const companyResponse = await getCompanyInfo(response.companyKey);
         setCompanyInfo(companyResponse);
-      } catch (e: any) {
-        if (e.response.status == "404") {
-          alert("마감 기한이 지난 공고 입니다.");
-          navigate(-1);
+      } catch (e) {
+        if (axios.isAxiosError(e)) {
+          if (e.response?.status == 404) {
+            alert("마감 기한이 지난 공고 입니다.");
+            navigate(-1);
+          }
         }
       }
     })();
-  }, [jobPostingKey]);
+  }, [jobPostingKey, navigate]);
 
   // 수정하기
   const goEdit = () => {
@@ -89,11 +92,13 @@ const JobPostDetail = () => {
       try {
         await postJobPostingApply(jobPostingKey);
         alert("지원되었습니다.");
-      } catch (e: any) {
-        if (e.response.status == "403") {
-          alert("지원할 수 없습니다.");
-        } else {
-          alert(e.response.data.message);
+      } catch (e) {
+        if (axios.isAxiosError(e)) {
+          if (e.response?.status == 403) {
+            alert("지원할 수 없습니다.");
+          } else {
+            alert(e.response?.data.message);
+          }
         }
       }
     }
@@ -107,8 +112,10 @@ const JobPostDetail = () => {
       try {
         await deleteCompaniesJobPosting(jobPostingKey);
         navigate("/company-mypage");
-      } catch (e: any) {
-        alert(e.response.data.message);
+      } catch (e) {
+        if (axios.isAxiosError(e)) {
+          alert(e.response?.data.message);
+        }
       }
     }
   };

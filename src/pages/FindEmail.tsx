@@ -1,25 +1,25 @@
-import styled, { keyframes } from 'styled-components';
-import React, { useState } from 'react';
-import { postFindEmail } from '../axios/http/user';
+import styled from "styled-components";
+import React, { useState } from "react";
+import { postFindEmail } from "../axios/http/user";
 
 const FindEmail: React.FC = () => {
-  const [name, setName] = useState('');
-  const [phoneNumber, setPhone] = useState('');
-  const [email, setEmail] = useState('');
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!name || !phoneNumber) {
-      alert('정보를 입력해주세요');
+      alert("정보를 입력해주세요");
     } else {
       try {
         const response = await postFindEmail(name, phoneNumber); // 이메일 찾기 API 호출
         setEmail(response.email);
         setIsModalOpen(true);
       } catch (error) {
-        console.error('Error finding email:', error);
-        alert('이메일을 찾을 수 없습니다. 다시 시도해주세요.');
+        console.error("Error finding email:", error);
+        alert("이메일을 찾을 수 없습니다. 다시 시도해주세요.");
       }
     }
   };
@@ -29,18 +29,28 @@ const FindEmail: React.FC = () => {
   };
 
   return (
-  <Wrapper>
-    <Container id="container">
-      <Form onSubmit={handleSubmit}>
-        <H1>이메일 찾기</H1>
-        <Span>이름과 휴대폰 번호를 입력해주세요.</Span>
-        <Input type="text" placeholder="이름" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input type="text" placeholder="휴대폰 번호 ( - 사용)" value={phoneNumber} onChange={(e) => setPhone(e.target.value)}/>
-        <Button>이메일 찾기</Button>
-        <Span className='companySpan'>회사는 이메일 찾기를 지원하지않습니다.</Span>
-      </Form>
-    </Container>
-    {isModalOpen && (
+    <Wrapper>
+      <Container id="container">
+        <Form onSubmit={handleSubmit}>
+          <H1>이메일 찾기</H1>
+          <Span>이름과 휴대폰 번호를 입력해주세요.</Span>
+          <Input
+            type="text"
+            placeholder="이름"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
+          <Input
+            type="text"
+            placeholder="휴대폰 번호 ( - 사용)"
+            value={phoneNumber}
+            onChange={e => setPhone(e.target.value)}
+          />
+          <Button>이메일 찾기</Button>
+          <Span className="companySpan">회사는 이메일 찾기를 지원하지않습니다.</Span>
+        </Form>
+      </Container>
+      {isModalOpen && (
         <ModalOverlay>
           <ModalContent>
             <H2>이메일 찾기 성공!</H2>
@@ -49,38 +59,23 @@ const FindEmail: React.FC = () => {
           </ModalContent>
         </ModalOverlay>
       )}
-  </Wrapper>
-
+    </Wrapper>
   );
 };
-
-
-
-
- //이메일 찾기 style
-const show = keyframes`
-  0%, 49.99% {
-    opacity: 0;
-    z-index: 1;
-  }
-
-  50%, 100% {
-    opacity: 1;
-    z-index: 5;
-  }
-`;
 
 const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 80px;
-`
+`;
 
 const Container = styled.div`
   background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.25),
+    0 10px 10px rgba(0, 0, 0, 0.22);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -89,7 +84,7 @@ const Container = styled.div`
   width: 500px;
   max-width: 100%;
   min-height: 480px;
-`
+`;
 
 const Form = styled.form`
   background-color: #ffffff;
@@ -100,12 +95,12 @@ const Form = styled.form`
   padding: 0 50px;
   height: 100%;
   text-align: center;
-`
+`;
 
 const H1 = styled.h1`
   font-weight: bold;
   margin-bottom: 12px;
-`
+`;
 
 const Input = styled.input`
   background-color: #eee;
@@ -113,7 +108,7 @@ const Input = styled.input`
   padding: 15px 40px;
   margin: 10px 0;
   width: 100%;
-`
+`;
 
 const Button = styled.button`
   border-radius: 8px;
@@ -129,16 +124,16 @@ const Button = styled.button`
   text-transform: uppercase;
   transition: transform 80ms ease-in;
   width: 100%;
-  `
+`;
 
 const Span = styled.span`
   font-size: 12px;
   margin-top: 5px;
   margin-bottom: 5px;
-  &.companySpan{
+  &.companySpan {
     color: red;
   }
-`
+`;
 
 // 이메일 찾기 후 모달
 const ModalOverlay = styled.div`
@@ -179,14 +174,12 @@ const H2 = styled.h2`
   justify-content: center;
   align-items: center;
   margin-bottom: 10px;
-`
+`;
 
 const P = styled.p`
   display: flex;
   justify-content: center;
   align-items: center;
-`
-
-
+`;
 
 export default FindEmail;
