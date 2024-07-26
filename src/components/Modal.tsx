@@ -8,8 +8,11 @@ import { ModalProps } from "../type/modal";
 import DatePickerOne from "./input/DatePickerOne";
 import TimePicker from "./input/TimePicker";
 import FormContent from "./FormContent";
+import { postReserveEmail } from "../axios/http/sendEmail";
+import { useRecoilValue } from "recoil";
+import { authUserState } from "../recoil/store";
 
-const Modal = ({ type, step, onClose }: ModalProps) => {
+const Modal = ({ type, stepId, onClose }: ModalProps) => {
   const { jobPostingKey } = useParams();
   const [currentTab, setCurrentTab] = useState("assignment");
   const [emailText, setEmailText] = useState("");
@@ -19,6 +22,7 @@ const Modal = ({ type, step, onClose }: ModalProps) => {
     endHour: new Date(2024, 7, 13, 18, 0),
   });
   const [scheduleKey, setScheduleKey] = useState("");
+  const authUser = useRecoilValue(authUserState);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,10 +39,25 @@ const Modal = ({ type, step, onClose }: ModalProps) => {
 
   // 메일 예약하기
   const sendEmail = async () => {
-    // try {
-    //   await
-    // } catch (error) {
-    // }
+    if (!authUser || !jobPostingKey) return;
+
+    const props = {
+      companyKey: authUser.key,
+      jobPostingKey,
+      stepId,
+    };
+    const body = {
+      mailContent: emailText,
+      mailSendDateTime: `${emailData.endDate.toISOString().split("T")[0]}T${emailData.endHour.toTimeString().slice(0, 8)}`,
+    };
+
+    try {
+      await postReserveEmail(props, body);
+      alert("메일을 성공적으로 예약했습니다.");
+      onClose();
+    } catch (error) {
+      alert("예약 메일을 생성하는데 문제가 생겼습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
@@ -66,7 +85,7 @@ const Modal = ({ type, step, onClose }: ModalProps) => {
                 <FormContent
                   currentTab={currentTab}
                   jobPostingKey={jobPostingKey}
-                  stepId={step}
+                  stepId={stepId}
                   setTypeEmail={setTypeEmail}
                   setScheduleKey={setScheduleKey}
                 />
@@ -86,7 +105,7 @@ const Modal = ({ type, step, onClose }: ModalProps) => {
                 ></TextArea>
                 <Field>
                   <Label>
-                    <Text>과제 마감 날짜</Text>
+                    <Text>메일 발송 날짜</Text>
                     <DatePickerOne
                       value={emailData.endDate}
                       onChange={date => setEmailData({ ...emailData, endDate: date })}
@@ -96,7 +115,9 @@ const Modal = ({ type, step, onClose }: ModalProps) => {
                     <Text>시간</Text>
                     <TimePicker
                       value={emailData.endHour}
-                      onChange={date => setEmailData({ ...emailData, endHour: date })}
+                      onChange={date => {
+                        setEmailData({ ...emailData, endHour: date });
+                      }}
                     />
                   </Label>
                 </Field>

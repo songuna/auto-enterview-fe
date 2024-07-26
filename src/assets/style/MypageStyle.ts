@@ -63,7 +63,9 @@ export const Label = styled.span`
   background-color: #00cc21;
 `;
 
-export const Dday = styled.p``;
+export const Dday = styled.p`
+  width: 6rem;
+`;
 
 export const ListTitle = styled(Link)`
   width: 100%;

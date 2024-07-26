@@ -27,6 +27,7 @@ import { authUserState } from "../recoil/store";
 import { getDday } from "../utils/Format";
 import { InfoItem, PostedJobPoting } from "../type/company";
 import { getCompanyInfo, postCompanyInfo, putCompanyInfo } from "../axios/http/company";
+import { Helmet } from "react-helmet-async";
 
 const CompanyMypage = () => {
   const [info, setInfo] = useState<InfoItem[]>([
@@ -165,84 +166,89 @@ const CompanyMypage = () => {
   };
 
   return (
-    <Wrapper>
-      <Inner className="inner-1200">
-        <UserName>{authUser?.name}</UserName>
-        <Container>
-          <Top>
-            <SubTitle>회사 정보</SubTitle>
-            <Buttons>
-              {editMode ? (
-                <>
-                  <IconButton className="cancel" onClick={cancelEdit}>
-                    <IoMdClose />
-                  </IconButton>
-                  <IconButton className="save" onClick={saveInfo}>
-                    <GiSaveArrow />
-                  </IconButton>
-                </>
-              ) : (
-                <IconButton className="edit" onClick={editInfo}>
-                  <CiEdit />
-                </IconButton>
-              )}
-            </Buttons>
-          </Top>
-          <UserInfo>
-            {info.map(({ title, desc }, idx) => (
-              <Info className="text" key={title}>
-                <InfoTitle>{title}</InfoTitle>
+    <>
+      <Helmet>
+        <title>AutoEnterview 마이페이지</title>
+      </Helmet>
+      <Wrapper>
+        <Inner className="inner-1200">
+          <UserName>{authUser?.name}</UserName>
+          <Container>
+            <Top>
+              <SubTitle>회사 정보</SubTitle>
+              <Buttons>
                 {editMode ? (
-                  <InfoInput
-                    type={title === "설립년도" ? "date" : title === "사원수" ? "number" : "text"}
-                    name={title}
-                    value={values[idx]}
-                    min={typeof values[idx] === "number" ? 0 : undefined}
-                    onChange={e => {
-                      const newValue = e.target.value;
-                      onChange(title, newValue);
-                    }}
-                  />
+                  <>
+                    <IconButton className="cancel" onClick={cancelEdit}>
+                      <IoMdClose />
+                    </IconButton>
+                    <IconButton className="save" onClick={saveInfo}>
+                      <GiSaveArrow />
+                    </IconButton>
+                  </>
                 ) : (
-                  <InfoDesc>
-                    {desc instanceof Date ? desc.toISOString().substring(0, 10) : desc}
-                  </InfoDesc>
+                  <IconButton className="edit" onClick={editInfo}>
+                    <CiEdit />
+                  </IconButton>
                 )}
-              </Info>
-            ))}
-          </UserInfo>
-        </Container>
-        <Container>
-          <Top>
-            <SubTitle className="sub-title">등록한 채용 공고 목록</SubTitle>
-            <CreatePost to="/create-jobpost">
-              <HiOutlinePlus />
-            </CreatePost>
-          </Top>
-          <RecruitLists>
-            {jobPostingList?.map(jobPosting => (
-              <RecruitList key={jobPosting.jobPostingKey}>
-                <LabelWrap>
-                  <Label />
-                  <Dday>{getDday(jobPosting.endDate)}</Dday>
-                </LabelWrap>
-                <ListTitle to={`/jobpost-detail/${jobPosting.jobPostingKey}`}>
-                  {jobPosting.title}
-                </ListTitle>
-                <ListCareer>
-                  {jobPosting.career === 0 ? "신입" : jobPosting.career + "년 이상"}
-                </ListCareer>
-                <StepsButton
-                  onClick={e => goToRecruitBoard(e, jobPosting.jobPostingKey, jobPosting.title)}
-                >
-                  채용단계 관리
-                </StepsButton>
-              </RecruitList>
-            ))}
-          </RecruitLists>
-        </Container>
-      </Inner>
-    </Wrapper>
+              </Buttons>
+            </Top>
+            <UserInfo>
+              {info.map(({ title, desc }, idx) => (
+                <Info className="text" key={title}>
+                  <InfoTitle>{title}</InfoTitle>
+                  {editMode ? (
+                    <InfoInput
+                      type={title === "설립년도" ? "date" : title === "사원수" ? "number" : "text"}
+                      name={title}
+                      value={values[idx]}
+                      min={typeof values[idx] === "number" ? 0 : undefined}
+                      onChange={e => {
+                        const newValue = e.target.value;
+                        onChange(title, newValue);
+                      }}
+                    />
+                  ) : (
+                    <InfoDesc>
+                      {desc instanceof Date ? desc.toISOString().substring(0, 10) : desc}
+                    </InfoDesc>
+                  )}
+                </Info>
+              ))}
+            </UserInfo>
+          </Container>
+          <Container>
+            <Top>
+              <SubTitle className="sub-title">등록한 채용 공고 목록</SubTitle>
+              <CreatePost to="/create-jobpost">
+                <HiOutlinePlus />
+              </CreatePost>
+            </Top>
+            <RecruitLists>
+              {jobPostingList?.map(jobPosting => (
+                <RecruitList key={jobPosting.jobPostingKey}>
+                  <LabelWrap>
+                    <Label />
+                    <Dday>{getDday(jobPosting.endDate)}</Dday>
+                  </LabelWrap>
+                  <ListTitle to={`/jobpost-detail/${jobPosting.jobPostingKey}`}>
+                    {jobPosting.title}
+                  </ListTitle>
+                  <ListCareer>
+                    {jobPosting.career === 0 ? "신입" : jobPosting.career + "년 이상"}
+                  </ListCareer>
+                  <StepsButton
+                    onClick={e => goToRecruitBoard(e, jobPosting.jobPostingKey, jobPosting.title)}
+                  >
+                    채용단계 관리
+                  </StepsButton>
+                </RecruitList>
+              ))}
+            </RecruitLists>
+          </Container>
+        </Inner>
+      </Wrapper>
+    </>
   );
 };
 

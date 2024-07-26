@@ -59,7 +59,7 @@ const FormContent = ({
 
     const interviewBody = dataList.map(data => ({
       startDate: data.startDate.toISOString().split("T")[0],
-      startTime: data.startTime.toISOString().split("T")[1].slice(0, 5),
+      startTime: data.startTime.toTimeString().slice(0, 5),
       term: data.term,
       times: data.times,
     }));
@@ -67,7 +67,8 @@ const FormContent = ({
     try {
       if (currentTab === "assignment") {
         // 과제 일정 생성
-        await postAssignmentSchedule(props, assignmentBody);
+        const { interviewScheduleKey } = await postAssignmentSchedule(props, assignmentBody);
+        setScheduleKey(interviewScheduleKey);
       } else {
         // 면접 일정 생성
         const { interviewScheduleKey } = await postInterviewSchedule(props, interviewBody);
