@@ -13,6 +13,7 @@ import TimePicker from "../components/input/TimePicker";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
 import { optionEducation, optionEmploymentType, optionJob, techStacks } from "../constants/options";
+import { FREE_HOUR } from "../constants/Word";
 
 interface JobPostingForm {
   jobCategory: string;
@@ -112,7 +113,7 @@ const CreateJobPost = () => {
       if (jobPostingInfo.career != -1) inputMemory.current.career = jobPostingInfo.career;
       if (jobPostingInfo.salary != -1) inputMemory.current.salary = jobPostingInfo.salary;
 
-      if (jobPostingInfo.workTime === "자유출근제") setFreeHour(true);
+      if (jobPostingInfo.workTime === FREE_HOUR) setFreeHour(true);
 
       setFormData({
         title: jobPostingInfo.title,
@@ -124,7 +125,7 @@ const CreateJobPost = () => {
         employmentType: jobPostingInfo.employmentType,
         salary: jobPostingInfo.salary,
         startHour:
-          jobPostingInfo.workTime === "자유출근제"
+          jobPostingInfo.workTime === FREE_HOUR
             ? new Date(2024, 7, 13, 9, 0)
             : new Date(
                 2024,
@@ -134,7 +135,7 @@ const CreateJobPost = () => {
                 +jobPostingInfo.workTime.slice(3, 5),
               ),
         endHour:
-          jobPostingInfo.workTime === "자유출근제"
+          jobPostingInfo.workTime === FREE_HOUR
             ? new Date(2024, 7, 13, 18, 0)
             : new Date(
                 2024,
@@ -188,9 +189,7 @@ const CreateJobPost = () => {
       education: formData.education,
       employmentType: formData.employmentType,
       salary: +formData.salary,
-      workTime: freeHour
-        ? "자율출근제"
-        : getStringWorkingHour(formData.startHour, formData.endHour),
+      workTime: freeHour ? FREE_HOUR : getStringWorkingHour(formData.startHour, formData.endHour),
       startDate: toLocaleDate(formData.startDate),
       endDate: toLocaleDate(formData.endDate),
       jobPostingContent: formData.jobPostingContent,
@@ -431,8 +430,9 @@ const CreateJobPost = () => {
               />
               <Checkbox
                 id="hourfree"
-                text="자율출근제"
+                text={FREE_HOUR}
                 onChange={event => setFreeHour(event.target.checked)}
+                checked={freeHour}
               />
             </InputContents>
             <ErrorMessage>

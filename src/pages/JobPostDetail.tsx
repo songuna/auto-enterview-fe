@@ -251,7 +251,9 @@ const JobPostDetail = () => {
               </LongInfo>
             </InfoContainer>
           </Container>
-          <ApplyButton onClick={Apply}>지원하기</ApplyButton>
+          {jobPostingInfo.companyKey == authUser?.key || (
+            <ApplyButton onClick={Apply}>지원하기</ApplyButton>
+          )}
         </Inner>
       </Wrapper>
     </>
