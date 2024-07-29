@@ -12,9 +12,10 @@ const ViewResume: React.FC = () => {
   const { candidateKey } = useParams<{ candidateKey: string }>();
   const authUser = useRecoilValue(authUserState);
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
-  // const [deleteConfirm, setDeleteConfirm] = useState(false);
   const navigate = useNavigate();
 
+  // 이력서 삭제
+  // const [deleteConfirm, setDeleteConfirm] = useState(false);
   // const handleDelete = async () => {
   //   if (deleteConfirm) {
   //     alert("이력서가 이미 삭제되었습니다!");
@@ -53,7 +54,7 @@ const ViewResume: React.FC = () => {
   }, [candidateKey]);
 
   const handleEdit = () => {
-    if (window.confirm("이력서를 수정하시겠습니까?")) {
+    if (window.confirm("지원한 공고에서도 이력서가 수정됩니다. 정말 수정하시겠어요?")) {
       navigate(`/create-resume`, { state: { resumeData } });
     }
   };

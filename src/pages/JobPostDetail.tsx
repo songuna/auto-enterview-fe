@@ -86,7 +86,7 @@ const JobPostDetail = () => {
         }
       }
     })();
-  }, [jobPostingKey, navigate]);
+  }, [authUser, jobPostingKey, navigate]);
 
   // 수정하기
   const goEdit = () => {

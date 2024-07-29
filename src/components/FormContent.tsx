@@ -53,8 +53,8 @@ const FormContent = ({ currentTab, jobPostingKey, stepId, setTypeEmail }: FormCo
     const interviewBody = dataList.map(data => ({
       startDate: data.startDate.toISOString().split("T")[0],
       startTime: data.startTime.toTimeString().slice(0, 5),
-      term: data.term,
-      times: data.times,
+      term: data.term === 0 ? 1 : data.term,
+      times: data.times === 0 ? 1 : data.times,
     }));
 
     try {
