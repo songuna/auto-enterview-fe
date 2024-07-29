@@ -558,6 +558,8 @@ const CreateJobPost = () => {
               <FileName>{formData.image?.name || ""}</FileName>
               <FileInput type="file" id="image" onChange={uploadFile} />
               <label htmlFor="image">이미지 업로드</label>
+              <Span>* 이미지 업로드 시 "jpg", "jpeg", "png" 만 가능</Span>
+              <Span>(최대 허용 크기 10MB)</Span>
             </FileContainer>
           </InputContainer>
           <SubmitButton
@@ -585,6 +587,13 @@ const EditModeText = styled.div`
 const Title = styled.h2`
   margin-top: 120px;
   margin-bottom: 24px;
+`;
+
+const Span = styled.span`
+  font-size: 12px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
 `;
 
 const Wrapper = styled.div`

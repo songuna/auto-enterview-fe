@@ -287,6 +287,8 @@ const CreateResume = () => {
                   )}
                   <ImgInput type="file" onChange={handleFileChange} ref={inputRef} />
                 </LabelName>
+                <Span>* 이미지 업로드 시 "jpg", "jpeg", "png" 만 가능</Span>
+                <Span>(최대 허용 크기 10MB)</Span>
               </div>
             </Image>
             <FlexContainer>
@@ -554,6 +556,8 @@ const CreateResume = () => {
             onChange={e => setPortfolio(e.target.value)}
           />
         </FileContainer>
+        <Span>* 이미지 업로드 시 "jpg", "jpeg", "png" 만 가능</Span>
+        <Span>(최대 허용 크기 10MB)</Span>
 
         <Container className="resumeBtn">
           <Button onClick={handleSubmit(onSubmit)}>이력서 등록</Button>
@@ -585,6 +589,13 @@ const Container = styled.div`
     display: flex;
     align-items: center;
   }
+`;
+
+const Span = styled.span`
+  font-size: 12px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
 `;
 
 const FlexContainer = styled.div`
