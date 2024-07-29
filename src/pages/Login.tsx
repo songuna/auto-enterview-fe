@@ -42,7 +42,8 @@ const Login = () => {
       navigate("/");
     } catch (error) {
       if (error instanceof AxiosError) {
-        alert(error.response?.data.email);
+        if (error.response?.data.email !== undefined) alert(error.response?.data.email);
+        else alert("이메일 또는 비밀번호가 일치하지 않습니다.");
       }
       console.error("서버 요청 실패:", error);
     }

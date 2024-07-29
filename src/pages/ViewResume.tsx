@@ -1,10 +1,9 @@
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components";
 import { MdOutlineEdit } from "react-icons/md";
-import { RiDeleteBin6Line } from "react-icons/ri";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getResume, deleteResume } from "../axios/http/resume";
+import { getResume } from "../axios/http/resume";
 import { useRecoilValue } from "recoil";
 import { authUserState } from "../recoil/store";
 import { ResumeData } from "../type/resume";
@@ -13,27 +12,28 @@ const ViewResume: React.FC = () => {
   const { candidateKey } = useParams<{ candidateKey: string }>();
   const authUser = useRecoilValue(authUserState);
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const navigate = useNavigate();
 
-  const handleDelete = async () => {
-    if (deleteConfirm) {
-      alert("이력서가 이미 삭제되었습니다!");
-      return;
-    } else {
-      if (window.confirm("정말 삭제하시겠습니까?")) {
-        try {
-          await deleteResume(candidateKey!);
-          alert("이력서가 삭제되었습니다!");
-          setDeleteConfirm(true);
-          navigate("/user-mypage");
-        } catch (error) {
-          console.error("삭제 실패:", error);
-          alert("이력서 삭제에 실패했습니다. 다시 시도해주세요.");
-        }
-      }
-    }
-  };
+  // 이력서 삭제
+  // const [deleteConfirm, setDeleteConfirm] = useState(false);
+  // const handleDelete = async () => {
+  //   if (deleteConfirm) {
+  //     alert("이력서가 이미 삭제되었습니다!");
+  //     return;
+  //   } else {
+  //     if (window.confirm("정말 삭제하시겠습니까?")) {
+  //       try {
+  //         await deleteResume(candidateKey!);
+  //         alert("이력서가 삭제되었습니다!");
+  //         setDeleteConfirm(true);
+  //         navigate("/user-mypage");
+  //       } catch (error) {
+  //         console.error("삭제 실패:", error);
+  //         alert("이력서 삭제에 실패했습니다. 다시 시도해주세요.");
+  //       }
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     if (!candidateKey) return;
@@ -54,7 +54,7 @@ const ViewResume: React.FC = () => {
   }, [candidateKey]);
 
   const handleEdit = () => {
-    if (window.confirm("이력서를 수정하시겠습니까?")) {
+    if (window.confirm("지원한 공고에서도 이력서가 수정됩니다. 정말 수정하시겠어요?")) {
       navigate(`/create-resume`, { state: { resumeData } });
     }
   };
@@ -77,9 +77,9 @@ const ViewResume: React.FC = () => {
               <Edit onClick={handleEdit}>
                 <MdOutlineEdit size={20} />
               </Edit>
-              <Delete onClick={handleDelete}>
+              {/* <Delete onClick={handleDelete}>
                 <RiDeleteBin6Line size={20} />
-              </Delete>
+              </Delete> */}
             </Icon>
           )}
         </Title>
