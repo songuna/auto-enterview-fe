@@ -61,7 +61,16 @@ const JobPostDetail = () => {
 
         // 회사정보
         const companyResponse = await getCompanyInfo(response.companyKey);
-        setCompanyInfo(companyResponse);
+        let companyURL = companyResponse.companyUrl;
+
+        if (!companyURL.startsWith("http://") && !companyURL.startsWith("https://")) {
+          companyURL = `https://${companyURL}`;
+        }
+
+        setCompanyInfo({
+          ...companyResponse,
+          companyUrl: companyURL,
+        });
       } catch (e) {
         if (axios.isAxiosError(e)) {
           if (e.response?.status == 404) {
@@ -92,7 +101,7 @@ const JobPostDetail = () => {
 
     if (!authUser) {
       //로그인하지 않았다면 로그인으로 보내기 alert
-      if (confirm("로그인이 하시겠습니까?")) navigate("/login");
+      if (confirm("로그인 하시겠습니까?")) navigate("/login");
     } else if (confirm("정말 지원하시겠습니까?")) {
       // 로그인한 사용자만
       try {

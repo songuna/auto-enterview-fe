@@ -3,7 +3,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useState, FormEvent, ChangeEvent } from "react";
 import { postChangePassword } from "../axios/http/user";
 import { postWithdrawCandidate } from "../axios/http/user";
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { authUserState } from "../recoil/atoms/userAtom";
 
 const Account = () => {
@@ -15,7 +15,7 @@ const Account = () => {
   const [confirmMessage, setConfirmMessage] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const authUser = useRecoilValue(authUserState);
+  const [authUser, setAuthUser] = useRecoilState(authUserState);
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -28,7 +28,7 @@ const Account = () => {
     // 비밀번호 유효성 검사
     const isValidNewPassword = validatePassword(newPassword);
     if (!isValidNewPassword) {
-      setPasswordError("8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다");
+      setPasswordError("8-16자리 영문 대/소문자, 숫자, 특수문자(@,$,!,%,*,?,&)를 포함해야 합니다.");
       return;
     } else {
       setPasswordError("");
@@ -54,7 +54,7 @@ const Account = () => {
       }
     } catch (error) {
       console.error("비밀번호 변경 오류:", error);
-      setMessage("비밀번호 변경 중 오류가 발생했습니다");
+      setMessage("기존 비밀번호가 일치하지 않습니다");
     }
   };
 
@@ -69,6 +69,8 @@ const Account = () => {
     if (window.confirm("모든 정보가 다 사라집니다. 정말 탈퇴하시겠습니까?")) {
       try {
         await postWithdrawCandidate(authUser.key); // 탈퇴 API 호출
+        setAuthUser(null);
+        localStorage.removeItem("token");
         alert("탈퇴되었습니다");
         window.location.href = "/"; // 메인 화면으로 이동
       } catch (error) {
@@ -152,16 +154,18 @@ const Container = styled.div`
   width: 600px;
   max-width: 100%;
   min-height: 550px;
+  padding: 0 50px;
 `;
 
 const Form = styled.form`
-  background-color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 0 50px;
+  width: 100%;
+  max-width: 360px;
   height: 100%;
+  background-color: #ffffff;
   text-align: center;
 `;
 
@@ -179,31 +183,31 @@ const Span = styled.span`
 const Input = styled.input`
   background-color: #eee;
   border: none;
-  padding: 15px 55px;
-  margin: 10px 0;
+  border-radius: var(--button-radius);
+  padding: 15px;
+  margin-top: 10px;
   width: 100%;
 `;
 
 const PassWordCheck = styled.div`
+  position: relative;
   width: 100%;
-  display: flex;
-  flex-direction: row;
 `;
 
 const Icon = styled.div`
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-30%);
   cursor: pointer;
-  margin-left: -30px;
-  display: flex;
-  align-items: center;
 `;
 
 const Button = styled.button`
   border-radius: 8px;
   border: 1px solid #000694;
   background-color: #000694;
-  margin-top: 20px;
+  margin-top: 10px;
   color: #ffffff;
-  font-size: 12px;
   font-weight: bold;
   padding: 12px 45px;
   letter-spacing: 1px;
