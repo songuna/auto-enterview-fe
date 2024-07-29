@@ -15,7 +15,6 @@ const Index = () => {
   const authUser = useRecoilValue(authUserState);
   const [jobInfos, setJobInfos] = useState<JobInfo[]>([]);
   const [page, setpage] = useState(1);
-  const [loading, setLoading] = useState(false);
   const totalPage = useRef(0);
   const [isInfoMessage, setIsInfoMessage] = useState(false);
 
@@ -25,12 +24,10 @@ const Index = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       () => {
-        if (!loading) {
-          setpage(page => {
-            if (page < totalPage.current) return page + 1;
-            else return page;
-          });
-        }
+        setpage(page => {
+          if (page < totalPage.current) return page + 1;
+          else return page;
+        });
       },
       {
         threshold: 0,
@@ -39,18 +36,19 @@ const Index = () => {
     if (observerTarget.current) {
       observer.observe(observerTarget.current);
     }
-  }, [loading]);
+    return () => observer && observer.disconnect();
+  }, []);
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
+      if (!observerTarget.current) return;
+
       const response = await getJobPostings(page);
       totalPage.current = response.totalPages;
 
       if (response.jobPostingsList.length > 0 && jobInfos.length <= (page - 1) * 24) {
         setJobInfos(jobInfos => [...jobInfos, ...response.jobPostingsList]);
       }
-      setLoading(false);
     })();
   }, [jobInfos.length, page]);
 

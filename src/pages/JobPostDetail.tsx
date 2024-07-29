@@ -66,7 +66,13 @@ const JobPostDetail = () => {
         if (axios.isAxiosError(e)) {
           if (e.response?.status == 404) {
             alert("마감 기한이 지난 공고 입니다.");
-            navigate(-1);
+            if (!authUser) {
+              navigate("/");
+            } else if (authUser?.role == "ROLE_COMPANY") {
+              navigate("/company-mypage");
+            } else if (authUser?.role == "ROLE_CANDIDATE") {
+              navigate("/user-mypage");
+            }
           }
         }
       }
@@ -251,7 +257,9 @@ const JobPostDetail = () => {
               </LongInfo>
             </InfoContainer>
           </Container>
-          <ApplyButton onClick={Apply}>지원하기</ApplyButton>
+          {jobPostingInfo.companyKey == authUser?.key || (
+            <ApplyButton onClick={Apply}>지원하기</ApplyButton>
+          )}
         </Inner>
       </Wrapper>
     </>
