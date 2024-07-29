@@ -556,7 +556,7 @@ const CreateJobPost = () => {
             />
             <FileContainer>
               <FileName>{formData.image?.name || ""}</FileName>
-              <FileInput type="file" id="image" onChange={uploadFile} />
+              <FileInput type="file" id="image" onChange={uploadFile} accept=".jpg, .jpeg, .png" />
               <label htmlFor="image">이미지 업로드</label>
               <Span>* 이미지 업로드 시 "jpg", "jpeg", "png" 만 가능</Span>
               <Span>(최대 허용 크기 10MB)</Span>

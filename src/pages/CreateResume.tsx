@@ -336,7 +336,12 @@ const CreateResume = () => {
                   {imgURL && (
                     <img src={imgURL} alt="Selected" style={{ width: "200px", height: "250px" }} />
                   )}
-                  <ImgInput type="file" onChange={handleFileChange} ref={inputRef} />
+                  <ImgInput
+                    type="file"
+                    onChange={handleFileChange}
+                    ref={inputRef}
+                    accept=".jpg, .jpeg, .png"
+                  />
                 </LabelName>
                 <Span>* 이미지 업로드 시 "jpg", "jpeg", "png" 만 가능</Span>
                 <Span>(최대 허용 크기 10MB)</Span>
@@ -414,7 +419,6 @@ const CreateResume = () => {
           </AllContainer>
           <Line></Line>
         </InputContainer>
-
         <InputContainer>
           <InputTitle>희망 직무</InputTitle>
           <SelectInput
@@ -424,7 +428,6 @@ const CreateResume = () => {
             onChange={handleJobChange}
           />
         </InputContainer>
-
         <InputContainer>
           <InputContainerShortMargin>
             <InputTitle>기술스택</InputTitle>
@@ -474,7 +477,6 @@ const CreateResume = () => {
           <InputTitle>학교명</InputTitle>
           <Input1 type="text" placeholder="학교명" {...register("schoolName")}></Input1>
         </InputContainer>
-
         <Label2>경력</Label2>
         {careerList.map((career, index) => (
           <Container key={index}>
@@ -529,7 +531,6 @@ const CreateResume = () => {
             )}
           </Container>
         ))}
-
         <Label2>경험/활동/교육</Label2>
         {experiences.map((experience, index) => (
           <Container key={index}>
@@ -570,7 +571,6 @@ const CreateResume = () => {
             )}
           </Container>
         ))}
-
         <Label2>자격/어학/수상</Label2>
         {qualifications.map((qualification, index) => (
           <Container key={index}>
@@ -604,7 +604,6 @@ const CreateResume = () => {
             )}
           </Container>
         ))}
-
         <Label2>포트폴리오</Label2>
         <FileContainer>
           <InputDefault
@@ -612,10 +611,7 @@ const CreateResume = () => {
             value={portfolio}
             onChange={e => setPortfolio(e.target.value)}
           />
-        </FileContainer>
-        <Span>* 이미지 업로드 시 "jpg", "jpeg", "png" 만 가능</Span>
-        <Span>(최대 허용 크기 10MB)</Span>
-
+        </FileContainer>{" "}
         <Container className="resumeBtn">
           <Button onClick={handleSubmit(onSubmit)}>이력서 등록</Button>
         </Container>
