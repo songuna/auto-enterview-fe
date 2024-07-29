@@ -54,7 +54,7 @@ const Account = () => {
       }
     } catch (error) {
       console.error("비밀번호 변경 오류:", error);
-      setMessage("비밀번호 변경 중 오류가 발생했습니다");
+      setMessage("기존 비밀번호가 일치하지 않습니다");
     }
   };
 
