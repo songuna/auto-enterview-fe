@@ -335,9 +335,9 @@ const Edit = styled.div`
   cursor: pointer;
 `;
 
-const Delete = styled.div`
-  color: #000694;
-  cursor: pointer;
-`;
+// const Delete = styled.div`
+//   color: #000694;
+//   cursor: pointer;
+// `;
 
 export default ViewResume;
