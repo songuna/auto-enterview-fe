@@ -113,7 +113,7 @@ const Index = () => {
             >
               <CompanyName>{jobInfo.companyName}</CompanyName>
               <JogTitle>{jobInfo.title}</JogTitle>
-              <TeckStack>{jobInfo.techStack.map(stack => `#${stack}`)}</TeckStack>
+              <TeckStack>{jobInfo.techStack.map(stack => `#${stack} `)}</TeckStack>
               <ApplyButton
                 onClick={event => {
                   event.stopPropagation();

@@ -14,6 +14,16 @@ import { optionEducation, optionJob, techStacks } from "../constants/options";
 import { InputDefault } from "../assets/style/input";
 import { useLocation } from "react-router-dom";
 
+interface useFormDefaultValues {
+  name: string;
+  birthDate: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  schoolName: string;
+  techStack: string[];
+}
+
 interface Career {
   companyName: string | null;
   jobCategory: string | null;
@@ -44,7 +54,7 @@ const CreateResume = () => {
     register,
     setValue,
     formState: { errors },
-  } = useForm({
+  } = useForm<useFormDefaultValues>({
     defaultValues: {
       name: "",
       birthDate: "",
@@ -79,8 +89,8 @@ const CreateResume = () => {
 
           setTitle(resumeData.title || "");
           setGender(resumeData.gender || "");
-          setJobCategory(resumeData.jobWant || "");
-          setEducation(resumeData.education || "");
+          setJobCategory(optionJob.find(job => job.label == resumeData.jobWant)?.value || "");
+          setEducation(optionEducation.find(edu => edu.label == resumeData.education)?.value || "");
           setPortfolio(resumeData.portfolio || "");
 
           setValue("name", resumeData.name || "");
@@ -89,12 +99,13 @@ const CreateResume = () => {
           setValue("phoneNumber", resumeData.phoneNumber || "");
           setValue("address", resumeData.address || "");
           setValue("schoolName", resumeData.schoolName || "");
+          setValue("techStack", resumeData.techStack || []);
 
           resumeData.career.length > 0
             ? setCareerList(
                 resumeData.career.map((career: any) => ({
                   companyName: career.companyName,
-                  jobCategory: career.jobCategory || "",
+                  jobCategory: optionJob.find(job => job.label == career.jobCategory)?.value || "",
                   startDate: career.startDate ? new Date(career.startDate) : null,
                   endDate: career.endDate ? new Date(career.endDate) : null,
                 })),
@@ -202,6 +213,43 @@ const CreateResume = () => {
   //이력서 생성 data
   const onSubmit = async (data: any) => {
     if (!authUser) return; // 로그인 안되있다면 리턴
+    console.log(data.techStack);
+
+    let canSubmit = true;
+
+    if (!title) {
+      alert("한 줄 소개를 작성해주세요.");
+      return;
+    } else if (!gender) {
+      alert("성별을 선택해주세요");
+    }
+
+    const filterCareerList = careerList.filter(career => {
+      if (career.companyName && !career.jobCategory) {
+        alert("담당업무를 선택해주세요.");
+        canSubmit = false;
+      } else if (!career.companyName && career.jobCategory) {
+        alert("회사명을 입력해주세요");
+        canSubmit = false;
+      } else {
+        return career.companyName && career.jobCategory;
+      }
+    });
+
+    if (!canSubmit) return;
+
+    const filterExperiences = experiences.filter(experience => {
+      return experience.experienceName;
+    });
+
+    const filterQualifications = qualifications.filter(qualification => {
+      return qualification.certificateName;
+    });
+
+    console.log(filterCareerList);
+    console.log(filterExperiences);
+    console.log(filterQualifications);
+    console.log(filterQualifications.map(el => console.log(el)));
 
     const ResumeData = {
       title: title,
@@ -214,7 +262,13 @@ const CreateResume = () => {
       address: data.address || "",
       education: education || "",
       schoolName: data.schoolName || "",
-      experience: experiences.map(experience => ({
+      career: filterCareerList.map(career => ({
+        companyName: career.companyName,
+        jobCategory: career.jobCategory || null,
+        startDate: career.startDate ? new Date(career.startDate).toISOString().split("T")[0] : "",
+        endDate: career.endDate ? new Date(career.endDate).toISOString().split("T")[0] : "",
+      })),
+      experience: filterExperiences.map(experience => ({
         experienceName: experience.experienceName,
         startDate: experience.startDate
           ? new Date(experience.startDate).toISOString().split("T")[0]
@@ -222,13 +276,7 @@ const CreateResume = () => {
         endDate: experience.endDate ? new Date(experience.endDate).toISOString().split("T")[0] : "",
       })),
       techStack: data.techStack || [],
-      career: careerList.map(career => ({
-        companyName: career.companyName,
-        jobCategory: career.jobCategory || null,
-        startDate: career.startDate ? new Date(career.startDate).toISOString().split("T")[0] : "",
-        endDate: career.endDate ? new Date(career.endDate).toISOString().split("T")[0] : "",
-      })),
-      certificates: qualifications.map(qualification => ({
+      certificates: filterQualifications.map(qualification => ({
         certificateName: qualification.certificateName,
         certificateDate: qualification.certificateDate
           ? new Date(qualification.certificateDate).toISOString().split("T")[0]
@@ -241,6 +289,9 @@ const CreateResume = () => {
     if (imgFile) {
       resultData.append("image", imgFile);
     }
+
+    console.log(ResumeData);
+
     resultData.append(
       "resumeInfo",
       new Blob([JSON.stringify(ResumeData)], { type: "application/json" }),
@@ -295,8 +346,9 @@ const CreateResume = () => {
                 className="textBox "
                 type="text"
                 placeholder="이름을 입력하세요."
-                {...register("name")}
-              ></Input>
+                {...register("name", { required: "이름을 입력해주세요." })}
+              ></Input>{" "}
+              <ErrorMessage>{errors.name && String(errors.name?.message)}</ErrorMessage>
               <Label1>성별</Label1>
               <GenderContainer className="genderCheck">
                 <GenderLabel>
@@ -327,29 +379,35 @@ const CreateResume = () => {
                 className="textBox"
                 type="text"
                 placeholder="YYYY-MM-DD"
-                {...register("birthDate")}
+                {...register("birthDate", { required: "생년월일을 입력해주세요." })}
               ></Input>
+              <ErrorMessage>{errors.birthDate && String(errors.birthDate?.message)}</ErrorMessage>
               <Label1>전화번호</Label1>
               <Input
                 className="textBox"
                 type="text"
                 placeholder="전화번호(-)를 입력하세요."
-                {...register("phoneNumber")}
+                {...register("phoneNumber", { required: "전화번호를 입력해주세요." })}
               ></Input>
+              <ErrorMessage>
+                {errors.phoneNumber && String(errors.phoneNumber?.message)}
+              </ErrorMessage>
               <Label1>이메일</Label1>
               <Input
                 className="emailBox"
                 type="text"
                 placeholder="이메일을 입력하세요."
-                {...register("email")}
+                {...register("email", { required: "이메일을 입력해주세요." })}
               ></Input>
+              <ErrorMessage>{errors.email && String(errors.email?.message)}</ErrorMessage>
               <Label1>주소</Label1>
               <Input
                 className="addressBox"
                 type="text"
                 placeholder="주소을 입력하세요."
-                {...register("address")}
+                {...register("address", { required: "주소를 입력해주세요." })}
               ></Input>
+              <ErrorMessage>{errors.address && String(errors.address?.message)}</ErrorMessage>
             </FlexContainer>
           </AllContainer>
           <Line></Line>
@@ -390,6 +448,7 @@ const CreateResume = () => {
                               onChange(value.filter(el => el !== stack));
                             }
                           }}
+                          checked={!!value.find(el => el == stack)}
                         />
                         <label htmlFor={stack}>{stack}</label>
                       </StackInputGroup>
@@ -398,9 +457,7 @@ const CreateResume = () => {
                 </StackInputContainer>
               )}
             />
-            <ErrorMessage>
-              {errors.techStack?.length == 0 && String(errors.techStack?.message)}
-            </ErrorMessage>
+            <ErrorMessage>{errors.techStack && String(errors.techStack?.message)}</ErrorMessage>
           </InputContainerShortMargin>
         </InputContainer>
         <InputContainer>
