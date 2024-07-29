@@ -336,7 +336,12 @@ const CreateResume = () => {
                   {imgURL && (
                     <img src={imgURL} alt="Selected" style={{ width: "200px", height: "250px" }} />
                   )}
-                  <ImgInput type="file" onChange={handleFileChange} ref={inputRef} />
+                  <ImgInput
+                    type="file"
+                    onChange={handleFileChange}
+                    ref={inputRef}
+                    accept=".jpg, .jpeg, .png"
+                  />
                 </LabelName>
                 <Span>* 이미지 업로드 시 "jpg", "jpeg", "png" 만 가능</Span>
                 <Span>(최대 허용 크기 10MB)</Span>
