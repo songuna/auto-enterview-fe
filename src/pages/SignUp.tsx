@@ -131,7 +131,7 @@ const SignUp: React.FC = () => {
     if (validatePassword(value)) {
       setPasswordError("");
     } else {
-      setPasswordError("8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다");
+      setPasswordError("8-16자리 영문 대/소문자, 숫자, 특수문자(@,$,!,%,*,?,&)를 포함해야 합니다.");
     }
     setUserData({ ...userData, [e.target.name]: value });
   };
@@ -179,7 +179,7 @@ const SignUp: React.FC = () => {
                 {isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
               </Icon>
             </PassWordCheck>
-            <ErrorSpan>{passwordError}</ErrorSpan>
+            {passwordError && <ErrorSpan>{passwordError}</ErrorSpan>}
             <Input
               type="text"
               name="companyName"
@@ -243,7 +243,7 @@ const SignUp: React.FC = () => {
                 {isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
               </Icon>
             </PassWordCheck>
-            <ErrorSpan>{passwordError}</ErrorSpan>
+            {passwordError && <ErrorSpan>{passwordError}</ErrorSpan>}
             <Input
               type="text"
               name="userPhoneNumber"
@@ -406,18 +406,15 @@ const Button = styled.button`
   background-color: #000694;
   margin-top: 10px;
   color: #ffffff;
-  font-size: 12px;
   font-weight: bold;
   padding: 12px 45px;
   letter-spacing: 1px;
   text-transform: uppercase;
   transition: transform 80ms ease-in;
   &.emailCheckBtn {
-    width: 50px;
+    width: 60px;
     height: 45px;
     padding: 0px;
-    border-radius: 0px;
-    font-size: 10px;
     margin-top: 7px;
   }
   &:active {
@@ -444,11 +441,12 @@ const Form = styled.form`
 `;
 
 const Input = styled.input`
-  background-color: #eee;
-  border: none;
-  padding: 15px 15px;
-  margin: 7px 0;
   width: 100%;
+  margin-top: 8px;
+  padding: 15px 15px;
+  border: none;
+  background-color: #eee;
+  border-radius: var(--button-radius);
 `;
 
 const H1 = styled.h1`
@@ -471,7 +469,7 @@ const P = styled.p`
 const EmailCheck = styled.div`
   width: 100%;
   display: flex;
-  flex-direction: row;
+  gap: 4px;
 `;
 
 const PassWordCheck = styled.div`
@@ -488,9 +486,11 @@ const Icon = styled.div`
 `;
 
 const ErrorSpan = styled.span`
-  color: red;
   margin-top: 5px;
+  padding: 0 8px;
   font-size: 12px;
+  line-height: 1.2;
+  color: red;
 `;
 
 export default SignUp;

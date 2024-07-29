@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { postSignin } from "../axios/http/user";
 import { useSetRecoilState } from "recoil";
 import { authUserState } from "../recoil/atoms/userAtom";
+import { AxiosError } from "axios";
 
 const Login = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -28,7 +29,7 @@ const Login = () => {
     // 비밀번호 유효성 검사
     const isValidPassword = validatePassword(password);
     if (!isValidPassword) {
-      setPasswordError("8-16자리 영문 대 소문자, 숫자, 특수문자를 포함해야 합니다.");
+      setPasswordError("8-16자리 영문 대/소문자, 숫자, 특수문자(@,$,!,%,*,?,&)를 포함해야 합니다.");
       return;
     }
 
@@ -40,8 +41,10 @@ const Login = () => {
 
       navigate("/");
     } catch (error) {
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.email);
+      }
       console.error("서버 요청 실패:", error);
-      alert("로그인에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -75,7 +78,7 @@ const Login = () => {
                 {isPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
               </Icon>
             </PassWordCheck>
-            <ErrorSpan>{passwordError}</ErrorSpan>
+            {passwordError && <ErrorSpan>{passwordError}</ErrorSpan>}
             <Button type="submit">로그인</Button>
             <FindLink to="/find-email">
               <FindEmailButton>이메일 찾기</FindEmailButton>
@@ -113,7 +116,11 @@ const Container = styled.div`
 const FormContainer = styled.div`
   position: absolute;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 95%;
   height: 100%;
+  margin: 0 auto;
   transition: all 0.6s ease-in-out;
 `;
 
@@ -143,17 +150,17 @@ const Input = styled.input`
   background-color: #eee;
   border: none;
   padding: 15px 15px;
-  margin: 10px 0;
-  width: 250px;
+  margin-top: 10px;
+  width: 100%;
+  border-radius: var(--button-radius);
 `;
 
 const Button = styled.button`
   border-radius: 8px;
   border: 1px solid #000694;
   background-color: #000694;
-  margin-top: 20px;
+  margin-top: 10px;
   color: #ffffff;
-  font-size: 12px;
   font-weight: bold;
   padding: 12px 45px;
   letter-spacing: 1px;
@@ -163,9 +170,9 @@ const Button = styled.button`
 `;
 
 const FindEmailButton = styled(Button)`
-  background-color: #f1f1f1;
+  background-color: #fff;
   color: #000694;
-  margin-top: 20px;
+  margin-top: 10px;
   border: 1px solid #000694;
   border-radius: 8px;
   width: 100%;
