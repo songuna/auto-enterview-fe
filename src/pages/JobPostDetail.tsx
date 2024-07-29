@@ -61,7 +61,16 @@ const JobPostDetail = () => {
 
         // 회사정보
         const companyResponse = await getCompanyInfo(response.companyKey);
-        setCompanyInfo(companyResponse);
+        let companyURL = companyResponse.companyUrl;
+
+        if (!companyURL.startsWith("http://") && !companyURL.startsWith("https://")) {
+          companyURL = `https://${companyURL}`;
+        }
+
+        setCompanyInfo({
+          ...companyResponse,
+          companyUrl: companyURL,
+        });
       } catch (e) {
         if (axios.isAxiosError(e)) {
           if (e.response?.status == 404) {
