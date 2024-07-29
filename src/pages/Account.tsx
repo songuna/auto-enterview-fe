@@ -3,7 +3,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useState, FormEvent, ChangeEvent } from "react";
 import { postChangePassword } from "../axios/http/user";
 import { postWithdrawCandidate } from "../axios/http/user";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { authUserState } from "../recoil/atoms/userAtom";
 
 const Account = () => {
