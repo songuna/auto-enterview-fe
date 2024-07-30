@@ -64,7 +64,10 @@ const Index = () => {
 
   useEffect(() => {
     (async () => {
-      if (!authUser) return;
+      if (!authUser) {
+        setIsInfoMessage(false);
+        return;
+      }
 
       if (authUser.role === "ROLE_CANDIDATE") {
         const response = await getResume(authUser.key);
