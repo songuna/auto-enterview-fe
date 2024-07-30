@@ -105,9 +105,11 @@ const Index = () => {
     <Wrapper className="inner-1200">
       {isInfoMessage && (
         <InfoMessage>
-          {authUser?.role === "ROLE_CANDIDATE"
-            ? "아직 이력서를 작성하지 않았습니다."
-            : "아직 회사정보를 작성하지 않았습니다."}
+          {!authUser
+            ? ""
+            : authUser.role === "ROLE_CANDIDATE"
+              ? "아직 이력서를 작성하지 않았습니다."
+              : "아직 회사정보를 작성하지 않았습니다."}
           <br></br>
           마이페이지에서 작성해주세요.
         </InfoMessage>
