@@ -169,7 +169,11 @@ const JobPostDetail = () => {
               </Info>
               <Info>
                 <InfoTitle>기술스택</InfoTitle>
-                <InfoDesc>{jobPostingInfo?.techStack.map(stack => `${stack}, `)}</InfoDesc>
+                <InfoDesc>
+                  {jobPostingInfo?.techStack.length === 1
+                    ? jobPostingInfo.techStack[0]
+                    : jobPostingInfo.techStack.join(", ")}
+                </InfoDesc>
               </Info>
               <Info>
                 <InfoTitle>고용형태</InfoTitle>
@@ -228,7 +232,7 @@ const JobPostDetail = () => {
             </InfoContainer>
             <ContentsContianer>
               <h2>공고내용</h2>
-              <div>{jobPostingInfo.jobPostingContent}</div>
+              <div style={{ whiteSpace: "pre-line" }}>{jobPostingInfo.jobPostingContent}</div>
               {jobPostingInfo.image && (
                 <ContentImage src={jobPostingInfo.image} alt="채용공고 설명 이미지" />
               )}
