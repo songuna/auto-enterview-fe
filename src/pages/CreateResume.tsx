@@ -334,7 +334,11 @@ const CreateResume = () => {
               <div>
                 <LabelName>
                   {imgURL && (
-                    <img src={imgURL} alt="Selected" style={{ width: "200px", height: "250px" }} />
+                    <img
+                      src={imgURL}
+                      alt="Selected"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
                   )}
                   <ImgInput
                     type="file"
