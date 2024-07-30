@@ -1,7 +1,7 @@
 # Auto Enter View
 
 <div align="center">
-<img width="300" alt="image" src="https://w1661913672-14q788704.slack.com/files/U078JS5QJ7L/F07EFGEMVJA/property_1_default.png">
+<img width="300" alt="image" src="./public/img/Property 1=Default.png">
 
 </div>
 
@@ -11,21 +11,21 @@
 
 ## 배포 주소
 
-> [https://auto-enter-view.link] <br>
-> 채용 과정의 자동화, Auto Enter View와 함께해보세요.
+> **Auto Enter View** : [https://auto-enter-view.link] <br>
+> 채용 과정의 자동화, Auto Enter View와 함께해보세요.<br>
 > 서류 심사부터 면접 일정 관리까지 자동으로 해결하고, 채용의 전 과정을 간편하게 만들어 드립니다.
 
-## 프로젝트 Github 주소
+## 프로젝트 Notion 주소
 
-> **FrontEnd** : [https://github.com/cheonjiyun/auto-enterview-fe] <br> **BackEnd** : [https://github.com/ESJung95/AutoEnterView]
+> **Notion** : [https://gray-heather-95a.notion.site/AutoEnterView-bad9c322c8104fc8bd86f4f86c6c7291]
 
 ## FrontEnd 소개
 
-|                                                               송유나                                                               |                                                     옥예원                                                      |                                                   천지윤                                                   |
-| :--------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------: |
-| <img width="160px" src="https://w1661913672-14q788704.slack.com/files/U078JS5QJ7L/F07EQKRBHAQ/kakaotalk_20240102_194518583.jpg" /> | <img width="160px" src="https://w1661913672-14q788704.slack.com/files/U07849FE4AK/F07EQK9R2DS/_________.jpg" /> | <img width="160px" src="https://w1661913672-14q788704.slack.com/files/U078C9GUZ0E/F07F0QT8X2M/image.png"/> |
-|                                               [@songuna](https://github.com/songuna)                                               |                                      [okyewon](https://github.com/okyewon)                                      |                                [@cheonjiyun](https://github.com/cheonjiyun)                                |
-|                                                  제로베이스 프론트엔드 스쿨 23기                                                   |                                         제로베이스 프론트엔드 스쿨 23기                                         |                                      제로베이스 프론트엔드 스쿨 23기                                       |
+|                       송유나                        |                       옥예원                        |                       천지윤                       |
+| :-------------------------------------------------: | :-------------------------------------------------: | :------------------------------------------------: |
+| <img width="160px" src="./public/img/송유나.jpg" /> | <img width="160px" src="./public/img/옥예원.jpg" /> | <img width="160px" src="./public/img/천지윤.png"/> |
+|       [@songuna](https://github.com/songuna)        |        [okyewon](https://github.com/okyewon)        |    [@cheonjiyun](https://github.com/cheonjiyun)    |
+|           제로베이스 프론트엔드 스쿨 23기           |           제로베이스 프론트엔드 스쿨 23기           |          제로베이스 프론트엔드 스쿨 23기           |
 
 ## 프로젝트 소개
 
@@ -50,7 +50,7 @@
 ![Styled Component](https://img.shields.io/badge/StyledComponent-pink?style=for-the-badge&logo=StyledComponent&logoColor=white)
 ![Recoil](https://img.shields.io/badge/Recoil-black?style=for-the-badge&logo=Recoil&logoColor=white)
 ![React Query](https://img.shields.io/badge/ReactQuery-red?style=for-the-badge&logo=ReactQuery&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-yellow?style=for-the-badge&logo=Vite&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-yellow?style=for-the-badge&logo=Vite&logoColor=white)
 ![axios](https://img.shields.io/badge/axios-purple?style=for-the-badge&logo=axios&logoColor=white)
 
 ### Communication
@@ -97,10 +97,10 @@
 
 ## ERD
 
-<img width="300" alt="image" src="https://w1661913672-14q788704.slack.com/files/U078JS5QJ7L/F07EQP4RGFN/auto_enter_view_erd.png">
+<img width="300" alt="image" src="./public/img/Auto Enter View ERD.png">
 
 ---
 
 ## 아키텍처
 
-<img width="300" alt="image" src="https://w1661913672-14q788704.slack.com/files/U078JS5QJ7L/F07F0UQU6JD/____________.png.png">
+<img width="300" alt="image" src="./public/img/아키텍쳐.PNG.png">
