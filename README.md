@@ -87,9 +87,7 @@
 
 ### 예시3
 
--
-
----
+- ***
 
 ## 와이어프레임
 
@@ -184,9 +182,7 @@
 
 ### 예시3
 
--
-
----
+- ***
 
 ## 와이어프레임
 
@@ -203,15 +199,3 @@
 ## 아키텍처
 
 <img width="1000" alt="image" src="./public/img/아키텍쳐.PNG.png">
-
----
-
-## ERD
-
-<img width="500" alt="image" src="./public/img/Auto Enter View ERD.png">
-
----
-
-## 아키텍처
-
-<img width="500" alt="image" src="./public/img/아키텍쳐.PNG.png">
