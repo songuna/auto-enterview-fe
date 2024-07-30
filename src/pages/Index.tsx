@@ -14,7 +14,7 @@ import axios from "axios";
 const Index = () => {
   const authUser = useRecoilValue(authUserState);
   const [jobInfos, setJobInfos] = useState<JobInfo[]>([]);
-  const [page, setpage] = useState(1);
+  const [page, setPage] = useState(1);
   const totalPage = useRef(0);
   const [isInfoMessage, setIsInfoMessage] = useState(false);
 
@@ -23,44 +23,54 @@ const Index = () => {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      () => {
-        setpage(page => {
-          if (page < totalPage.current) return page + 1;
-          else return page;
-        });
+      entries => {
+        if (entries[0].isIntersecting) {
+          setPage(prevPage => {
+            if (prevPage < totalPage.current) return prevPage + 1;
+            return prevPage;
+          });
+        }
       },
       {
-        threshold: 0,
+        threshold: 0.1,
       },
     );
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
+
+    const currentObserverTarget = observerTarget.current;
+    if (currentObserverTarget) {
+      observer.observe(currentObserverTarget);
     }
-    return () => observer && observer.disconnect();
+
+    return () => {
+      if (currentObserverTarget) {
+        observer.unobserve(currentObserverTarget);
+      }
+    };
   }, []);
 
   useEffect(() => {
     (async () => {
-      if (!observerTarget.current) return;
-
       const response = await getJobPostings(page);
       totalPage.current = response.totalPages;
 
-      if (response.jobPostingsList.length > 0 && jobInfos.length <= (page - 1) * 24) {
-        setJobInfos(jobInfos => [...jobInfos, ...response.jobPostingsList]);
-      }
+      setJobInfos(prevJobInfos => {
+        const newJobInfos = response.jobPostingsList.filter(
+          jobInfo => !prevJobInfos.some(info => info.jobPostingKey === jobInfo.jobPostingKey),
+        );
+        return [...prevJobInfos, ...newJobInfos];
+      });
     })();
-  }, [jobInfos.length, page]);
+  }, [page]);
 
   useEffect(() => {
     (async () => {
       if (!authUser) return;
 
-      if (authUser.role == "ROLE_CANDIDATE") {
-        const response = await getResume(authUser?.key);
+      if (authUser.role === "ROLE_CANDIDATE") {
+        const response = await getResume(authUser.key);
         if (response.title == null) setIsInfoMessage(true);
       } else if (authUser.role === "ROLE_COMPANY") {
-        const response = await getCompanyInfo(authUser?.key);
+        const response = await getCompanyInfo(authUser.key);
         if (!response.boss) setIsInfoMessage(true);
       }
     })();
@@ -71,19 +81,17 @@ const Index = () => {
   };
 
   const apply = async (jobPostingKey: string) => {
-    if (!jobPostingKey) return; // url에 jobPostingKey가 없음
+    if (!jobPostingKey) return;
 
     if (!authUser) {
-      //로그인하지 않았다면 로그인으로 보내기 alert
       if (confirm("로그인 하시겠습니까?")) navigate("/login");
     } else if (confirm("정말 지원하시겠습니까?")) {
-      // 로그인한 사용자만
       try {
         await postJobPostingApply(jobPostingKey);
         alert("지원되었습니다.");
       } catch (e) {
         if (axios.isAxiosError(e)) {
-          if (e.response?.status == 403) {
+          if (e.response?.status === 403) {
             alert("지원할 수 없습니다.");
           } else {
             alert(e.response?.data.message);
@@ -97,7 +105,7 @@ const Index = () => {
     <Wrapper className="inner-1200">
       {isInfoMessage && (
         <InfoMessage>
-          {authUser?.role == "ROLE_CANDIDATE"
+          {authUser?.role === "ROLE_CANDIDATE"
             ? "아직 이력서를 작성하지 않았습니다."
             : "아직 회사정보를 작성하지 않았습니다."}
           <br></br>
@@ -105,27 +113,22 @@ const Index = () => {
         </InfoMessage>
       )}
       <JobsContainer>
-        {jobInfos.map(jobInfo => {
-          return (
-            <JobContainer
-              onClick={() => goDetail(jobInfo.jobPostingKey)}
-              key={jobInfo.jobPostingKey}
+        {jobInfos.map(jobInfo => (
+          <JobContainer onClick={() => goDetail(jobInfo.jobPostingKey)} key={jobInfo.jobPostingKey}>
+            <CompanyName>{jobInfo.companyName}</CompanyName>
+            <JobTitle>{jobInfo.title}</JobTitle>
+            <TechStack>{jobInfo.techStack.map(stack => `#${stack} `)}</TechStack>
+            <ApplyButton
+              onClick={event => {
+                event.stopPropagation();
+                apply(jobInfo.jobPostingKey);
+              }}
             >
-              <CompanyName>{jobInfo.companyName}</CompanyName>
-              <JogTitle>{jobInfo.title}</JogTitle>
-              <TeckStack>{jobInfo.techStack.map(stack => `#${stack} `)}</TeckStack>
-              <ApplyButton
-                onClick={event => {
-                  event.stopPropagation();
-                  apply(jobInfo.jobPostingKey);
-                }}
-              >
-                지원하기
-              </ApplyButton>
-              <Dday>{getDday(jobInfo.endDate)}</Dday>
-            </JobContainer>
-          );
-        })}
+              지원하기
+            </ApplyButton>
+            <Dday>{getDday(jobInfo.endDate)}</Dday>
+          </JobContainer>
+        ))}
       </JobsContainer>
       <Observer ref={observerTarget}></Observer>
     </Wrapper>
@@ -169,7 +172,7 @@ const CompanyName = styled.p`
   text-overflow: ellipsis;
 `;
 
-const JogTitle = styled.p`
+const JobTitle = styled.p`
   width: 100%;
   margin-top: 14px;
   font-size: 1.3rem;
@@ -179,7 +182,7 @@ const JogTitle = styled.p`
   text-overflow: ellipsis;
 `;
 
-const TeckStack = styled.p`
+const TechStack = styled.p`
   width: 100%;
   margin-top: 8px;
   margin-bottom: 16px;
