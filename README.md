@@ -2,10 +2,7 @@
 
 <div align="center">
 <img width="300" alt="image" src="./public/img/Property 1=Default.png">
-
 </div>
-
-# Auto Enter View
 
 > **제로베이스 프론트엔드 스쿨 23기** <br/> **개발기간 : 24.06.24 ~ 27.08.01**
 
@@ -19,13 +16,14 @@
 
 > **Notion** : [https://gray-heather-95a.notion.site/AutoEnterView-bad9c322c8104fc8bd86f4f86c6c7291]
 
-## FrontEnd 소개
-
-|                       송유나                        |                       옥예원                        |                       천지윤                       |
-| :-------------------------------------------------: | :-------------------------------------------------: | :------------------------------------------------: |
-| <img width="160px" src="./public/img/송유나.jpg" /> | <img width="180px" src="./public/img/옥예원.jpg" /> | <img width="160px" src="./public/img/천지윤.png"/> |
-|       [@songuna](https://github.com/songuna)        |       [@okyewon](https://github.com/okyewon)        |    [@cheonjiyun](https://github.com/cheonjiyun)    |
-|           제로베이스 프론트엔드 스쿨 23기           |           제로베이스 프론트엔드 스쿨 23기           |          제로베이스 프론트엔드 스쿨 23기           |
+## 목차
+- [프로젝트 소개](#프로젝트-소개)
+- [기술 스택](#Stacks)
+- [화면 구성](#화면-구성)
+- [주요 기능](#주요-기능)
+- [아키텍처](#아키텍처)
+- [와이어프레임](#와이어프레임)
+- [FrontEnd 팀원 소개](#FrontEnd-팀원-소개)
 
 ## 프로젝트 소개
 
@@ -238,12 +236,23 @@
 
 ---
 
+## 아키텍처
+
+<img width="1000" alt="image" src="./public/img/아키텍쳐.PNG.png">
+
+---
+
 ## 와이어프레임
 
 > [https://www.figma.com/embed?embed_host=notion&url=https%3A%2F%2Fwww.figma.com%2Fdesign%2F5ljYgmZD1RoqItfpoz8WaO%2FEnterview%3Fnode-id%3D0-1]
 
 ---
 
-## 아키텍처
+## FrontEnd 팀원 소개
 
-<img width="1000" alt="image" src="./public/img/아키텍쳐.PNG.png">
+|                       송유나                        |                       옥예원                        |                       천지윤                       |
+| :-------------------------------------------------: | :-------------------------------------------------: | :------------------------------------------------: |
+| <img width="160px" src="./public/img/송유나.jpg" /> | <img width="180px" src="./public/img/옥예원.jpg" /> | <img width="160px" src="./public/img/천지윤.png"/> |
+|       [@songuna](https://github.com/songuna)        |       [@okyewon](https://github.com/okyewon)        |    [@cheonjiyun](https://github.com/cheonjiyun)    |
+|           제로베이스 프론트엔드 스쿨 23기           |           제로베이스 프론트엔드 스쿨 23기           |          제로베이스 프론트엔드 스쿨 23기           |
+
