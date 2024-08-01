@@ -6,15 +6,18 @@
 
 > **제로베이스 프론트엔드 스쿨 23기** <br/> **개발기간 : 24.06.24 ~ 27.08.01**
 
+
 ## 배포 주소
 
 > **Auto Enter View** : [https://auto-enter-view.link] <br>
 > 채용 과정의 자동화, Auto Enter View와 함께해보세요.<br>
 > 서류 심사부터 면접 일정 관리까지 자동으로 해결하고, 채용의 전 과정을 간편하게 만들어 드립니다.
 
+
 ## 프로젝트 Notion 주소
 
 > **Notion** : [https://gray-heather-95a.notion.site/AutoEnterView-bad9c322c8104fc8bd86f4f86c6c7291]
+
 
 ## 목차
 - [프로젝트 소개](#프로젝트-소개)
@@ -24,6 +27,7 @@
 - [아키텍처](#아키텍처)
 - [와이어프레임](#와이어프레임)
 - [FrontEnd 팀원 소개](#FrontEnd-팀원-소개)
+
 
 ## 프로젝트 소개
 
