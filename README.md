@@ -21,6 +21,7 @@
 - [기술 스택](#Stacks)
 - [화면 구성](#화면-구성)
 - [주요 기능](#주요-기능)
+- [Lighthouse 최적화](#Lighthouse-최적화)
 - [아키텍처](#아키텍처)
 - [와이어프레임](#와이어프레임)
 - [FrontEnd 팀원 소개](#FrontEnd-팀원-소개)
@@ -233,6 +234,16 @@
 
 1. 일정을 생성하시면 다음 단계에서 메일 예약이 가능합니다.
 2. 메일을 예약하지 않고 창을 닫으셨어도, 일정이 생성되어 있다면 [일정 생성]이 [메일 예약] 버튼으로 변경되어 메일을 예약하실 수 있습니다.
+
+---
+
+## Lighthouse 최적화
+
+### Before
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/944a47bb-d1b6-4398-b119-e230fa51f981">
+
+### After
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/5f385419-d15c-43a1-93f8-00c2a970dd3e">
 
 ---
 
