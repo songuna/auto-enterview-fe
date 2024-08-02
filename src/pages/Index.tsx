@@ -191,7 +191,7 @@ const TechStack = styled.p`
   width: 100%;
   margin-top: 8px;
   margin-bottom: 16px;
-  color: #969696;
+  color: #707070;
   font-size: 0.8rem;
   white-space: nowrap;
   overflow: hidden;
