@@ -44,7 +44,7 @@ const Header = () => {
       <HdInner className="inner-1200">
         <Logo>
           <Link to="/">
-            <Img src="/logo.svg" />
+            <Img src="/logo.svg" alt="logo" />
           </Link>
         </Logo>
         <Buttons>
