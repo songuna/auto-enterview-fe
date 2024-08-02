@@ -117,6 +117,7 @@ const Index = () => {
           마이페이지에서 작성해주세요.
         </InfoMessage>
       )}
+      <Title className="title">채용 공고</Title>
       <JobsContainer>
         {jobInfos.map(jobInfo => (
           <JobContainer onClick={() => goDetail(jobInfo.jobPostingKey)} key={jobInfo.jobPostingKey}>
@@ -145,6 +146,12 @@ const InfoMessage = styled.p`
   text-align: center;
   color: var(--color-red);
   line-height: 120%;
+`;
+
+const Title = styled.h2`
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border-gray-200);
 `;
 
 const JobsContainer = styled.div`
@@ -180,7 +187,7 @@ const CompanyName = styled.p`
 const JobTitle = styled.p`
   width: 100%;
   margin-top: 14px;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
