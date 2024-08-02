@@ -22,7 +22,7 @@ export const GlobalStyles = createGlobalStyle`
   :root {
     --primary-color: #000694;
     --sub-color: #5690FB;
-    --color-red: #F00000;
+    --color-red: #E00000;
     --bg-light-blue: #EFF5FF;
     --bg-light-gray: #eee;
     --border-gray-200: #4F4F4F;
