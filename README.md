@@ -8,7 +8,7 @@
 <br/><br/>
 ## 배포 주소
 
-> **Auto Enter View** : [https://auto-enter-view.link] <br>
+> **Auto Enter View** : [https://auto-enterview-fe.vercel.app/] <br>
 > 채용 과정의 자동화, Auto Enter View와 함께해보세요.<br>
 > 서류 심사부터 면접 일정 관리까지 자동으로 해결하고, 채용의 전 과정을 간편하게 만들어 드립니다.
 <br/><br/>
