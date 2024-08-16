@@ -14,7 +14,7 @@
 <br/><br/>
 ## 프로젝트 Notion 주소
 
-> **Notion** : [https://gray-heather-95a.notion.site/AutoEnterView-bad9c322c8104fc8bd86f4f86c6c7291]
+> **Notion** : [https://www.notion.so/ogi-front-end/AutoEnterView-cfb4b57cd8f4486c8b5c01fef88aa060]
 <br/><br/>
 ## 목차
 - [프로젝트 소개](#프로젝트-소개)
